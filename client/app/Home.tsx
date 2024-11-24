@@ -17,7 +17,7 @@ export default function Home() {
               Example Contract
             </Link>
           </Button>
-      <div className="prose px-2">
+      <div className="prose prose-invert px-2 dark:prose">
           
           <ReadmeContent />
         </div>
