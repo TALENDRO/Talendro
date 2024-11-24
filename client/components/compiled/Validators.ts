@@ -1,6 +1,7 @@
 import { Address, applyDoubleCborEncoding, applyParamsToScript, MintingPolicy, paymentCredentialOf, SpendingValidator } from "@lucid-evolution/lucid"
 import alwaysTrueSpend from "./spend.json" with {type: "json"}
 import identification_nft from "./identification_nft.json" with {type: "json"}
+import arbitrator_nft from "./arbitrator_nft.json" with {type: "json"}
 
 
 
@@ -44,6 +45,22 @@ export function identification_nftValidator(params: any[]): MintingPolicy {
         script: mintingScriptWithParams,
     };
 }
+
+
+// policyid of Identification_NFT as a param
+const arbitrator_nftScript = applyDoubleCborEncoding(arbitrator_nft.cborHex)
+export function arbitrator_nftValidator(params: any[]): MintingPolicy {
+    const mintingScriptWithParams = applyParamsToScript(
+        arbitrator_nftScript,
+        params
+    );
+
+    return {
+        type: "PlutusV3",
+        script: mintingScriptWithParams,
+    };
+}
+
 
 
 
