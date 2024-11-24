@@ -7,6 +7,9 @@ import { Providers } from "./providers";
 import { siteConfig } from "@/config/site";
 import { fontSans, fontComfortaa } from "@/config/fonts";
 import { Navbar } from "@/components/navbar";
+import dynamic from "next/dynamic";
+// const LucidProvider = dynamic(() => import('./LucidProvider'))
+import LucidProvider from "./LucidProvider";
 
 export const metadata: Metadata = {
   title: {
@@ -33,14 +36,16 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body className={clsx(
         "min-h-screen bg-background font-sans antialiased",
         fontSans.variable,
-        fontComfortaa.variable 
+        fontComfortaa.variable
       )}>
-        <Navbar/>
-        <Providers themeProps={{ attribute: "class", defaultTheme: "dark" }}>
-          <div className="relative flex flex-col h-screen">
-            <main className="container mx-auto  flex-grow">{children}</main>
-          </div>
-        </Providers>
+        <LucidProvider>
+        <Navbar />
+          <Providers themeProps={{ attribute: "class", defaultTheme: "dark" }}>
+            <div className="relative flex flex-col h-screen">
+              <main className="container mx-auto  flex-grow">{children}</main>
+            </div>
+          </Providers>
+        </LucidProvider>
       </body>
     </html>
   );
