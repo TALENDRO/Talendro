@@ -3,7 +3,7 @@ use aiken/collection/list
 use cardano/assets.{AssetName, PolicyId, Value, policies}
 use cardano/transaction.{Input}
 
-pub fn tokens_minting(
+pub fn tokens_details(
   value: Value,
   policy_id: PolicyId,
 ) -> Pairs<AssetName, Int> {

@@ -6,7 +6,7 @@ use mint_utils
 validator arbitrator_nft(identification_nft: PolicyId) {
   mint(_redeemer, policy_id: PolicyId, tx: Transaction) {
     let Transaction { mint, inputs, .. } = tx
-    expect [token] = mint_utils.tokens_minting(mint, policy_id)
+    expect [token] = mint_utils.tokens_details(mint, policy_id)
     let Pair(_, token_qty) = token
     when token_qty is {
       1 | -1 ->
