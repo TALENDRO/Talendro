@@ -9,7 +9,7 @@ import { fontSans, fontComfortaa } from "@/config/fonts";
 import { Navbar } from "@/components/navbar";
 import dynamic from "next/dynamic";
 // const LucidProvider = dynamic(() => import('./LucidProvider'))
-import LucidProvider from "./LucidProvider";
+import {LucidProvider} from "./LucidProvider";
 
 export const metadata: Metadata = {
   title: {

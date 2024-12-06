@@ -16,11 +16,14 @@ const NETWORK = process.env.NEXT_PUBLIC_CARDANO_NETWORK as Network;
 export interface ProvidersProps {
   children: React.ReactNode;
 }
-export default function LucidProvider({ children }: ProvidersProps) {
+// export default function LucidProvider({ children }: ProvidersProps) {
+  export const LucidProvider: React.FC<{ children: React.ReactNode }> = ({
+    children,
+  }) => {
   const [lucid, setLucid] = useState<LucidEvolution>();
 
-  // useEffect(() => {
-  //   const blockfrost = new Blockfrost(BF_URL, BF_PID);
+  useEffect(() => {
+    // const blockfrost = new Blockfrost(BF_URL, BF_PID);
   //   // Lucid(blockfrost, NETWORK).then(setLucid).catch((error) => console.log(error));
 
   //   Lucid(blockfrost, NETWORK)
@@ -29,7 +32,7 @@ export default function LucidProvider({ children }: ProvidersProps) {
   //         setLucid(lucidInstance);
   //       } else { console.error("Lucid returned undefined."); }
   //     }).catch((error) => console.error("Error initializing Lucid:", error));
-  // }, []);
+  }, []);
 
 
   // useEffect(() => {
