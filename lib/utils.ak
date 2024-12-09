@@ -1,7 +1,7 @@
 use aiken/collection/list
 use aiken/crypto.{VerificationKeyHash}
 use cardano/address.{Address}
-use cardano/assets.{PolicyId}
+use cardano/assets.{AssetName, Lovelace, PolicyId}
 use cardano/transaction.{InlineDatum,
   Input, Output, OutputReference, find_input}
 use types.{ProjectDatum}
@@ -50,10 +50,10 @@ pub fn datum_address_update(
   expect project_datum: ProjectDatum = projectdatum
 
   and {
-    project_datum.project_title == input_datum.project_title,
+    project_datum.title == input_datum.title,
     project_datum.client == input_datum.client,
     project_datum.pay == input_datum.pay,
-    project_datum.developer == address,
+    project_datum.developer == Some(address),
   }
 }
 
@@ -62,4 +62,28 @@ pub fn must_be_signed_by(
   signer: VerificationKeyHash,
 ) -> Bool {
   list.has(signatories, signer)
+}
+
+pub fn must_have_x_token(inputs: List<Input>, policy_id: PolicyId) -> Input {
+  expect Some(input_with_x_token) =
+    list.find(
+      inputs,
+      fn(input) { list.has(input.output.value |> assets.policies, policy_id) },
+    )
+  input_with_x_token
+}
+
+pub fn dev_token_to_script(
+  output: Output,
+  token: AssetName,
+  policy_id: PolicyId,
+) -> Bool {
+  assets.quantity_of(output.value, policy_id, token) == 1
+}
+
+pub fn ada_to_script_address(output: Output, pay: Option<Lovelace>) -> Bool {
+  when pay is {
+    Some(ada) -> ada >= assets.lovelace_of(output.value)
+    None -> True
+  }
 }

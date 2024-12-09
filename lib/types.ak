@@ -1,16 +1,33 @@
 use cardano/address.{Address}
-use cardano/assets.{Lovelace}
+use cardano/assets.{Lovelace, PolicyId}
 
 pub type ProjectDatum {
-  project_title: ByteArray,
+  title: ByteArray,
+  pay: Option<Lovelace>,
+  developer: Option<Address>,
   client: Address,
-  developer: Address,
+  milestones: List<Milestone>,
+  current_milestoneIdentifier: Option<ByteArray>,
+  next_milestone: Option<ByteArray>,
+}
+
+pub type Milestone {
+  milestoneIdentifier: ByteArray,
+  status: Bool,
   pay: Lovelace,
 }
 
-// pay: Lovelace //could be 0 too
-
 pub type ConfigDatum {
+  identificatoin_nft: PolicyId,
+  milestone_contract: PolicyId,
   holding_contract: Address,
+  projectinit_contract: Address,
+  arbitrator_nft: PolicyId,
+  talendrouser_nft: PolicyId,
 }
+
 // the contract that holds the assets
+pub type ArbitrationDatum {
+  project_datum: ProjectDatum,
+  pow: ByteArray,
+}
