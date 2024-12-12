@@ -4,7 +4,7 @@ use cardano/address.{Address}
 use cardano/assets.{AssetName, Lovelace, PolicyId}
 use cardano/transaction.{InlineDatum,
   Input, Output, OutputReference, find_input}
-use types.{ProjectDatum}
+use types.{ConfigDatum, ProjectDatum}
 
 pub fn must_consume_oref(inputs: List<Input>, oref: OutputReference) -> Bool {
   expect Some(_) = find_input(inputs, oref)
@@ -83,7 +83,49 @@ pub fn dev_token_to_script(
 
 pub fn ada_to_script_address(output: Output, pay: Option<Lovelace>) -> Bool {
   when pay is {
-    Some(ada) -> ada >= assets.lovelace_of(output.value)
+    Some(ada) -> ada <= assets.lovelace_of(output.value)
     None -> True
+  }
+}
+
+pub fn find_output_with_datum(
+  outputs: List<Output>,
+  datum: ProjectDatum,
+) -> Output {
+  expect Some(output) =
+    list.find(
+      outputs,
+      fn(output) {
+        when output.datum is {
+          InlineDatum(datum_data) -> {
+            expect output_datum: ProjectDatum = datum_data
+            and {
+              output_datum.title == datum.title,
+              output_datum.pay == datum.pay,
+              output_datum.client == datum.client,
+              output_datum.milestones == datum.milestones,
+              output_datum.current_milestoneidentifier == datum.current_milestoneidentifier,
+              output_datum.next_milestone == datum.next_milestone,
+            }
+          }
+
+          _ -> True
+        }
+      },
+    )
+  output
+}
+
+pub fn must_send_to_correct_script(
+  output: Output,
+  pay: Option<Int>,
+  config_datum: ConfigDatum,
+) -> Bool {
+  when pay is {
+    Some(ada) -> and {
+        ada <= assets.lovelace_of(output.value),
+        output.address == config_datum.holding_contract,
+      }
+    None -> output.address == config_datum.milestone_contract
   }
 }

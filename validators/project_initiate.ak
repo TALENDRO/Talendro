@@ -16,54 +16,46 @@ use utils
 validator project_initiate(config_nft: PolicyId) {
   spend(
     datum: Option<ProjectDatum>,
-    redeemer: Int,
+    _redeemer: Int,
     oref: OutputReference,
     tx: Transaction,
   ) {
-    when redeemer is {
-      0 -> {
-        let Transaction { outputs, reference_inputs, extra_signatories, .. } =
-          tx
-        expect Some(datum) = datum
-        let ref_input =
-          utils.find_ref_input_with_config_nft(reference_inputs, config_nft)
-        expect InlineDatum(output_datum) = ref_input.output.datum
-        expect config_datum: ConfigDatum = output_datum
+    expect Some(datum) = datum
+    let Transaction { inputs, reference_inputs, outputs, extra_signatories, .. } =
+      tx
 
-        let holding_script_output =
-          utils.find_output_with_address(outputs, config_datum.holding_contract)
-        expect Some(input_utxo) = find_input(tx.inputs, oref)
-        // find script utxo
-        expect Script(policy_id) = input_utxo.output.address.payment_credential
-        // find script hash/policyID
-        let nft_output_utxo = utils.find_output_with_nft(outputs, policy_id)
-        expect VerificationKey(vk_hash) =
-          nft_output_utxo.address.payment_credential
-        and {
-          when datum.pay is {
-            Some(pay) -> pay <= assets.lovelace_of(holding_script_output.value)
-            None -> False
-          },
-          utils.datum_address_update(
-            holding_script_output,
-            datum,
-            nft_output_utxo.address,
-          ),
-          utils.must_be_signed_by(extra_signatories, vk_hash),
-        }
-      }
+    // find ref_input and Datum type
+    let ref_input =
+      utils.find_ref_input_with_config_nft(reference_inputs, config_nft)
+    expect InlineDatum(output_datum) = ref_input.output.datum
+    expect config_datum: ConfigDatum = output_datum
+    // -----
+    expect Some(input_utxo) = find_input(inputs, oref)
+    expect Script(policy_id) = input_utxo.output.address.payment_credential
+    let dev_output = utils.find_output_with_nft(outputs, policy_id)
+    expect VerificationKey(vk_hash) = dev_output.address.payment_credential
 
-      1 -> True
-      _ -> fail
+    // must have talendro token
+    expect _ =
+      utils.must_have_x_token(reference_inputs, config_datum.talendrouser_nft)
+    // same datum expect projectDatum.developer
+    let contract_output = utils.find_output_with_datum(outputs, datum)
+
+    expect InlineDatum(datum_data) = contract_output.datum
+    expect output_datum: ProjectDatum = datum_data
+    // (output_datum.developer == nft )
+    and {
+      output_datum.developer == Some(dev_output.address),
+      utils.must_send_to_correct_script(
+        contract_output,
+        datum.pay,
+        config_datum,
+      ),
+      utils.must_be_signed_by(extra_signatories, vk_hash),
     }
   }
 
   mint(_redeemer, policy_id: PolicyId, tx: Transaction) {
-    //TODO: 
-    //TODO: 
-    //TODO:_
-    //TODO: 
-    //TODO: projectDatum.pay == ada to script output if None then skip
     let Transaction { inputs, outputs, reference_inputs, mint, .. } = tx
     // find ref_input and Datum type
     let ref_input =

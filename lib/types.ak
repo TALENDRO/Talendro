@@ -7,7 +7,7 @@ pub type ProjectDatum {
   developer: Option<Address>,
   client: Address,
   milestones: List<Milestone>,
-  current_milestoneIdentifier: Option<ByteArray>,
+  current_milestoneidentifier: Option<ByteArray>,
   next_milestone: Option<ByteArray>,
 }
 
@@ -19,7 +19,7 @@ pub type Milestone {
 
 pub type ConfigDatum {
   identificatoin_nft: PolicyId,
-  milestone_contract: PolicyId,
+  milestone_contract: Address,
   holding_contract: Address,
   projectinit_contract: Address,
   arbitrator_nft: PolicyId,
