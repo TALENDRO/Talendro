@@ -31,3 +31,10 @@ pub type ArbitrationDatum {
   project_datum: ProjectDatum,
   pow: ByteArray,
 }
+
+pub type MilestoneRedeemer {
+  Create
+  Complete
+  Cancel
+  CancelX
+}
