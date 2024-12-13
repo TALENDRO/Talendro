@@ -1,10 +1,12 @@
+use aiken/collection/dict
 use aiken/collection/list
 use aiken/crypto.{VerificationKeyHash}
+use aiken/primitive/bytearray
 use cardano/address.{Address}
-use cardano/assets.{AssetName, Lovelace, PolicyId}
+use cardano/assets.{AssetName, Lovelace, PolicyId, Value}
 use cardano/transaction.{InlineDatum,
   Input, Output, OutputReference, find_input}
-use types.{ConfigDatum, ProjectDatum}
+use types.{ConfigDatum, Milestone, ProjectDatum}
 
 pub fn must_consume_oref(inputs: List<Input>, oref: OutputReference) -> Bool {
   expect Some(_) = find_input(inputs, oref)
@@ -103,9 +105,19 @@ pub fn find_output_with_datum(
               output_datum.title == datum.title,
               output_datum.pay == datum.pay,
               output_datum.client == datum.client,
-              output_datum.milestones == datum.milestones,
-              output_datum.current_milestoneidentifier == datum.current_milestoneidentifier,
-              output_datum.next_milestone == datum.next_milestone,
+              if output_datum.developer == datum.developer {
+                and {
+                  output_datum.milestones != datum.milestones,
+                  output_datum.current_milestone != datum.current_milestone,
+                  output_datum.next_milestone == datum.next_milestone,
+                }
+              } else {
+                and {
+                  output_datum.milestones == datum.milestones,
+                  output_datum.current_milestone == datum.current_milestone,
+                  output_datum.next_milestone == datum.next_milestone,
+                }
+              },
             }
           }
 
@@ -126,6 +138,70 @@ pub fn must_send_to_correct_script(
         ada <= assets.lovelace_of(output.value),
         output.address == config_datum.holding_contract,
       }
-    None -> output.address == config_datum.milestone_contract
+    None -> output.address == config_datum.milestone_contract_address
   }
+}
+
+pub fn find_input_with_address(inputs: List<Input>, address: Address) -> Input {
+  expect Some(some_utxo) =
+    list.find(inputs, fn(input) { input.output.address == address })
+  some_utxo
+}
+
+pub fn confirm_minting_token_with_milestones(
+  mint: Value,
+  datum: ProjectDatum,
+  policy_id: PolicyId,
+) -> Bool {
+  let milestones = datum.milestones
+
+  let value = assets.tokens(mint, policy_id)
+  //Dict<AssetName, Int>  datatype of value
+  and {
+    list.all(
+      milestones,
+      fn(milestone) {
+        let token_name =
+          datum.title
+            |> bytearray.concat("_")
+            |> bytearray.concat(milestone.name)
+        and {
+          dict.has_key(value, bytearray.concat("clt_", token_name)),
+          dict.has_key(value, bytearray.concat("dev_", token_name)),
+        }
+      },
+    ),
+    list.all(dict.values(value), fn(qty) { qty == 1 }),
+  }
+}
+
+pub fn output_must_have_x_tokens(
+  output: Output,
+  policy_id: PolicyId,
+  datum: ProjectDatum,
+) -> Bool {
+  let value = assets.tokens(output.value, policy_id)
+  //Dict<AssetName, Int>  datatype of value
+  let token_names = dict.keys(value)
+  list.count(
+    token_names,
+    fn(tokenname) { bytearray.take(tokenname, 4) == "_dev" },
+  ) == list.length(datum.milestones)
+}
+
+pub fn correct_milestone_ada_to_script(
+  output: Output,
+  milestone: Option<Milestone>,
+) -> Bool {
+  when milestone is {
+    Some(x) -> assets.lovelace_of(output.value) >= x.pay
+    None -> False
+  }
+}
+
+pub fn find_nft_with_policy_id(
+  input: Input,
+  policy_id: PolicyId,
+) -> Dict<AssetName, Int> {
+  assets.tokens(input.output.value, policy_id)
 }

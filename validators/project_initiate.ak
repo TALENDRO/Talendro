@@ -36,8 +36,7 @@ validator project_initiate(config_nft: PolicyId) {
     expect VerificationKey(vk_hash) = dev_output.address.payment_credential
 
     // must have talendro token
-    expect _ =
-      utils.must_have_x_token(reference_inputs, config_datum.talendrouser_nft)
+    expect _ = utils.must_have_x_token(inputs, config_datum.talendrouser_nft)
     // same datum expect projectDatum.developer
     let contract_output = utils.find_output_with_datum(outputs, datum)
 
