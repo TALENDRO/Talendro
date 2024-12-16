@@ -206,6 +206,58 @@ pub fn correct_milestone_ada_to_script(
 //   assets.tokens(input.output.value, policy_id)
 // }
 
-pub fn must_burn_dev_clt_token() {
-  todo
+pub fn must_burn_dev_clt_token(
+  mint: Value,
+  policy_id: PolicyId,
+  datum: ProjectDatum,
+) -> Bool {
+  expect [Pair(clt_token_name, 1),
+    Pair(dev_token_name, 1)] =
+    mint
+      |> assets.tokens(policy_id)
+      |> dict.to_pairs
+  let milestone_name =
+    when datum.current_milestone is {
+      Some(milestone) -> milestone.name
+      None -> fail
+    }
+
+  let token_name =
+    datum.title
+      |> bytearray.concat("_")
+      |> bytearray.concat(milestone_name)
+
+  let clt_token_name_var = bytearray.drop(clt_token_name, 4)
+  and {
+    clt_token_name_var == bytearray.drop(dev_token_name, 4),
+    token_name == clt_token_name_var,
+  }
+}
+
+pub fn correct_milestone_updation(
+  old_datum: ProjectDatum,
+  new_datum: ProjectDatum,
+) -> Bool {
+  let old_current_milstone_name =
+    when old_datum.current_milestone is {
+      Some(m) -> m.name
+      None -> fail
+    }
+  let milestone_status =
+    list.any(
+      new_datum.milestones,
+      fn(milestone) {
+        if old_current_milstone_name == milestone.name {
+          milestone.status == True
+        } else {
+          True
+        }
+      },
+    )
+
+  and {
+    new_datum.current_milestone == old_datum.next_milestone,
+    new_datum.next_milestone == None,
+    milestone_status,
+  }
 }

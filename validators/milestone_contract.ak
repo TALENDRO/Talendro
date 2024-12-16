@@ -92,14 +92,31 @@ validator milestone_contract_mint(config_nft: PolicyId) {
           holding_contract_utxo.address == config_datum.holding_contract,
         }
       }
-      Complete -> and {
-          utils.must_burn_dev_clt_token(),
-          True,
+      Complete -> {
+        let project_datum = {
+          let holding_contract_input =
+            utils.find_input_with_address(inputs, config_datum.holding_contract)
+          expect InlineDatum(project_datum_data) =
+            holding_contract_input.output.datum
+          expect project_datum: ProjectDatum = project_datum_data
+          project_datum
         }
-      // must burn clt_ and dev_ for current milestone
-      // output should go back to holding contract with(current pay and datum)
-      // current milestone status == true && current milstone = nextMilestone | nextMilestone = None
-      // 
+
+        let holding_contract_output =
+          utils.find_output_with_address(outputs, config_datum.holding_contract)
+
+        expect InlineDatum(project_datum_data) = holding_contract_output.datum
+        expect output_project_datum: ProjectDatum = project_datum_data
+        and {
+          utils.must_burn_dev_clt_token(mint, policy_id, project_datum),
+          utils.correct_milestone_updation(project_datum, output_project_datum),
+          utils.correct_milestone_ada_to_script(
+            holding_contract_output,
+            output_project_datum.current_milestone,
+          ),
+        }
+      }
+
       Cancel -> True
       CancelX -> True
     }
