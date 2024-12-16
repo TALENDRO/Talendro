@@ -199,9 +199,13 @@ pub fn correct_milestone_ada_to_script(
   }
 }
 
-pub fn find_nft_with_policy_id(
-  input: Input,
-  policy_id: PolicyId,
-) -> Dict<AssetName, Int> {
-  assets.tokens(input.output.value, policy_id)
+// pub fn find_nft_with_policy_id(
+//   input: Input,
+//   policy_id: PolicyId,
+// ) -> Dict<AssetName, Int> {
+//   assets.tokens(input.output.value, policy_id)
+// }
+
+pub fn must_burn_dev_clt_token() {
+  todo
 }

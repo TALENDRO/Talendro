@@ -1,3 +1,4 @@
+use cardano/address.{Script}
 use cardano/assets.{PolicyId}
 use cardano/transaction.{
   InlineDatum, Input, Output, OutputReference, Transaction, find_input,
@@ -8,22 +9,34 @@ use types.{
 }
 use utils
 
-validator milestone_contract_spend(_config_nft: PolicyId) {
+validator milestone_contract_spend(config_nft: PolicyId) {
   spend(
     _datum,
     redeemer: MilestoneRedeemer,
     oref: OutputReference,
     tx: Transaction,
   ) {
-    let Transaction { inputs, .. } = tx
+    let Transaction { inputs, reference_inputs, .. } = tx
     when redeemer is {
       Create -> {
         expect Some(script_utxo) = find_input(inputs, oref)
+
+        let config_datum = {
+          let ref_input =
+            utils.find_ref_input_with_config_nft(reference_inputs, config_nft)
+          expect InlineDatum(output_datum) = ref_input.output.datum
+          expect configdatum: ConfigDatum = output_datum
+          configdatum
+        }
+        expect Script(project_init_policyid) =
+          config_datum.projectinit_contract.payment_credential
+        expect _: Input =
+          utils.find_ref_input_with_config_nft(inputs, project_init_policyid)
         True
       }
-      Complete -> True
       Cancel -> True
       CancelX -> True
+      _ -> fail
     }
   }
 
@@ -76,9 +89,17 @@ validator milestone_contract_mint(config_nft: PolicyId) {
             holding_contract_utxo,
             holding_contract_datum.current_milestone,
           ),
+          holding_contract_utxo.address == config_datum.holding_contract,
         }
       }
-      Complete -> True
+      Complete -> and {
+          utils.must_burn_dev_clt_token(),
+          True,
+        }
+      // must burn clt_ and dev_ for current milestone
+      // output should go back to holding contract with(current pay and datum)
+      // current milestone status == true && current milstone = nextMilestone | nextMilestone = None
+      // 
       Cancel -> True
       CancelX -> True
     }
@@ -95,7 +116,7 @@ validator milestone_contract_mint(config_nft: PolicyId) {
 // DONE: Project Datu, doesn't change except Milstone list, currentMilestone -> milstone_contract_spend (address configdatum) -> input.address == milestone_address ->  project datum 
 // DONE: should mint 2 token for each milestone -> holding_contract_utxo (datum.milestone) ->milestone[] ...> tx.mint and confirm 2 token
 // DONE: _dev token goes to projectDatum.developer
-// DONE: projectDatum.currentMilestone.pay ==ada to holding contract
+// DONE: projectDatum.currentMilestone.pay == ada to holding contract
 
 // Spend
 // client will mint milestone token -> should have _clt token == script _dev token   |||| scriptOutput -> dev_token | clt_
