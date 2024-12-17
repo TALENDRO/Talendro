@@ -331,3 +331,39 @@ pub fn output_must_have_dev_token(
     bytearray.drop(dev_token_name, 4) == datum.title,
   }
 }
+
+pub fn output_with_datum_address(
+  output: List<Output>,
+  dev_address: Option<Address>,
+  nft: PolicyId,
+  input_datum: ProjectDatum,
+) {
+  let output_nft = find_output_with_nft(output, nft)
+  expect InlineDatum(out_datum) = output_nft.datum
+  expect in_datum: ProjectDatum = out_datum
+  and {
+    in_datum.title == input_datum.title,
+    in_datum.client == input_datum.client,
+    in_datum.pay == input_datum.pay,
+    in_datum.developer == dev_address,
+    in_datum.pay == input_datum.pay,
+  }
+}
+
+pub fn datum_pay_to_developer(
+  output: List<Output>,
+  datum: ProjectDatum,
+  nft: PolicyId,
+) {
+  let output_nft = find_output_with_nft(output, nft)
+
+  when (datum.pay, datum.developer) is {
+    (Some(ada), addr) -> and {
+        ada <= assets.lovelace_of(output_nft.value),
+        addr == Some(output_nft.address),
+      }
+    _ -> False
+  }
+}
+
+
