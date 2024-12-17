@@ -37,5 +37,4 @@ pub type MilestoneRedeemer {
   Create
   Complete
   Cancel
-  CancelX
 }

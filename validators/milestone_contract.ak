@@ -1,41 +1,59 @@
 use cardano/address.{Script}
 use cardano/assets.{PolicyId}
-use cardano/transaction.{
-  InlineDatum, Input, Output, OutputReference, Transaction, find_input,
-}
+use cardano/transaction.{InlineDatum, Input, Output, Transaction}
+use datum_file
 use types.{
-  Cancel, CancelX, Complete, ConfigDatum, Create, MilestoneRedeemer,
-  ProjectDatum,
+  Cancel, Complete, ConfigDatum, Create, MilestoneRedeemer, ProjectDatum,
 }
 use utils
 
 validator milestone_contract_spend(config_nft: PolicyId) {
   spend(
-    _datum,
+    datum: Option<ProjectDatum>,
     redeemer: MilestoneRedeemer,
-    oref: OutputReference,
+    _oref,
     tx: Transaction,
   ) {
-    let Transaction { inputs, reference_inputs, .. } = tx
+    let Transaction { inputs, reference_inputs, outputs, mint, .. } = tx
+    expect Some(datum) = datum
+    let config_datum = {
+      let ref_input =
+        utils.find_ref_input_with_config_nft(reference_inputs, config_nft)
+      expect InlineDatum(output_datum) = ref_input.output.datum
+      expect configdatum: ConfigDatum = output_datum
+      configdatum
+    }
+    expect Script(project_init_policyid) =
+      config_datum.projectinit_contract.payment_credential
+
     when redeemer is {
       Create -> {
-        expect Some(script_utxo) = find_input(inputs, oref)
-
-        let config_datum = {
-          let ref_input =
-            utils.find_ref_input_with_config_nft(reference_inputs, config_nft)
-          expect InlineDatum(output_datum) = ref_input.output.datum
-          expect configdatum: ConfigDatum = output_datum
-          configdatum
-        }
-        expect Script(project_init_policyid) =
-          config_datum.projectinit_contract.payment_credential
         expect _: Input =
           utils.find_ref_input_with_config_nft(inputs, project_init_policyid)
+        expect _: Input =
+          utils.must_have_x_token(inputs, config_datum.talendrouser_nft)
         True
       }
-      Cancel -> True
-      CancelX -> True
+      Cancel ->
+        when datum.developer is {
+          Some(_) -> {
+            expect Script(script_hash) =
+              config_datum.milestone_contract_address.payment_credential
+            expect [script_utxo] =
+              transaction.find_script_outputs(outputs, script_hash)
+            let script_datum =
+              datum_file.output_datum_to_project_datum(script_utxo)
+            and {
+              script_datum.developer == None,
+              utils.output_must_have_dev_token(
+                script_utxo,
+                project_init_policyid,
+                script_datum,
+              ),
+            }
+          }
+          None -> utils.must_burn_dev_clt_token(mint, project_init_policyid)
+        }
       _ -> fail
     }
   }
@@ -56,8 +74,6 @@ validator milestone_contract_mint(config_nft: PolicyId) {
 
     when redeemer is {
       Create -> {
-        expect _: Input =
-          utils.must_have_x_token(inputs, config_datum.talendrouser_nft)
         let milestone_input: Input =
           utils.find_input_with_address(
             inputs,
@@ -74,7 +90,7 @@ validator milestone_contract_mint(config_nft: PolicyId) {
         let dev_output: Output =
           utils.find_output_with_address(outputs, dev_address)
         and {
-          utils.output_must_have_x_tokens(
+          utils.output_must_have_dev_tokens(
             dev_output,
             policy_id,
             holding_contract_datum,
@@ -108,7 +124,11 @@ validator milestone_contract_mint(config_nft: PolicyId) {
         expect InlineDatum(project_datum_data) = holding_contract_output.datum
         expect output_project_datum: ProjectDatum = project_datum_data
         and {
-          utils.must_burn_dev_clt_token(mint, policy_id, project_datum),
+          utils.must_burn_dev_clt_milestone_token(
+            mint,
+            policy_id,
+            project_datum,
+          ),
           utils.correct_milestone_updation(project_datum, output_project_datum),
           utils.correct_milestone_ada_to_script(
             holding_contract_output,
@@ -117,8 +137,21 @@ validator milestone_contract_mint(config_nft: PolicyId) {
         }
       }
 
-      Cancel -> True
-      CancelX -> True
+      Cancel -> {
+        let holding_contract_input: Input =
+          utils.find_input_with_address(inputs, config_datum.holding_contract)
+        expect InlineDatum(holding_contract_data) =
+          holding_contract_input.output.datum
+        expect holding_contract_datum: ProjectDatum = holding_contract_data
+        and {
+          utils.datum_for_cancel(holding_contract_datum),
+          utils.milestone_tokens_burn_cancel(
+            mint,
+            policy_id,
+            holding_contract_datum,
+          ),
+        }
+      }
     }
   }
 
@@ -126,16 +159,3 @@ validator milestone_contract_mint(config_nft: PolicyId) {
     fail
   }
 }
-// Create 
-// Mint
-// DONE: must have Talendro_Token 
-// DONE: must have input from script address
-// DONE: Project Datu, doesn't change except Milstone list, currentMilestone -> milstone_contract_spend (address configdatum) -> input.address == milestone_address ->  project datum 
-// DONE: should mint 2 token for each milestone -> holding_contract_utxo (datum.milestone) ->milestone[] ...> tx.mint and confirm 2 token
-// DONE: _dev token goes to projectDatum.developer
-// DONE: projectDatum.currentMilestone.pay == ada to holding contract
-
-// Spend
-// client will mint milestone token -> should have _clt token == script _dev token   |||| scriptOutput -> dev_token | clt_
-// output to the holding contract
-// must mint some milestone token

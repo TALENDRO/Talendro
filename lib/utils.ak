@@ -175,7 +175,7 @@ pub fn confirm_minting_token_with_milestones(
   }
 }
 
-pub fn output_must_have_x_tokens(
+pub fn output_must_have_dev_tokens(
   output: Output,
   policy_id: PolicyId,
   datum: ProjectDatum,
@@ -185,7 +185,7 @@ pub fn output_must_have_x_tokens(
   let token_names = dict.keys(value)
   list.count(
     token_names,
-    fn(tokenname) { bytearray.take(tokenname, 4) == "_dev" },
+    fn(tokenname) { bytearray.take(tokenname, 4) == "dev_" },
   ) == list.length(datum.milestones)
 }
 
@@ -206,7 +206,55 @@ pub fn correct_milestone_ada_to_script(
 //   assets.tokens(input.output.value, policy_id)
 // }
 
-pub fn must_burn_dev_clt_token(
+pub fn correct_milestone_updation(
+  old_datum: ProjectDatum,
+  new_datum: ProjectDatum,
+) -> Bool {
+  let old_current_milstone_name =
+    when old_datum.current_milestone is {
+      Some(m) -> m.name
+      None -> fail
+    }
+  let milestone_status =
+    list.any(
+      new_datum.milestones,
+      fn(milestone) {
+        if old_current_milstone_name == milestone.name {
+          milestone.status == True
+        } else {
+          True
+        }
+      },
+    )
+
+  and {
+    new_datum.current_milestone == old_datum.next_milestone,
+    new_datum.next_milestone == None,
+    milestone_status,
+  }
+}
+
+pub fn datum_for_cancel(datum: ProjectDatum) -> Bool {
+  and {
+    datum.current_milestone == None,
+    datum.next_milestone == None,
+    datum.developer == None,
+    list.all(
+      datum.milestones,
+      fn(milestone) {
+        if milestone.status == False {
+          milestone.pay == 0
+        } else {
+          True
+        }
+      },
+    ),
+  }
+}
+
+// currentMilestone == none &  pay for incomeplete datum == none & developer==none
+
+pub fn must_burn_dev_clt_milestone_token(
   mint: Value,
   policy_id: PolicyId,
   datum: ProjectDatum,
@@ -234,30 +282,52 @@ pub fn must_burn_dev_clt_token(
   }
 }
 
-pub fn correct_milestone_updation(
-  old_datum: ProjectDatum,
-  new_datum: ProjectDatum,
+pub fn milestone_tokens_burn_cancel(
+  mint: Value,
+  policy_id: PolicyId,
+  datum: ProjectDatum,
 ) -> Bool {
-  let old_current_milstone_name =
-    when old_datum.current_milestone is {
-      Some(m) -> m.name
-      None -> fail
-    }
-  let milestone_status =
-    list.any(
-      new_datum.milestones,
-      fn(milestone) {
-        if old_current_milstone_name == milestone.name {
-          milestone.status == True
-        } else {
-          True
-        }
-      },
-    )
+  let incomplete_milestone =
+    list.count(datum.milestones, fn(milestone) { milestone.status == False })
+  incomplete_milestone * 2 == must_burn_less_than_0(mint, policy_id)
+}
+
+pub fn must_burn_less_than_0(mint: Value, policy_id: PolicyId) -> Int {
+  let values: Pairs<AssetName, Int> =
+    mint
+      |> assets.tokens(policy_id)
+      |> dict.to_pairs()
+
+  expect list.all(values, fn(Pair(_, amount)) { amount < 0 })
+  list.length(values)
+}
+
+pub fn must_burn_dev_clt_token(mint: Value, policy_id: PolicyId) -> Bool {
+  expect [Pair(clt_token_name, 1),
+    Pair(dev_token_name, 1)] =
+    mint
+      |> assets.tokens(policy_id)
+      |> dict.to_pairs
 
   and {
-    new_datum.current_milestone == old_datum.next_milestone,
-    new_datum.next_milestone == None,
-    milestone_status,
+    "dev_" == bytearray.take(dev_token_name, 4),
+    "clt_" == bytearray.take(clt_token_name, 4),
+    bytearray.drop(dev_token_name, 4) == bytearray.drop(clt_token_name, 4),
+  }
+}
+
+pub fn output_must_have_dev_token(
+  output: Output,
+  policy_id: PolicyId,
+  datum: ProjectDatum,
+) -> Bool {
+  expect [Pair(dev_token_name, 1)] =
+    output.value
+      |> assets.tokens(policy_id)
+      |> dict.to_pairs
+
+  and {
+    bytearray.take(dev_token_name, 4) == "dev_",
+    bytearray.drop(dev_token_name, 4) == datum.title,
   }
 }
