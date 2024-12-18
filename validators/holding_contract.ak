@@ -11,7 +11,7 @@ use mint_utils
 use types.{ConfigDatum, ProjectDatum}
 use utils
 
-validator holding_contract(config_nft: PolicyId) {
+validator project_complete(config_nft: PolicyId) {
   spend(datum: Option<ProjectDatum>, _redeemer, _oref, tx: Transaction) {
     expect Some(datum) = datum
     let Transaction { inputs, outputs, mint, .. } = tx
@@ -37,3 +37,40 @@ validator holding_contract(config_nft: PolicyId) {
     fail
   }
 }
+
+
+validator cancel_project(config_nft: PolicyId){
+  spend(datum: Option<ConfigDatum>,_r,_oref,tx: Transaction){
+    expect Some(datum) = datum
+    let Transaction {inputs , mint, .. } =  tx  
+    let config_datum = {
+      let ref_input =
+        utils.find_ref_input_with_config_nft(inputs, config_nft)
+      expect InlineDatum(output_datum) = ref_input.output.datum
+      expect configdatum: ProjectDatum = output_datum
+      configdatum
+    }
+    //expect Script(project_init_policyid) =
+      //config_datum.projectinit_contract.payment_credential
+    expect mile_pid = datum.milestone_contract_policy
+    and{
+// projectdatum.developer & currentmilestone == None
+      utils.datum_for_cancel(config_datum),
+      utils.must_burn_dev_clt_token(mint, config_nft),
+      utils.must_burn_dev_clt_milestone_token(mint,mile_pid,datum ),
+      True
+    }
+  }
+}
+
+
+//milestone based
+// must send all milestone & project token
+// locked ada goes to client
+
+
+//regular based
+// must send the dev_ toekn
+// projectdatum.developer == None & pay == 0
+// locked ada goes to client
+ 
