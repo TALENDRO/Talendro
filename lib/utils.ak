@@ -332,38 +332,28 @@ pub fn output_must_have_dev_token(
   }
 }
 
-pub fn output_with_datum_address(
-  output: List<Output>,
-  dev_address: Option<Address>,
+pub fn output_same_datum_dev_token(
+  output: Output,
+  //dev_address: Option<Address>,
   nft: PolicyId,
   input_datum: ProjectDatum,
 ) {
-  let output_nft = find_output_with_nft(output, nft)
+  let output_nft = find_output_with_nft([output], nft)
   expect InlineDatum(out_datum) = output_nft.datum
   expect in_datum: ProjectDatum = out_datum
+  expect [Pair(name, 1)] = assets.tokens(output.value, nft) |> dict.to_pairs()
   and {
-    in_datum.title == input_datum.title,
-    in_datum.client == input_datum.client,
-    in_datum.pay == input_datum.pay,
-    in_datum.developer == dev_address,
-    in_datum.pay == input_datum.pay,
+    in_datum == input_datum,
+    bytearray.take(name, 4) == "dev_",
+    bytearray.drop(name, 4) == input_datum.title,
   }
 }
 
-pub fn datum_pay_to_developer(
-  output: List<Output>,
-  datum: ProjectDatum,
-  nft: PolicyId,
-) {
-  let output_nft = find_output_with_nft(output, nft)
-
-  when (datum.pay, datum.developer) is {
-    (Some(ada), addr) -> and {
-        ada <= assets.lovelace_of(output_nft.value),
-        addr == Some(output_nft.address),
-      }
+pub fn datum_pay_to_developer(output: List<Output>, datum: ProjectDatum) {
+  expect Some(dev_address) = datum.developer
+  let dev_output = find_output_with_address(output, dev_address)
+  when datum.pay is {
+    Some(ada) -> ada <= assets.lovelace_of(dev_output.value)
     _ -> False
   }
 }
-
-
