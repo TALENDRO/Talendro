@@ -2,15 +2,13 @@ use cardano/address.{Script}
 use cardano/assets.{PolicyId}
 use cardano/transaction.{InlineDatum, Input, Output, Transaction}
 use datum_file
-use types.{
-  Cancel, Complete, ConfigDatum, Create, MilestoneRedeemer, ProjectDatum,
-}
+use types.{Cancel, Complete, ConfigDatum, Create, ProjectDatum, ProjectRedeemer}
 use utils
 
 validator milestone_contract_spend(config_nft: PolicyId) {
   spend(
     datum: Option<ProjectDatum>,
-    redeemer: MilestoneRedeemer,
+    redeemer: ProjectRedeemer,
     _oref,
     tx: Transaction,
   ) {
@@ -41,8 +39,7 @@ validator milestone_contract_spend(config_nft: PolicyId) {
               config_datum.milestone_contract_address.payment_credential
             expect [script_utxo] =
               transaction.find_script_outputs(outputs, script_hash)
-            let script_datum =
-              datum_file.output_datum_to_project_datum(script_utxo)
+            let script_datum = datum_file.output_to_project_datum(script_utxo)
             and {
               script_datum.developer == None,
               utils.output_must_have_dev_token(
@@ -64,7 +61,7 @@ validator milestone_contract_spend(config_nft: PolicyId) {
 }
 
 validator milestone_contract_mint(config_nft: PolicyId) {
-  mint(redeemer: MilestoneRedeemer, policy_id: PolicyId, tx: Transaction) {
+  mint(redeemer: ProjectRedeemer, policy_id: PolicyId, tx: Transaction) {
     let Transaction { inputs, reference_inputs, outputs, mint, .. } = tx
     // find ref_input and Datum type
     let ref_input =
@@ -152,6 +149,7 @@ validator milestone_contract_mint(config_nft: PolicyId) {
           ),
         }
       }
+      _ -> False
     }
   }
 

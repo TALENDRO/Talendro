@@ -24,6 +24,7 @@ pub type ConfigDatum {
   holding_contract: Address,
   projectinit_contract: Address,
   arbitrator_nft: PolicyId,
+  arbitrator_contract: Address,
   talendrouser_nft: PolicyId,
 }
 
@@ -33,8 +34,15 @@ pub type ArbitrationDatum {
   pow: ByteArray,
 }
 
-pub type MilestoneRedeemer {
+// pub type MilestoneRedeemer {
+//   Create
+//   Complete
+//   Cancel
+// }
+
+pub type ProjectRedeemer {
   Create
   Complete
   Cancel
+  Arbitrator
 }

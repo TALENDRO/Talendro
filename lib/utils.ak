@@ -332,28 +332,29 @@ pub fn output_must_have_dev_token(
   }
 }
 
-pub fn output_same_datum_dev_token(
-  output: Output,
-  //dev_address: Option<Address>,
-  nft: PolicyId,
-  input_datum: ProjectDatum,
-) {
-  let output_nft = find_output_with_nft([output], nft)
-  expect InlineDatum(out_datum) = output_nft.datum
-  expect in_datum: ProjectDatum = out_datum
-  expect [Pair(name, 1)] = assets.tokens(output.value, nft) |> dict.to_pairs()
-  and {
-    in_datum == input_datum,
-    bytearray.take(name, 4) == "dev_",
-    bytearray.drop(name, 4) == input_datum.title,
+pub fn datum_pay_to_developer(output: List<Output>, datum: ProjectDatum) {
+  expect Some(dev_address) = datum.developer
+  let developer_output = find_output_with_address(output, dev_address)
+  when datum.pay is {
+    Some(ada) -> ada <= assets.lovelace_of(developer_output.value)
+    _ -> False
   }
 }
 
-pub fn datum_pay_to_developer(output: List<Output>, datum: ProjectDatum) {
-  expect Some(dev_address) = datum.developer
-  let dev_output = find_output_with_address(output, dev_address)
+pub fn datum_pay_to_client(output: List<Output>, datum: ProjectDatum) {
+  let client_output = find_output_with_address(output, datum.client)
   when datum.pay is {
-    Some(ada) -> ada <= assets.lovelace_of(dev_output.value)
+    Some(ada) -> ada <= assets.lovelace_of(client_output.value)
     _ -> False
   }
+}
+
+pub fn output_must_have_prj_token(
+  output: Output,
+  policy_id: PolicyId,
+  datum: ProjectDatum,
+) {
+  expect [Pair(assetname, 1)] =
+    assets.tokens(output.value, policy_id) |> dict.to_pairs()
+  bytearray.drop(assetname, 4) == datum.title
 }
