@@ -53,14 +53,10 @@ validator project_initiate(config_nft: PolicyId) {
   mint(_redeemer, policy_id: PolicyId, tx: Transaction) {
     let Transaction { inputs, outputs, reference_inputs, mint, .. } = tx
     // find ref_input and Datum type
-<<<<<<< Updated upstream
     let ref_input =
       utils.find_ref_input_with_config_nft(reference_inputs, config_nft)
     // expect InlineDatum(output_datum) = ref_input.output.datum
     let config_datum: ConfigDatum = d.input_to_config_datum(ref_input)
-=======
-    let config_datum = utils.get_config_datum(reference_inputs, config_nft)
->>>>>>> Stashed changes
     // -----
     // finding script output and Inlinedatum
     expect [script_output]: List<Output> =
@@ -83,9 +79,13 @@ validator project_initiate(config_nft: PolicyId) {
       // token name must be same
       bytearray.drop(dev_token_name, 4) == bytearray.drop(clt_token_name, 4),
       // dev_ must go to script
-      utils.dev_token_to_script(script_output, dev_token_name, policy_id),
+      utils.must_have_token_in_output(script_output, dev_token_name, policy_id),
       // projectDatum.pay == ada to script output if None then True
-      utils.ada_to_script_address(script_output, script_datum.pay),
+      utils.must_send_to_correct_script(
+        script_output,
+        script_datum.pay,
+        config_datum,
+      ),
     }
   }
 

@@ -103,7 +103,7 @@ pub fn must_have_x_token(inputs: List<Input>, policy_id: PolicyId) -> Bool {
   list.has(input.output.value |> assets.policies, policy_id)
 }
 
-pub fn dev_token_to_script(
+pub fn must_have_token_in_output(
   output: Output,
   token: AssetName,
   policy_id: PolicyId,
