@@ -184,10 +184,9 @@ pub fn identification_nft(
   policy_id: PolicyId,
   oref: OutputReference,
 ) {
-  expect [ref_token, usr_token] = mint_utils.tokens_details(tx.mint, policy_id)
-  expect Pair(ref_token_name, 1) = ref_token
+  expect [Pair(ref_token_name, 1),
+    Pair(usr_token_name, 1)] = mint_utils.tokens_details(tx.mint, policy_id)
   expect #"7265665f" = ref_token_name |> bytearray.take(4)
-  expect Pair(usr_token_name, 1) = usr_token
   expect #"7573725f" = usr_token_name |> bytearray.take(4)
   // ref_ goes to config UTXO and usr_ goes to admin for Arbitator token minting control
   and {
