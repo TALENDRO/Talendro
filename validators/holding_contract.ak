@@ -61,7 +61,7 @@ validator project_complete(config_nft: PolicyId) {
 
       // DEVELOEPR = must send dev_ -> holding_script
       // proectdatum.deveolper & pay ==NONE
-      //output should have dev_ token and assets.value(input.valiue)==assets.value(input.output.valiue) 
+      // output should have dev_ token and assets.value(input.valiue)==assets.value(input.output.valiue) 
       Cancel ->
         when dict.is_empty(dev_token) is {
           // Developer
@@ -95,11 +95,11 @@ validator project_complete(config_nft: PolicyId) {
       //  DONE = must send dev_ -> aribration contract
       //  DONE = must send arbitration datum -> aribration contract
       //  DONE = aribration.projectdatum == script_input.projectdatum
-      //  script_input ADA == aribration_output ADA
+      //  DONE = script_input ADA == aribration_output ADA
       // CLIENT
       // DONE = must send clt_ token ->  aribration
       // DONE = aribration.projectdatum == script_input.projectdatum
-      // script_input ADA == aribration_output ADA
+      // DONE = script_input ADA == aribration_output ADA
       Arbitrator -> {
         //let arbitrator_address = config_datum.arbitrator_contract
         let arbitrator_output: Output =
