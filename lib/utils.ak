@@ -6,11 +6,21 @@ use cardano/address.{Address}
 use cardano/assets.{AssetName, Lovelace, PolicyId, Value}
 use cardano/transaction.{InlineDatum,
   Input, Output, OutputReference, find_input}
+use datum_file as d
 use types.{ConfigDatum, Milestone, ProjectDatum}
 
 pub fn must_consume_oref(inputs: List<Input>, oref: OutputReference) -> Bool {
   expect Some(_) = find_input(inputs, oref)
   True
+}
+
+pub fn find_output_with_policy(outputs: List<Output>, nft: PolicyId) -> Output {
+  expect Some(output_utxo) =
+    list.find(
+      outputs,
+      fn(output) -> Bool { list.has(output.value |> assets.policies, nft) },
+    )
+  output_utxo
 }
 
 pub fn find_output_with_nft(outputs: List<Output>, nft: PolicyId) -> Output {
@@ -20,6 +30,28 @@ pub fn find_output_with_nft(outputs: List<Output>, nft: PolicyId) -> Output {
       fn(output) -> Bool { list.has(output.value |> assets.policies, nft) },
     )
   output_utxo
+}
+
+// refactored
+pub fn get_config_datum(
+  inputs: List<Input>,
+  config_nft: PolicyId,
+) -> ConfigDatum {
+  expect Some(ref_input) =
+    list.find(
+      inputs,
+      fn(input) { list.has(input.output.value |> assets.policies, config_nft) },
+    )
+  d.input_to_config_datum(ref_input)
+}
+
+pub fn find_input_with_policy(inputs: List<Input>, nft: PolicyId) -> Input {
+  expect Some(ref_input) =
+    list.find(
+      inputs,
+      fn(input) { list.has(input.output.value |> assets.policies, nft) },
+    )
+  ref_input
 }
 
 pub fn find_ref_input_with_config_nft(
@@ -66,13 +98,9 @@ pub fn must_be_signed_by(
   list.has(signatories, signer)
 }
 
-pub fn must_have_x_token(inputs: List<Input>, policy_id: PolicyId) -> Input {
-  expect Some(input_with_x_token) =
-    list.find(
-      inputs,
-      fn(input) { list.has(input.output.value |> assets.policies, policy_id) },
-    )
-  input_with_x_token
+pub fn must_have_x_token(inputs: List<Input>, policy_id: PolicyId) -> Bool {
+  let input <- list.any(inputs)
+  list.has(input.output.value |> assets.policies, policy_id)
 }
 
 pub fn dev_token_to_script(
