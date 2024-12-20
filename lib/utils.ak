@@ -45,13 +45,11 @@ pub fn get_config_datum(
   d.input_to_config_datum(ref_input)
 }
 
-pub fn find_input_with_policy(inputs: List<Input>, nft: PolicyId) -> Input {
-  expect Some(ref_input) =
-    list.find(
-      inputs,
-      fn(input) { list.has(input.output.value |> assets.policies, nft) },
-    )
-  ref_input
+pub fn find_input_with_policy(inputs: List<Input>, nft: PolicyId) -> Bool {
+  list.any(
+    inputs,
+    fn(input) { list.has(input.output.value |> assets.policies, nft) },
+  )
 }
 
 pub fn find_ref_input_with_config_nft(
@@ -203,17 +201,18 @@ pub fn confirm_minting_token_with_milestones(
   }
 }
 
-pub fn output_must_have_dev_tokens(
+pub fn output_must_have_dev_or_clt_tokens(
   output: Output,
   policy_id: PolicyId,
   datum: ProjectDatum,
+  dev_clt: ByteArray,
 ) -> Bool {
   let value = assets.tokens(output.value, policy_id)
   //Dict<AssetName, Int>  datatype of value
   let token_names = dict.keys(value)
   list.count(
     token_names,
-    fn(tokenname) { bytearray.take(tokenname, 4) == "dev_" },
+    fn(tokenname) { bytearray.take(tokenname, 4) == dev_clt },
   ) == list.length(datum.milestones)
 }
 

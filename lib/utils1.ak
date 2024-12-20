@@ -18,10 +18,8 @@ pub fn mint_milestone(
   policy_id: PolicyId,
   tx: Transaction,
 ) {
-  let ref_input =
-    utils.find_ref_input_with_config_nft(tx.reference_inputs, config_nft)
-
-  let config_datum: ConfigDatum = d.input_to_config_datum(ref_input)
+  let config_datum: ConfigDatum =
+    utils.get_config_datum(tx.reference_inputs, config_nft)
   when action is {
     Create -> tx |> milestone_mint_create(config_datum, policy_id)
     Complete -> tx |> milestone_mint_compelete(config_datum, policy_id)
@@ -52,10 +50,11 @@ pub fn milestone_mint_create(
   let dev_output: Output =
     utils.find_output_with_address(tx.outputs, dev_address)
   and {
-    utils.output_must_have_dev_tokens(
+    utils.output_must_have_dev_or_clt_tokens(
       dev_output,
       policy_id,
       holding_contract_datum,
+      "dev_",
     ),
     //  below function also check for qty == 1
     utils.confirm_minting_token_with_milestones(
@@ -76,19 +75,21 @@ pub fn milestone_mint_compelete(
   config_datum: ConfigDatum,
   policy_id: PolicyId,
 ) {
-  let project_datum = {
-    let holding_contract_input =
-      utils.find_input_with_address(tx.inputs, config_datum.holding_contract)
-    d.input_to_project_datum(holding_contract_input)
-  }
+  let input_project_datum: ProjectDatum =
+    utils.find_input_with_address(tx.inputs, config_datum.holding_contract)
+      |> d.input_to_project_datum
 
   let holding_contract_output =
     utils.find_output_with_address(tx.outputs, config_datum.holding_contract)
   let output_project_datum: ProjectDatum =
     d.output_to_project_datum(holding_contract_output)
   and {
-    utils.must_burn_dev_clt_milestone_token(tx.mint, policy_id, project_datum),
-    utils.correct_milestone_updation(project_datum, output_project_datum),
+    utils.must_burn_dev_clt_milestone_token(
+      tx.mint,
+      policy_id,
+      input_project_datum,
+    ),
+    utils.correct_milestone_updation(input_project_datum, output_project_datum),
     utils.correct_milestone_ada_to_script(
       holding_contract_output,
       output_project_datum.current_milestone,
@@ -142,11 +143,9 @@ pub fn milestone_spend_create(
   project_init_policyid: PolicyId,
   config_datum: ConfigDatum,
 ) {
-  expect _: Input =
-    utils.find_input_with_policy(tx.inputs, project_init_policyid)
   and {
+    utils.find_input_with_policy(tx.inputs, project_init_policyid),
     utils.must_have_x_token(tx.inputs, config_datum.talendrouser_nft),
-    True,
   }
 }
 
@@ -162,13 +161,14 @@ pub fn milestone_spend_cancel(
         config_datum.milestone_contract_address.payment_credential
       expect [script_utxo] =
         transaction.find_script_outputs(tx.outputs, script_hash)
-      let script_datum = d.output_to_project_datum(script_utxo)
+      let script_datum: ProjectDatum = d.output_to_project_datum(script_utxo)
       and {
         script_datum.developer == None,
-        utils.output_must_have_dev_token(
+        utils.output_must_have_dev_or_clt_tokens(
           script_utxo,
           project_init_policyid,
           script_datum,
+          "dev_",
         ),
       }
     }

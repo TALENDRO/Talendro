@@ -2,8 +2,7 @@ use aiken/primitive/bytearray
 use cardano/address.{Script, VerificationKey}
 use cardano/assets.{PolicyId}
 use cardano/transaction.{
-  InlineDatum, Output, OutputReference, Transaction, find_input,
-  find_script_outputs,
+  Output, OutputReference, Transaction, find_input, find_script_outputs,
 }
 use datum_file as d
 use mint_utils
