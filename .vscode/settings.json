@@ -1,20 +1,13 @@
 {
-  "files.autoSave": "onFocusChange",
-  "files.autoSaveDelay": 1000,
   "VsCodeTaskButtons.showCounter": false,
   "VsCodeTaskButtons.tasks": [
     {
-      "label": "aiken c",
+      "label": "check",
       "task": "Aiken Compile"
     },
+    {
+      "label": "fmt",
+      "task": "Aiken Format"
+    },
   ],
- "emeraldwalk.runonsave": {
-    "commands": [
-      {
-        "match": "\\.ak$",
-        "cmd": "echo 'file saved'"
-        // "cmd": "/home/rahat/.aiken/bin/aiken c"
-      }
-    ]
-  },
 }
