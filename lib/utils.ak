@@ -359,19 +359,20 @@ pub fn output_must_have_dev_token(
   }
 }
 
-pub fn datum_pay_to_developer(output: List<Output>, datum: ProjectDatum) {
+pub fn must_pay_to_developer(output: List<Output>, datum: ProjectDatum) -> Bool {
   expect Some(dev_address) = datum.developer
   let developer_output = find_output_with_address(output, dev_address)
-  when datum.pay is {
-    Some(ada) -> ada <= assets.lovelace_of(developer_output.value)
-    _ -> False
-  }
+  must_pay_to_x(developer_output, datum.pay)
 }
 
-pub fn datum_pay_to_client(output: List<Output>, datum: ProjectDatum) {
+pub fn must_pay_to_client(output: List<Output>, datum: ProjectDatum)-> Bool {
   let client_output = find_output_with_address(output, datum.client)
-  when datum.pay is {
-    Some(ada) -> ada <= assets.lovelace_of(client_output.value)
+  must_pay_to_x(client_output, datum.pay)
+}
+
+pub fn must_pay_to_x(output: Output, pay: Option<Lovelace>) {
+  when pay is {
+    Some(ada) -> ada <= assets.lovelace_of(output.value)
     _ -> False
   }
 }
