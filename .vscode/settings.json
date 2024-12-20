@@ -1,0 +1,13 @@
+{
+  "VsCodeTaskButtons.showCounter": false,
+  "VsCodeTaskButtons.tasks": [
+    {
+      "label": "check",
+      "task": "Aiken Compile"
+    },
+    {
+      "label": "fmt",
+      "task": "Aiken Format"
+    },
+  ],
+}
