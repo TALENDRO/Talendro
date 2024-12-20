@@ -5,6 +5,7 @@ use cardano/transaction.{
   InlineDatum, Output, OutputReference, Transaction, find_input,
   find_script_outputs,
 }
+use datum_file as d
 use mint_utils
 use types.{ConfigDatum, ProjectDatum}
 use utils
@@ -25,25 +26,20 @@ validator project_initiate(config_nft: PolicyId) {
       tx
 
     // find ref_input and Datum type
-    let ref_input =
-      utils.find_ref_input_with_config_nft(reference_inputs, config_nft)
-    expect InlineDatum(output_datum) = ref_input.output.datum
-    expect config_datum: ConfigDatum = output_datum
+    let config_datum = utils.get_config_datum(reference_inputs, config_nft)
     // -----
     expect Some(input_utxo) = find_input(inputs, oref)
     expect Script(policy_id) = input_utxo.output.address.payment_credential
-    let dev_output = utils.find_output_with_nft(outputs, policy_id)
+    let dev_output = utils.find_output_with_policy(outputs, policy_id)
     expect VerificationKey(vk_hash) = dev_output.address.payment_credential
 
     // must have talendro token
-    expect _ = utils.must_have_x_token(inputs, config_datum.talendrouser_nft)
     // same datum expect projectDatum.developer
     let contract_output = utils.find_output_with_datum(outputs, datum)
-
-    expect InlineDatum(datum_data) = contract_output.datum
-    expect output_datum: ProjectDatum = datum_data
+    let output_datum: ProjectDatum = d.output_to_project_datum(contract_output)
     // (output_datum.developer == nft )
     and {
+      utils.must_have_x_token(inputs, config_datum.talendrouser_nft),
       output_datum.developer == Some(dev_output.address),
       utils.must_send_to_correct_script(
         contract_output,

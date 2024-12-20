@@ -125,11 +125,7 @@ pub fn spend_milestone(
   tx: Transaction,
 ) {
   expect Some(datum) = datum
-  let config_datum = {
-    let ref_input =
-      utils.find_ref_input_with_config_nft(tx.reference_inputs, config_nft)
-    d.input_to_config_datum(ref_input)
-  }
+  let config_datum: ConfigDatum = utils.get_config_datum(tx.inputs, config_nft)
   expect Script(project_init_policyid) =
     config_datum.projectinit_contract.payment_credential
 
@@ -147,10 +143,11 @@ pub fn milestone_spend_create(
   config_datum: ConfigDatum,
 ) {
   expect _: Input =
-    utils.find_ref_input_with_config_nft(tx.inputs, project_init_policyid)
-  expect _: Input =
-    utils.must_have_x_token(tx.inputs, config_datum.talendrouser_nft)
-  True
+    utils.find_input_with_policy(tx.inputs, project_init_policyid)
+  and {
+    utils.must_have_x_token(tx.inputs, config_datum.talendrouser_nft),
+    True,
+  }
 }
 
 pub fn milestone_spend_cancel(

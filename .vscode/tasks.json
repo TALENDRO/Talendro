@@ -1,0 +1,18 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Aiken Compile",
+      "type": "shell",
+      // "command": "aiken",
+      "command": "/home/rahat/.aiken/bin/aikup",
+      "args": ["c"],
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+      "problemMatcher": [],
+      "detail": "Runs Aiken compilation."
+    }
+  ]
+}
