@@ -331,3 +331,30 @@ pub fn output_must_have_dev_token(
     bytearray.drop(dev_token_name, 4) == datum.title,
   }
 }
+
+pub fn datum_pay_to_developer(output: List<Output>, datum: ProjectDatum) {
+  expect Some(dev_address) = datum.developer
+  let developer_output = find_output_with_address(output, dev_address)
+  when datum.pay is {
+    Some(ada) -> ada <= assets.lovelace_of(developer_output.value)
+    _ -> False
+  }
+}
+
+pub fn datum_pay_to_client(output: List<Output>, datum: ProjectDatum) {
+  let client_output = find_output_with_address(output, datum.client)
+  when datum.pay is {
+    Some(ada) -> ada <= assets.lovelace_of(client_output.value)
+    _ -> False
+  }
+}
+
+pub fn output_must_have_prj_token(
+  output: Output,
+  policy_id: PolicyId,
+  datum: ProjectDatum,
+) {
+  expect [Pair(assetname, 1)] =
+    assets.tokens(output.value, policy_id) |> dict.to_pairs()
+  bytearray.drop(assetname, 4) == datum.title
+}
