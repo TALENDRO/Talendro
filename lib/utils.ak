@@ -365,7 +365,7 @@ pub fn must_pay_to_developer(output: List<Output>, datum: ProjectDatum) -> Bool 
   must_pay_to_x(developer_output, datum.pay)
 }
 
-pub fn must_pay_to_client(output: List<Output>, datum: ProjectDatum)-> Bool {
+pub fn must_pay_to_client(output: List<Output>, datum: ProjectDatum) -> Bool {
   let client_output = find_output_with_address(output, datum.client)
   must_pay_to_x(client_output, datum.pay)
 }

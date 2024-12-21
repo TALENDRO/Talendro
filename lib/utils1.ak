@@ -55,17 +55,17 @@ pub fn milestone_mint_create(
       policy_id,
       holding_contract_datum,
       "dev_",
-    ),
+    )?,
     //  below function also check for qty == 1
     utils.confirm_minting_token_with_milestones(
       tx.mint,
       holding_contract_datum,
       policy_id,
-    ),
+    )?,
     utils.correct_milestone_ada_to_script(
       holding_contract_utxo,
       holding_contract_datum.current_milestone,
-    ),
+    )?,
     holding_contract_utxo.address == config_datum.holding_contract,
   }
 }
