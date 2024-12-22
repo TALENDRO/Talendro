@@ -66,7 +66,7 @@ pub fn milestone_mint_create(
       holding_contract_utxo,
       holding_contract_datum.current_milestone,
     )?,
-    holding_contract_utxo.address == config_datum.holding_contract,
+    (holding_contract_utxo.address == config_datum.holding_contract)?,
   }
 }
 

@@ -196,8 +196,8 @@ pub fn confirm_minting_token_with_milestones(
           dict.has_key(value, bytearray.concat("dev_", token_name)),
         }
       },
-    ),
-    list.all(dict.values(value), fn(qty) { qty == 1 }),
+    )?,
+    list.all(dict.values(value), fn(qty) { qty == 1 })?,
   }
 }
 
@@ -221,7 +221,7 @@ pub fn correct_milestone_ada_to_script(
   milestone: Option<Milestone>,
 ) -> Bool {
   when milestone is {
-    Some(x) -> assets.lovelace_of(output.value) >= x.pay
+    Some(x) -> (assets.lovelace_of(output.value) >= x.pay)?
     None -> False
   }
 }
