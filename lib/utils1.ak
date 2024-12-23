@@ -88,12 +88,12 @@ pub fn milestone_mint_compelete(
       tx.mint,
       policy_id,
       input_project_datum,
-    ),
-    utils.correct_milestone_updation(input_project_datum, output_project_datum),
+    )?,
+    utils.correct_milestone_updation(input_project_datum, output_project_datum)?,
     utils.correct_milestone_ada_to_script(
       holding_contract_output,
       output_project_datum.current_milestone,
-    ),
+    )?,
   }
 }
 

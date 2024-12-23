@@ -56,7 +56,7 @@ test create_milestone_pass() {
       talendrouser_nft: mock_policy_id(3),
     }
 
-  let address1 = from_verification_key("abc")
+  let address1 = config_datum.milestone_contract_address
   let value = from_asset(mock_policy_id(0), "dev_dev_mile", 1)
   let value1 = from_asset(mock_policy_id(0), "clt_dev_mile", 1)
   expect Some(dev_address1) = prj_datum.developer
@@ -78,11 +78,10 @@ test create_milestone_pass() {
       |> add_mint(value1)
       |> add_tx_output(tx_output_1)
 
-
   utils1.milestone_mint_create(tx, config_datum, policy_id)
 }
 
-test create_milestone_output_dont_have_any_token_fail()fail {
+test create_milestone_output_dont_have_any_token_fail() fail {
   let mil: Milestone = Milestone { name: "mile", status: True, pay: 12 }
   let prj_datum =
     ProjectDatum {
@@ -128,8 +127,7 @@ test create_milestone_output_dont_have_any_token_fail()fail {
       |> set_datum_of_tx_input(InlineDatum(prj_datum))
 
   let tx_output_1 =
-    txn.new_tx_output(dev_address1)
-      // |> add_asset_to_tx_output(value)
+    txn.new_tx_output(dev_address1) // |> add_asset_to_tx_output(value)
       // |> add_asset_to_tx_output(value1)
       |> set_datum_of_tx_output(InlineDatum(out_prj_datum))
       |> add_asset_to_tx_output(assets.from_lovelace(13))
@@ -141,11 +139,10 @@ test create_milestone_output_dont_have_any_token_fail()fail {
       |> add_mint(value1)
       |> add_tx_output(tx_output_1)
 
-
   utils1.milestone_mint_create(tx, config_datum, policy_id)
 }
 
-test create_milestone_diff_PID_fail()fail {
+test create_milestone_diff_PID_fail() fail {
   let mil: Milestone = Milestone { name: "mile", status: True, pay: 12 }
   let prj_datum =
     ProjectDatum {
@@ -184,7 +181,7 @@ test create_milestone_diff_PID_fail()fail {
 
   let address1 = from_verification_key("abc")
   let value = from_asset(mock_policy_id(0), "dev_dev_mile", 1)
-  let value1 = from_asset(mock_policy_id(0), "clt_dev_mile",1)
+  let value1 = from_asset(mock_policy_id(0), "clt_dev_mile", 1)
   expect Some(dev_address1) = prj_datum.developer
   let tx_input =
     txn.new_tx_input(campaign_nonce, address1)
@@ -268,11 +265,10 @@ test create_milestone_token_qty_2_fail() fail {
       |> add_mint(value1)
       |> add_tx_output(tx_output_1)
 
-
   utils1.milestone_mint_create(tx, config_datum, policy_id)
 }
 
-test create_milestone_mint_1Mile_token_fail() fail{
+test create_milestone_mint_1Mile_token_fail() fail {
   let mil: Milestone = Milestone { name: "mile", status: True, pay: 12 }
   let prj_datum =
     ProjectDatum {
@@ -327,15 +323,13 @@ test create_milestone_mint_1Mile_token_fail() fail{
   let tx =
     transaction.placeholder
       |> add_tx_input(tx_input)
-      |> add_mint(value)
-      // |> add_mint(value1)
+      |> add_mint(value) // |> add_mint(value1)
       |> add_tx_output(tx_output_1)
-
 
   utils1.milestone_mint_create(tx, config_datum, policy_id)
 }
 
-test create_milestone_output_dont_have_dev_token()fail {
+test create_milestone_output_dont_have_dev_token() fail {
   let mil: Milestone = Milestone { name: "mile", status: True, pay: 12 }
   let prj_datum =
     ProjectDatum {
@@ -381,8 +375,7 @@ test create_milestone_output_dont_have_dev_token()fail {
       |> set_datum_of_tx_input(InlineDatum(prj_datum))
 
   let tx_output_1 =
-    txn.new_tx_output(dev_address1)
-      // |> add_asset_to_tx_output(value)
+    txn.new_tx_output(dev_address1) // |> add_asset_to_tx_output(value)
       |> add_asset_to_tx_output(value1)
       |> set_datum_of_tx_output(InlineDatum(out_prj_datum))
       |> add_asset_to_tx_output(assets.from_lovelace(21))
@@ -394,11 +387,10 @@ test create_milestone_output_dont_have_dev_token()fail {
       |> add_mint(value1)
       |> add_tx_output(tx_output_1)
 
-
   utils1.milestone_mint_create(tx, config_datum, policy_id)
 }
 
-test create_milestone_Holding_diff_address() fail{
+test create_milestone_Holding_diff_address() fail {
   let mil: Milestone = Milestone { name: "mile", status: True, pay: 12 }
   let prj_datum =
     ProjectDatum {
@@ -428,7 +420,8 @@ test create_milestone_Holding_diff_address() fail{
       identification_nft: mock_policy_id(0),
       milestone_contract_policy: mock_policy_id(0),
       milestone_contract_address: from_verification_key("abc"),
-      holding_contract: from_verification_key("abcd"),// different address
+      holding_contract: from_verification_key("abcd"),
+      // different address
       projectinit_contract: from_verification_key("abc"),
       arbitrator_nft: mock_policy_id(0),
       arbitrator_contract: from_verification_key("abc"),
@@ -457,11 +450,10 @@ test create_milestone_Holding_diff_address() fail{
       |> add_mint(value1)
       |> add_tx_output(tx_output_1)
 
-
   utils1.milestone_mint_create(tx, config_datum, policy_id)
 }
 
-test create_milestone_output_less_ada()fail {
+test create_milestone_output_less_ada() fail {
   let mil: Milestone = Milestone { name: "mile", status: True, pay: 12 }
   let prj_datum =
     ProjectDatum {
@@ -511,8 +503,9 @@ test create_milestone_output_less_ada()fail {
       |> add_asset_to_tx_output(value)
       |> add_asset_to_tx_output(value1)
       |> set_datum_of_tx_output(InlineDatum(out_prj_datum))
-      |> add_asset_to_tx_output(assets.from_lovelace(12)) //-- output ADA is less
+      |> add_asset_to_tx_output(assets.from_lovelace(12))
 
+  //-- output ADA is less
   let tx =
     transaction.placeholder
       |> add_tx_input(tx_input)
@@ -520,11 +513,10 @@ test create_milestone_output_less_ada()fail {
       |> add_mint(value1)
       |> add_tx_output(tx_output_1)
 
-
   utils1.milestone_mint_create(tx, config_datum, policy_id)
 }
 
-test create_milestone_output_No_datum()fail {
+test create_milestone_output_No_datum() fail {
   let mil: Milestone = Milestone { name: "mile", status: True, pay: 12 }
   let prj_datum =
     ProjectDatum {
@@ -536,7 +528,6 @@ test create_milestone_output_No_datum()fail {
       current_milestone: Some(Milestone { name: "mile", status: True, pay: 12 }),
       next_milestone: Some(mil),
     }
- 
 
   let config_datum =
     ConfigDatum {
@@ -561,10 +552,9 @@ test create_milestone_output_No_datum()fail {
   let tx_output_1 =
     txn.new_tx_output(dev_address1)
       |> add_asset_to_tx_output(value)
-      |> add_asset_to_tx_output(value1)
-      // NOT passing INLINE datum 
+      |> add_asset_to_tx_output(value1) // NOT passing INLINE datum 
       // |> set_datum_of_tx_output(InlineDatum(out_prj_datum)) 
-      |> add_asset_to_tx_output(assets.from_lovelace(13)) 
+      |> add_asset_to_tx_output(assets.from_lovelace(13))
 
   let tx =
     transaction.placeholder
@@ -573,11 +563,10 @@ test create_milestone_output_No_datum()fail {
       |> add_mint(value1)
       |> add_tx_output(tx_output_1)
 
-
   utils1.milestone_mint_create(tx, config_datum, policy_id)
 }
 
-test create_milestone_output_diff_datum()fail {
+test create_milestone_output_diff_datum() fail {
   let mil: Milestone = Milestone { name: "mile", status: True, pay: 12 }
   let prj_datum =
     ProjectDatum {
@@ -623,7 +612,6 @@ test create_milestone_output_diff_datum()fail {
       |> add_mint(value)
       |> add_mint(value1)
       |> add_tx_output(tx_output_1)
-
 
   utils1.milestone_mint_create(tx, config_datum, policy_id)
 }

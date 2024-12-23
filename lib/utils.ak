@@ -247,17 +247,17 @@ pub fn correct_milestone_updation(
       new_datum.milestones,
       fn(milestone) {
         if old_current_milstone_name == milestone.name {
-          milestone.status == True
+          (milestone.status == True)?
         } else {
-          True
+          False
         }
       },
     )
 
   and {
-    new_datum.current_milestone == old_datum.next_milestone,
-    new_datum.next_milestone == None,
-    milestone_status,
+    (new_datum.current_milestone == old_datum.next_milestone)?,
+    (new_datum.next_milestone == None)?,
+    milestone_status?,
   }
 }
 
