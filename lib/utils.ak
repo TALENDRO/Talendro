@@ -316,7 +316,7 @@ pub fn milestone_tokens_burn_cancel(
 ) -> Bool {
   let incomplete_milestone =
     list.count(datum.milestones, fn(milestone) { milestone.status == False })
-  incomplete_milestone * 2 == must_burn_less_than_0(mint, policy_id)
+  (incomplete_milestone * 2 == must_burn_less_than_0(mint, policy_id))?
 }
 
 pub fn must_burn_less_than_0(mint: Value, policy_id: PolicyId) -> Int {
@@ -325,7 +325,7 @@ pub fn must_burn_less_than_0(mint: Value, policy_id: PolicyId) -> Int {
       |> assets.tokens(policy_id)
       |> dict.to_pairs()
 
-  expect list.all(values, fn(Pair(_, amount)) { amount < 0 })
+  expect (list.all(values, fn(Pair(_, amount)) { amount < 0 }))?
   list.length(values)
 }
 
