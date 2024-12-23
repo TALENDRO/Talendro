@@ -304,8 +304,8 @@ pub fn must_burn_dev_clt_milestone_token(
 
   let clt_token_name_var = bytearray.drop(clt_token_name, 4)
   and {
-    clt_token_name_var == bytearray.drop(dev_token_name, 4),
-    token_name == clt_token_name_var,
+    (clt_token_name_var == bytearray.drop(dev_token_name, 4))?,
+    (token_name == clt_token_name_var)?,
   }
 }
 
