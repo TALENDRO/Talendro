@@ -132,7 +132,7 @@ test complete_milestone_diff_input_addr() fail {
   utils1.milestone_mint_compelete(tx, config_datum, policy_id)
 }
 
-test complete_milestone_diff_output_addr() fail{
+test complete_milestone_diff_output_addr() fail {
   let old_milestone =
     ProjectDatum {
       title: "title",
@@ -305,7 +305,7 @@ test complete_milestone_not_passsing_milestone_name() fail {
   utils1.milestone_mint_compelete(tx, config_datum, policy_id)
 }
 
-test complete_milestone_burn_only_dev() fail{
+test complete_milestone_burn_only_dev() fail {
   let old_milestone =
     ProjectDatum {
       title: "title",
@@ -361,7 +361,7 @@ test complete_milestone_burn_only_dev() fail{
   utils1.milestone_mint_compelete(tx, config_datum, policy_id)
 }
 
-test complete_milestone_burn_only_clt() fail{
+test complete_milestone_burn_only_clt() fail {
   let old_milestone =
     ProjectDatum {
       title: "title",
@@ -417,7 +417,7 @@ test complete_milestone_burn_only_clt() fail{
   utils1.milestone_mint_compelete(tx, config_datum, policy_id)
 }
 
-test complete_milestone_new_miletsone_name_not_found()fail {
+test complete_milestone_new_miletsone_name_not_found() fail {
   let old_milestone =
     ProjectDatum {
       title: "title",
@@ -428,8 +428,8 @@ test complete_milestone_new_miletsone_name_not_found()fail {
       current_milestone: Some(Milestone { name: "mile", status: True, pay: 12 }),
       next_milestone: Some(mil2),
     }
-    //---------hvaing diff milestone name
-    let mil3 =Milestone { name: "mile3", status: True, pay: 12 }
+  //---------hvaing diff milestone name
+  let mil3 = Milestone { name: "mile3", status: True, pay: 12 }
   let new_milestone =
     ProjectDatum {
       title: "title",
@@ -476,7 +476,7 @@ test complete_milestone_new_miletsone_name_not_found()fail {
   utils1.milestone_mint_compelete(tx, config_datum, policy_id)
 }
 
-test complete_milestone_new_miletsone_status_false() fail{
+test complete_milestone_new_miletsone_status_false() fail {
   let old_milestone =
     ProjectDatum {
       title: "title",
@@ -487,8 +487,7 @@ test complete_milestone_new_miletsone_status_false() fail{
       current_milestone: Some(Milestone { name: "mile", status: True, pay: 12 }),
       next_milestone: Some(mil2),
     }
-    /// new milseont status is False i.e oldmilestone.currentMiletsone.status == newmiletone.miletsone.status
-    let mil3 =Milestone { name: "mile", status: False, pay: 12 }
+  let mil3 = Milestone { name: "mile", status: False, pay: 12 }
   let new_milestone =
     ProjectDatum {
       title: "title",
@@ -535,7 +534,8 @@ test complete_milestone_new_miletsone_status_false() fail{
   utils1.milestone_mint_compelete(tx, config_datum, policy_id)
 }
 
-test complete_milestone_newMilestone_currMil_notEqual_oldMil_nextMile() fail{
+/// new milseont status is False i.e oldmilestone.currentMiletsone.status == newmiletone.miletsone.status
+test complete_milestone_newMilestone_currMil_notEqual_oldMil_nextMile() fail {
   let old_milestone =
     ProjectDatum {
       title: "title",
@@ -546,8 +546,8 @@ test complete_milestone_newMilestone_currMil_notEqual_oldMil_nextMile() fail{
       current_milestone: Some(Milestone { name: "mile", status: True, pay: 12 }),
       next_milestone: Some(mil2),
     }
-    //name are diff---------------------(new_datum.current_milestone == old_datum.next_milestone)?,
-    let mil3 =Milestone { name: "mile1", status: True, pay: 12 }
+  //name are diff---------------------(new_datum.current_milestone == old_datum.next_milestone)?,
+  let mil3 = Milestone { name: "mile1", status: True, pay: 12 }
   let new_milestone =
     ProjectDatum {
       title: "title",
@@ -605,7 +605,7 @@ test complete_milestone_newMilestone_nextMile_is_notNone() fail {
       current_milestone: Some(Milestone { name: "mile", status: True, pay: 12 }),
       next_milestone: Some(mil2),
     }
-    let mil3 =Milestone { name: "mile", status: True, pay: 12 }
+  let mil3 = Milestone { name: "mile", status: True, pay: 12 }
   let new_milestone =
     ProjectDatum {
       title: "title",
@@ -614,9 +614,10 @@ test complete_milestone_newMilestone_nextMile_is_notNone() fail {
       client: from_verification_key("abc"),
       milestones: [mil3],
       current_milestone: Some(mil3),
-      next_milestone: Some(mil2),//this is not NONE
+      next_milestone: Some(mil2),
     }
 
+  //this is not NONE
   let config_datum =
     ConfigDatum {
       identification_nft: mock_policy_id(0),
@@ -652,7 +653,7 @@ test complete_milestone_newMilestone_nextMile_is_notNone() fail {
   utils1.milestone_mint_compelete(tx, config_datum, policy_id)
 }
 
-test complete_milestone_output_ADA_less() fail{
+test complete_milestone_output_ADA_less() fail {
   let old_milestone =
     ProjectDatum {
       title: "title",
@@ -705,7 +706,6 @@ test complete_milestone_output_ADA_less() fail{
       |> add_mint(value)
       |> add_mint(value1)
       |> add_tx_output(tx_output_1)
-
 
   utils1.milestone_mint_compelete(tx, config_datum, policy_id)
 }

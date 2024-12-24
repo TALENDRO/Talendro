@@ -263,9 +263,9 @@ pub fn correct_milestone_updation(
 
 pub fn datum_for_cancel(datum: ProjectDatum) -> Bool {
   and {
-    datum.current_milestone == None,
-    datum.next_milestone == None,
-    datum.developer == None,
+    (datum.current_milestone == None)?,
+    (datum.next_milestone == None)?,
+    (datum.developer == None)?,
     list.all(
       datum.milestones,
       fn(milestone) {
@@ -275,7 +275,7 @@ pub fn datum_for_cancel(datum: ProjectDatum) -> Bool {
           True
         }
       },
-    ),
+    )?,
   }
 }
 
@@ -316,7 +316,11 @@ pub fn milestone_tokens_burn_cancel(
 ) -> Bool {
   let incomplete_milestone =
     list.count(datum.milestones, fn(milestone) { milestone.status == False })
-  (incomplete_milestone * 2 == must_burn_less_than_0(mint, policy_id))?
+
+  let burn_count = must_burn_less_than_0(mint, policy_id)
+   (incomplete_milestone * 2 == burn_count)?
+
+
 }
 
 pub fn must_burn_less_than_0(mint: Value, policy_id: PolicyId) -> Int {
@@ -325,7 +329,7 @@ pub fn must_burn_less_than_0(mint: Value, policy_id: PolicyId) -> Int {
       |> assets.tokens(policy_id)
       |> dict.to_pairs()
 
-  expect (list.all(values, fn(Pair(_, amount)) { amount < 0 }))?
+  expect list.all(values, fn(Pair(_, amount)) { amount < 0 })?
   list.length(values)
 }
 
