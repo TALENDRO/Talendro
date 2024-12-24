@@ -1,3 +1,18 @@
 {
-  "typescript.tsdk": "node_modules/typescript/lib"
+  "typescript.tsdk": "node_modules/typescript/lib",
+  "VsCodeTaskButtons.showCounter": false,
+  "VsCodeTaskButtons.tasks": [
+    {
+      "label": "Next dev",
+      "task": "Next.js: run"
+    },
+    {
+      "label": "Prettier",
+      "task": "Prettier: Fix"
+    },
+    {
+      "label": "ESLint",
+      "task": "ESLint: Fix"
+    }
+  ]
 }
