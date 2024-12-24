@@ -12,6 +12,7 @@ module.exports = {
       fontFamily: {
         sans: ["var(--font-sans)"],
         mono: ["var(--font-mono)"],
+        comfortaa: ["var(--font-comfortaa)"]
       },
     },
   },
