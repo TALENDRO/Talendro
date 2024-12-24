@@ -45,13 +45,11 @@ pub fn get_config_datum(
   d.input_to_config_datum(ref_input)
 }
 
-pub fn find_input_with_policy(inputs: List<Input>, nft: PolicyId) -> Input {
-  expect Some(ref_input) =
-    list.find(
-      inputs,
-      fn(input) { list.has(input.output.value |> assets.policies, nft) },
-    )
-  ref_input
+pub fn find_input_with_policy(inputs: List<Input>, nft: PolicyId) -> Bool {
+  list.any(
+    inputs,
+    fn(input) { list.has(input.output.value |> assets.policies, nft) },
+  )
 }
 
 pub fn find_ref_input_with_config_nft(
@@ -103,7 +101,7 @@ pub fn must_have_x_token(inputs: List<Input>, policy_id: PolicyId) -> Bool {
   list.has(input.output.value |> assets.policies, policy_id)
 }
 
-pub fn dev_token_to_script(
+pub fn must_have_token_in_output(
   output: Output,
   token: AssetName,
   policy_id: PolicyId,
@@ -203,17 +201,18 @@ pub fn confirm_minting_token_with_milestones(
   }
 }
 
-pub fn output_must_have_dev_tokens(
+pub fn output_must_have_dev_or_clt_tokens(
   output: Output,
   policy_id: PolicyId,
   datum: ProjectDatum,
+  dev_clt: ByteArray,
 ) -> Bool {
   let value = assets.tokens(output.value, policy_id)
   //Dict<AssetName, Int>  datatype of value
   let token_names = dict.keys(value)
   list.count(
     token_names,
-    fn(tokenname) { bytearray.take(tokenname, 4) == "dev_" },
+    fn(tokenname) { bytearray.take(tokenname, 4) == dev_clt },
   ) == list.length(datum.milestones)
 }
 
@@ -360,19 +359,20 @@ pub fn output_must_have_dev_token(
   }
 }
 
-pub fn datum_pay_to_developer(output: List<Output>, datum: ProjectDatum) {
+pub fn must_pay_to_developer(output: List<Output>, datum: ProjectDatum) -> Bool {
   expect Some(dev_address) = datum.developer
   let developer_output = find_output_with_address(output, dev_address)
-  when datum.pay is {
-    Some(ada) -> ada <= assets.lovelace_of(developer_output.value)
-    _ -> False
-  }
+  must_pay_to_x(developer_output, datum.pay)
 }
 
-pub fn datum_pay_to_client(output: List<Output>, datum: ProjectDatum) {
+pub fn must_pay_to_client(output: List<Output>, datum: ProjectDatum)-> Bool {
   let client_output = find_output_with_address(output, datum.client)
-  when datum.pay is {
-    Some(ada) -> ada <= assets.lovelace_of(client_output.value)
+  must_pay_to_x(client_output, datum.pay)
+}
+
+pub fn must_pay_to_x(output: Output, pay: Option<Lovelace>) {
+  when pay is {
+    Some(ada) -> ada <= assets.lovelace_of(output.value)
     _ -> False
   }
 }

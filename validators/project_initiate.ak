@@ -2,8 +2,7 @@ use aiken/primitive/bytearray
 use cardano/address.{Script, VerificationKey}
 use cardano/assets.{PolicyId}
 use cardano/transaction.{
-  InlineDatum, Output, OutputReference, Transaction, find_input,
-  find_script_outputs,
+  Output, OutputReference, Transaction, find_input, find_script_outputs,
 }
 use datum_file as d
 use mint_utils
@@ -61,12 +60,11 @@ validator project_initiate(config_nft: PolicyId) {
     // finding script output and Inlinedatum
     expect [script_output]: List<Output> =
       find_script_outputs(outputs, policy_id)
-    expect InlineDatum(script_datum_data) = script_output.datum
+    let script_datum: ProjectDatum = d.output_to_project_datum(script_output)
     // -----
     // finding clt_ dev_ tokens 
-    expect [clt_token, dev_token] = mint_utils.tokens_details(mint, policy_id)
-    expect Pair(clt_token_name, 1) = clt_token
-    expect Pair(dev_token_name, 1) = dev_token
+    expect [Pair(clt_token_name, 1),
+      Pair(dev_token_name, 1)] = mint_utils.tokens_details(mint, policy_id)
     expect #"636c745f" = clt_token_name |> bytearray.take(4)
     expect #"6465765f" = dev_token_name |> bytearray.take(4)
 
@@ -74,16 +72,19 @@ validator project_initiate(config_nft: PolicyId) {
     // -----
     // ------------------------- //
     // must have talendro token -> ref input -> ConfigDatum Match .talendro
-    expect _ = utils.must_have_x_token(inputs, config_datum.talendrouser_nft)
     // must send correct datum to script
-    expect script_datum: ProjectDatum = script_datum_data
     and {
+      utils.must_have_x_token(inputs, config_datum.talendrouser_nft),
       // token name must be same
       bytearray.drop(dev_token_name, 4) == bytearray.drop(clt_token_name, 4),
       // dev_ must go to script
-      utils.dev_token_to_script(script_output, dev_token_name, policy_id),
+      utils.must_have_token_in_output(script_output, dev_token_name, policy_id),
       // projectDatum.pay == ada to script output if None then True
-      utils.ada_to_script_address(script_output, script_datum.pay),
+      utils.must_send_to_correct_script(
+        script_output,
+        script_datum.pay,
+        config_datum,
+      ),
     }
   }
 
