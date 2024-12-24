@@ -196,8 +196,8 @@ pub fn confirm_minting_token_with_milestones(
           dict.has_key(value, bytearray.concat("dev_", token_name)),
         }
       },
-    ),
-    list.all(dict.values(value), fn(qty) { qty == 1 }),
+    )?,
+    list.all(dict.values(value), fn(qty) { qty == 1 })?,
   }
 }
 
@@ -221,7 +221,7 @@ pub fn correct_milestone_ada_to_script(
   milestone: Option<Milestone>,
 ) -> Bool {
   when milestone is {
-    Some(x) -> assets.lovelace_of(output.value) >= x.pay
+    Some(x) -> (assets.lovelace_of(output.value) >= x.pay)?
     None -> False
   }
 }
@@ -247,25 +247,25 @@ pub fn correct_milestone_updation(
       new_datum.milestones,
       fn(milestone) {
         if old_current_milstone_name == milestone.name {
-          milestone.status == True
+          (milestone.status == True)?
         } else {
-          True
+          False
         }
       },
     )
 
   and {
-    new_datum.current_milestone == old_datum.next_milestone,
-    new_datum.next_milestone == None,
-    milestone_status,
+    (new_datum.current_milestone == old_datum.next_milestone)?,
+    (new_datum.next_milestone == None)?,
+    milestone_status?,
   }
 }
 
 pub fn datum_for_cancel(datum: ProjectDatum) -> Bool {
   and {
-    datum.current_milestone == None,
-    datum.next_milestone == None,
-    datum.developer == None,
+    (datum.current_milestone == None)?,
+    (datum.next_milestone == None)?,
+    (datum.developer == None)?,
     list.all(
       datum.milestones,
       fn(milestone) {
@@ -275,7 +275,7 @@ pub fn datum_for_cancel(datum: ProjectDatum) -> Bool {
           True
         }
       },
-    ),
+    )?,
   }
 }
 
@@ -304,8 +304,8 @@ pub fn must_burn_dev_clt_milestone_token(
 
   let clt_token_name_var = bytearray.drop(clt_token_name, 4)
   and {
-    clt_token_name_var == bytearray.drop(dev_token_name, 4),
-    token_name == clt_token_name_var,
+    (clt_token_name_var == bytearray.drop(dev_token_name, 4))?,
+    (token_name == clt_token_name_var)?,
   }
 }
 
@@ -316,7 +316,11 @@ pub fn milestone_tokens_burn_cancel(
 ) -> Bool {
   let incomplete_milestone =
     list.count(datum.milestones, fn(milestone) { milestone.status == False })
-  incomplete_milestone * 2 == must_burn_less_than_0(mint, policy_id)
+
+  let burn_count = must_burn_less_than_0(mint, policy_id)
+   (incomplete_milestone * 2 == burn_count)?
+
+
 }
 
 pub fn must_burn_less_than_0(mint: Value, policy_id: PolicyId) -> Int {
@@ -325,7 +329,7 @@ pub fn must_burn_less_than_0(mint: Value, policy_id: PolicyId) -> Int {
       |> assets.tokens(policy_id)
       |> dict.to_pairs()
 
-  expect list.all(values, fn(Pair(_, amount)) { amount < 0 })
+  expect list.all(values, fn(Pair(_, amount)) { amount < 0 })?
   list.length(values)
 }
 
@@ -365,7 +369,7 @@ pub fn must_pay_to_developer(output: List<Output>, datum: ProjectDatum) -> Bool 
   must_pay_to_x(developer_output, datum.pay)
 }
 
-pub fn must_pay_to_client(output: List<Output>, datum: ProjectDatum)-> Bool {
+pub fn must_pay_to_client(output: List<Output>, datum: ProjectDatum) -> Bool {
   let client_output = find_output_with_address(output, datum.client)
   must_pay_to_x(client_output, datum.pay)
 }
