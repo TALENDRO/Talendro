@@ -21,11 +21,11 @@ export const AddressSchema = Data.Tuple([
 export const ConfigDatumSchema = Data.Object({
   identification_nft: Data.Bytes(), //PolicyId
   milestone_contract_policy: Data.Bytes(), //PolicyId,
-  milestone_contract_address: AddressSchema,
-  holding_contract: AddressSchema,
-  projectinit_contract: AddressSchema,
+  milestone_contract_address: Data.Bytes(),
+  holding_contract: Data.Bytes(),
+  projectinit_contract: Data.Bytes(),
   arbitrator_nft: Data.Bytes(), //PolicyId,
-  arbitrator_contract: AddressSchema,
+  arbitrator_contract: Data.Bytes(),
   talendrouser_nft: Data.Bytes(), //PolicyId,
 });
 export type ConfigDatum = Data.Static<typeof ConfigDatumSchema>;
@@ -45,8 +45,8 @@ export const MilestoneDatum = MilestoneDatumSchema as unknown as MilestoneDatum;
 export const ProjectDatumSchema = Data.Object({
   title: Data.Bytes(),
   pay: Data.Nullable(Data.Integer()),
-  developer: Data.Nullable(AddressSchema),
-  client: AddressSchema,
+  developer: Data.Nullable(Data.Bytes()),
+  client: Data.Bytes(),
   milestones: Data.Array(MilestoneDatumSchema),
   current_milestone: Data.Nullable(MilestoneDatumSchema),
   next_milestone: Data.Nullable(MilestoneDatumSchema),

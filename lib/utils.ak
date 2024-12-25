@@ -318,9 +318,7 @@ pub fn milestone_tokens_burn_cancel(
     list.count(datum.milestones, fn(milestone) { milestone.status == False })
 
   let burn_count = must_burn_less_than_0(mint, policy_id)
-   (incomplete_milestone * 2 == burn_count)?
-
-
+  (incomplete_milestone * 2 == burn_count)?
 }
 
 pub fn must_burn_less_than_0(mint: Value, policy_id: PolicyId) -> Int {

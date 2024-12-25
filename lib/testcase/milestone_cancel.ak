@@ -120,7 +120,7 @@ test cancel_milestone_current_milestone_isNotNone() fail {
       developer: None,
       client: from_verification_key("abc"),
       milestones: [mil],
-      current_milestone: Some(mil), ///shoudl be None to Pass
+      current_milestone: Some(mil),
       next_milestone: None,
     }
 
@@ -159,6 +159,7 @@ test cancel_milestone_current_milestone_isNotNone() fail {
   utils1.milestone_mint_cancel(tx, config_datum, policy_id)
 }
 
+///shoudl be None to Pass
 test cancel_milestone_next_milestone_isNotNone() fail {
   let prj_datum =
     ProjectDatum {
@@ -168,9 +169,10 @@ test cancel_milestone_next_milestone_isNotNone() fail {
       client: from_verification_key("abc"),
       milestones: [mil],
       current_milestone: None,
-      next_milestone: Some(mil), // should be None to pass
+      next_milestone: Some(mil),
     }
 
+  // should be None to pass
   let config_datum =
     ConfigDatum {
       identification_nft: mock_policy_id(0),
@@ -211,7 +213,8 @@ test cancel_milestone_developer_isNotNone() fail {
     ProjectDatum {
       title: "dev",
       pay: Some(10),
-      developer: Some(from_verification_key("abc")), //should be None to pass
+      developer: Some(from_verification_key("abc")),
+      //should be None to pass
       client: from_verification_key("abc"),
       milestones: [mil],
       current_milestone: None,
@@ -253,7 +256,7 @@ test cancel_milestone_developer_isNotNone() fail {
   utils1.milestone_mint_cancel(tx, config_datum, policy_id)
 }
 
-test cancel_milestone_MilestoneStatus_True() fail{
+test cancel_milestone_MilestoneStatus_True() fail {
   //---------Status should be False to Pass the test
   let mil4 = Milestone { ..mil, status: True, pay: 0 }
   let prj_datum =
@@ -302,8 +305,8 @@ test cancel_milestone_MilestoneStatus_True() fail{
   utils1.milestone_mint_cancel(tx, config_datum, policy_id)
 }
 
-test cancel_milestone_MilestoneStatus_Pay_isNot_Zero() fail{
-                    //---------Pay == 0 to Pass the test
+test cancel_milestone_MilestoneStatus_Pay_isNot_Zero() fail {
+  //---------Pay == 0 to Pass the test
   let mil4 = Milestone { ..mil, status: False, pay: 10 }
   let prj_datum =
     ProjectDatum {
@@ -353,8 +356,8 @@ test cancel_milestone_MilestoneStatus_Pay_isNot_Zero() fail{
 
 //need refactor for 2 FALSE
 test cancel_milestone_2_False_milestone() {
- let mil2: Milestone = Milestone { name: "mile", status: False, pay: 0 }
- let mil3: Milestone = Milestone { name: "mile", status: True, pay: 0 }
+  let mil2: Milestone = Milestone { name: "mile", status: False, pay: 0 }
+  let mil3: Milestone = Milestone { name: "mile", status: True, pay: 0 }
 
   let prj_datum =
     ProjectDatum {
@@ -362,7 +365,7 @@ test cancel_milestone_2_False_milestone() {
       pay: Some(10),
       developer: None,
       client: from_verification_key("abc"),
-      milestones: [mil3,mil2],
+      milestones: [mil3, mil2],
       current_milestone: None,
       next_milestone: None,
     }
@@ -398,8 +401,7 @@ test cancel_milestone_2_False_milestone() {
     transaction.placeholder
       |> add_tx_input(tx_input)
       |> add_mint(value)
-      |> add_mint(value1)
-      // |> add_mint(value2)
+      |> add_mint(value1) // |> add_mint(value2)
       // |> add_mint(value3)
       |> add_tx_output(tx_output_1)
 

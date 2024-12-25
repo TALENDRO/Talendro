@@ -11,11 +11,11 @@
         "isDefault": false
       },
       "presentation": {
-                "reveal": "silent",
-                "clear": true,
-                "showReuseMessage": false,
-                "panel": "shared"
-            },
+        "reveal": "silent",
+        "clear": true,
+        "showReuseMessage": false,
+        "panel": "shared"
+      }
     },
     {
       "label": "Aiken Compile",
@@ -28,13 +28,31 @@
         "isDefault": true
       },
       "presentation": {
-                "reveal": "silent",
-                "clear": true,
-                "showReuseMessage": false,
-                "panel": "shared"
-            },
+        "reveal": "silent",
+        "clear": true,
+        "showReuseMessage": false,
+        "panel": "shared"
+      },
       "problemMatcher": [],
       "detail": "Runs Aiken compilation."
+    },
+    {
+      "label": "Next.js: run",
+      "type": "npm",
+      "script": "dev",
+      "presentation": {
+        "panel": "dedicated"
+      }
+    },
+    {
+      "label": "Prettier: Fix",
+      "type": "shell",
+      "command": "npx prettier --write ."
+    },
+    {
+      "label": "ESLint: Fix",
+      "type": "shell",
+      "command": "npx eslint --fix ."
     }
   ]
 }
