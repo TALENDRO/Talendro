@@ -144,8 +144,8 @@ pub fn milestone_spend_create(
   config_datum: ConfigDatum,
 ) {
   and {
-    utils.find_input_with_policy(tx.inputs, project_init_policyid),
-    utils.must_have_x_token(tx.inputs, config_datum.talendrouser_nft),
+    (utils.find_input_with_policy(tx.inputs, project_init_policyid))?,
+    utils.must_have_x_token(tx.inputs, config_datum.talendrouser_nft)?,
   }
 }
 
@@ -163,13 +163,13 @@ pub fn milestone_spend_cancel(
         transaction.find_script_outputs(tx.outputs, script_hash)
       let script_datum: ProjectDatum = d.output_to_project_datum(script_utxo)
       and {
-        script_datum.developer == None,
-        utils.output_must_have_dev_or_clt_tokens(
+        (script_datum.developer == None)?,
+        (utils.output_must_have_dev_or_clt_tokens(
           script_utxo,
           project_init_policyid,
           script_datum,
           "dev_",
-        ),
+        ))?,
       }
     }
     None -> utils.must_burn_dev_clt_token(tx.mint, project_init_policyid)

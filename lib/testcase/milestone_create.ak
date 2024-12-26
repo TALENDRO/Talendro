@@ -1,11 +1,8 @@
 use cardano/address.{from_verification_key}
 use cardano/assets.{from_asset}
-//from_lovelace
 use cardano/transaction.{InlineDatum}
 use mocktail.{mock_utxo_ref}
-// use mocktail/virgin_address.{mock_pub_key_address}
 use mocktail/virgin_key_hash.{mock_policy_id}
-// mock_key_hash
 use tx_util/builder/txn.{
   add_asset_to_tx_output, add_mint, add_tx_input, add_tx_output,
   set_datum_of_tx_input, set_datum_of_tx_output,
