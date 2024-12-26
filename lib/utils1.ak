@@ -163,7 +163,7 @@ pub fn milestone_spend_cancel(
         transaction.find_script_outputs(tx.outputs, script_hash)
       let script_datum: ProjectDatum = d.output_to_project_datum(script_utxo)
       and {
-        //   (script_datum.developer == None)?,
+        (script_datum.developer == None)?,
         utils.output_must_have_dev_or_clt_tokens(
           script_utxo,
           project_init_policyid,

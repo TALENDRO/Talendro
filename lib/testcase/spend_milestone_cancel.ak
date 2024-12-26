@@ -20,15 +20,16 @@ pub const policy_id = mock_policy_id(1)
 pub const mil: Milestone = Milestone { name: "mile", status: True, pay: 12 }
 
 pub const out_prj_datum =
-    ProjectDatum {
-      title: "dev",
-      pay: Some(10),
-      developer: None,//Some(from_verification_key("abc")),
-      client: from_verification_key("abc"),
-      milestones: [mil],
-      current_milestone: Some(Milestone { name: "mile", status: True, pay: 12 }),
-      next_milestone: Some(mil),
-    }
+  ProjectDatum {
+    title: "dev",
+    pay: Some(10),
+    developer: None,
+    //Some(from_verification_key("abc")),
+    client: from_verification_key("abc"),
+    milestones: [mil],
+    current_milestone: Some(Milestone { name: "mile", status: True, pay: 12 }),
+    next_milestone: Some(mil),
+  }
 
 test cancel_milestone_spend_Developer_NONE_pass() {
   let mil: Milestone = Milestone { name: "mile", status: True, pay: 12 }
@@ -178,12 +179,12 @@ test cancel_milestone_spend_Developer_pass() {
       next_milestone: Some(mil),
     }
 
-
- let out_prj_datum =
+  let out_prj_datum =
     ProjectDatum {
       title: "dev",
       pay: Some(10),
-      developer: None,//Some(from_verification_key("abc")),
+      developer: None,
+      //Some(from_verification_key("abc")),
       client: from_verification_key("abc"),
       milestones: [mil],
       current_milestone: Some(Milestone { name: "mile", status: True, pay: 12 }),
@@ -204,7 +205,6 @@ test cancel_milestone_spend_Developer_pass() {
 
   let address1 = prj_datum.client
   let value = from_asset(policy_id, "dev_dev_mile", -1)
-
 
   let script_addr = config_datum.milestone_contract_address
 
