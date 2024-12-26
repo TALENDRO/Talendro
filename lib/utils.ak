@@ -48,7 +48,7 @@ pub fn get_config_datum(
 pub fn find_input_with_policy(inputs: List<Input>, nft: PolicyId) -> Bool {
   list.any(
     inputs,
-    fn(input) { (list.has(input.output.value |> assets.policies, nft))? },
+    fn(input) { list.has(input.output.value |> assets.policies, nft)? },
   )
 }
 
@@ -98,7 +98,7 @@ pub fn must_be_signed_by(
 
 pub fn must_have_x_token(inputs: List<Input>, policy_id: PolicyId) -> Bool {
   let input <- list.any(inputs)
- (list.has(input.output.value |> assets.policies, policy_id))?
+  list.has(input.output.value |> assets.policies, policy_id)?
 }
 
 // pub fn find_input_with_policy(inputs: List<Input>, nft: PolicyId) -> Bool {
@@ -345,7 +345,7 @@ pub fn must_burn_dev_clt_token(mint: Value, policy_id: PolicyId) -> Bool {
       |> dict.to_pairs
 
   and {
-   ( "dev_" == bytearray.take(dev_token_name, 4))?,
+    ("dev_" == bytearray.take(dev_token_name, 4))?,
     ("clt_" == bytearray.take(clt_token_name, 4))?,
     (bytearray.drop(dev_token_name, 4) == bytearray.drop(clt_token_name, 4))?,
   }
