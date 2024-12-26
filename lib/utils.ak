@@ -338,8 +338,8 @@ pub fn must_burn_less_than_0(mint: Value, policy_id: PolicyId) -> Int {
 }
 
 pub fn must_burn_dev_clt_token(mint: Value, policy_id: PolicyId) -> Bool {
-  expect [Pair(clt_token_name, 1),
-    Pair(dev_token_name, 1)] =
+  expect [Pair(clt_token_name, -1),
+    Pair(dev_token_name, -1)] =
     mint
       |> assets.tokens(policy_id)
       |> dict.to_pairs
