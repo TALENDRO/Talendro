@@ -1,11 +1,11 @@
-use cardano/address.{from_verification_key,Address,Script}
+use cardano/address.{Address, Script, from_verification_key}
 use cardano/assets.{from_asset}
 use cardano/transaction.{InlineDatum}
 use mocktail.{mock_utxo_ref}
 use mocktail/virgin_key_hash.{mock_policy_id}
 use tx_util/builder/txn.{
   add_asset_to_tx_output, add_mint, add_tx_input, add_tx_output,
-  with_asset_of_tx_input,set_datum_of_tx_output
+  set_datum_of_tx_output, with_asset_of_tx_input,
 }
 // use mocktail/virgin_address.{mock_pub_key_address}
 use types.{ConfigDatum, Milestone, ProjectDatum}
@@ -66,7 +66,7 @@ test cancel_milestone_spend_Developer_NONE_pass() {
   utils1.milestone_spend_cancel(tx, prj_datum, config_datum, policy_id)
 }
 
-test cancel_milestone_spend_Developer_NONE_only_CltToken() fail{
+test cancel_milestone_spend_Developer_NONE_only_CltToken() fail {
   let mil: Milestone = Milestone { name: "mile", status: True, pay: 12 }
   let prj_datum =
     ProjectDatum {
@@ -102,13 +102,13 @@ test cancel_milestone_spend_Developer_NONE_only_CltToken() fail{
   let tx =
     transaction.placeholder
       |> add_tx_input(tx_input)
-      |> add_mint(value) 
+      |> add_mint(value)
       |> add_tx_output(tx_output_1)
 
   utils1.milestone_spend_cancel(tx, prj_datum, config_datum, policy_id)
 }
 
-test cancel_milestone_spend_Developer_NONE_only_DevToken() fail{
+test cancel_milestone_spend_Developer_NONE_only_DevToken() fail {
   let mil: Milestone = Milestone { name: "mile", status: True, pay: 12 }
   let prj_datum =
     ProjectDatum {
@@ -144,7 +144,7 @@ test cancel_milestone_spend_Developer_NONE_only_DevToken() fail{
 
   let tx =
     transaction.placeholder
-      |> add_tx_input(tx_input) 
+      |> add_tx_input(tx_input)
       |> add_mint(value1)
       |> add_tx_output(tx_output_1)
 
@@ -152,7 +152,6 @@ test cancel_milestone_spend_Developer_NONE_only_DevToken() fail{
 }
 
 ///---------------------------------Developer is Some---------
-
 test cancel_milestone_spend_Developer_pass() {
   let mil: Milestone = Milestone { name: "mile", status: True, pay: 12 }
   let prj_datum =
@@ -170,7 +169,7 @@ test cancel_milestone_spend_Developer_pass() {
     ConfigDatum {
       identification_nft: mock_policy_id(0),
       milestone_contract_policy: mock_policy_id(0),
-      milestone_contract_address: Address(Script("abc"),None),
+      milestone_contract_address: Address(Script("abc"), None),
       holding_contract: from_verification_key("abc"),
       projectinit_contract: from_verification_key("abc"),
       arbitrator_nft: mock_policy_id(0),
@@ -195,13 +194,12 @@ test cancel_milestone_spend_Developer_pass() {
   let tx =
     transaction.placeholder
       |> add_tx_input(tx_input)
-
       |> add_tx_output(tx_output_1)
 
   utils1.milestone_spend_cancel(tx, prj_datum, config_datum, policy_id)
 }
 
-test cancel_milestone_spend_Developer_pasiing_diff_Output_addr()fail {
+test cancel_milestone_spend_Developer_pasiing_diff_Output_addr() fail {
   let mil: Milestone = Milestone { name: "mile", status: True, pay: 12 }
   let prj_datum =
     ProjectDatum {
@@ -218,7 +216,7 @@ test cancel_milestone_spend_Developer_pasiing_diff_Output_addr()fail {
     ConfigDatum {
       identification_nft: mock_policy_id(0),
       milestone_contract_policy: mock_policy_id(0),
-      milestone_contract_address: Address(Script("abc"),None),
+      milestone_contract_address: Address(Script("abc"), None),
       holding_contract: from_verification_key("abc"),
       projectinit_contract: from_verification_key("abc"),
       arbitrator_nft: mock_policy_id(0),
@@ -230,7 +228,6 @@ test cancel_milestone_spend_Developer_pasiing_diff_Output_addr()fail {
   let value = from_asset(policy_id, "dev_dev_mile", 1)
 
   // let script_addr = config_datum.milestone_contract_address
-
   let tx_input =
     txn.new_tx_input(campaign_nonce, address1)
       |> with_asset_of_tx_input(value)
@@ -243,13 +240,12 @@ test cancel_milestone_spend_Developer_pasiing_diff_Output_addr()fail {
   let tx =
     transaction.placeholder
       |> add_tx_input(tx_input)
-
       |> add_tx_output(tx_output_1)
 
   utils1.milestone_spend_cancel(tx, prj_datum, config_datum, policy_id)
 }
 
-test cancel_milestone_spend_Developer_passing_diff_OutputDatum()fail {
+test cancel_milestone_spend_Developer_passing_diff_OutputDatum() fail {
   let mil: Milestone = Milestone { name: "mile", status: True, pay: 12 }
   let prj_datum =
     ProjectDatum {
@@ -266,7 +262,7 @@ test cancel_milestone_spend_Developer_passing_diff_OutputDatum()fail {
     ConfigDatum {
       identification_nft: mock_policy_id(0),
       milestone_contract_policy: mock_policy_id(0),
-      milestone_contract_address: Address(Script("abc"),None),
+      milestone_contract_address: Address(Script("abc"), None),
       holding_contract: from_verification_key("abc"),
       projectinit_contract: from_verification_key("abc"),
       arbitrator_nft: mock_policy_id(0),
@@ -286,18 +282,18 @@ test cancel_milestone_spend_Developer_passing_diff_OutputDatum()fail {
   let tx_output_1 =
     txn.new_tx_output(script_addr)
       |> add_asset_to_tx_output(value)
-      |> set_datum_of_tx_output(InlineDatum(config_datum)) //pasing different datum
+      |> set_datum_of_tx_output(InlineDatum(config_datum))
 
+  //pasing different datum
   let tx =
     transaction.placeholder
       |> add_tx_input(tx_input)
-
       |> add_tx_output(tx_output_1)
 
   utils1.milestone_spend_cancel(tx, prj_datum, config_datum, policy_id)
 }
 
-test cancel_milestone_spend_Developer_passing_Diff_token() fail{
+test cancel_milestone_spend_Developer_passing_Diff_token() fail {
   let mil: Milestone = Milestone { name: "mile", status: True, pay: 12 }
   let prj_datum =
     ProjectDatum {
@@ -314,7 +310,7 @@ test cancel_milestone_spend_Developer_passing_Diff_token() fail{
     ConfigDatum {
       identification_nft: mock_policy_id(0),
       milestone_contract_policy: mock_policy_id(0),
-      milestone_contract_address: Address(Script("abc"),None),
+      milestone_contract_address: Address(Script("abc"), None),
       holding_contract: from_verification_key("abc"),
       projectinit_contract: from_verification_key("abc"),
       arbitrator_nft: mock_policy_id(0),
@@ -323,8 +319,9 @@ test cancel_milestone_spend_Developer_passing_Diff_token() fail{
     }
 
   let address1 = prj_datum.client
-  let value = from_asset(policy_id, "abc_dev_mile", 1) //passing different token
+  let value = from_asset(policy_id, "abc_dev_mile", 1)
 
+  //passing different token
   let script_addr = config_datum.milestone_contract_address
 
   let tx_input =
@@ -339,14 +336,12 @@ test cancel_milestone_spend_Developer_passing_Diff_token() fail{
   let tx =
     transaction.placeholder
       |> add_tx_input(tx_input)
-
       |> add_tx_output(tx_output_1)
 
   utils1.milestone_spend_cancel(tx, prj_datum, config_datum, policy_id)
 }
 
-
-test cancel_milestone_spend_Developer_passing_diff_PId() fail{
+test cancel_milestone_spend_Developer_passing_diff_PId() fail {
   let mil: Milestone = Milestone { name: "mile", status: True, pay: 12 }
   let prj_datum =
     ProjectDatum {
@@ -363,7 +358,7 @@ test cancel_milestone_spend_Developer_passing_diff_PId() fail{
     ConfigDatum {
       identification_nft: mock_policy_id(0),
       milestone_contract_policy: mock_policy_id(0),
-      milestone_contract_address: Address(Script("abc"),None),
+      milestone_contract_address: Address(Script("abc"), None),
       holding_contract: from_verification_key("abc"),
       projectinit_contract: from_verification_key("abc"),
       arbitrator_nft: mock_policy_id(0),
@@ -372,8 +367,9 @@ test cancel_milestone_spend_Developer_passing_diff_PId() fail{
     }
 
   let address1 = prj_datum.client
-  let value = from_asset(mock_policy_id(2), "dev_dev_mile", 1) //passing different policy_id
+  let value = from_asset(mock_policy_id(2), "dev_dev_mile", 1)
 
+  //passing different policy_id
   let script_addr = config_datum.milestone_contract_address
 
   let tx_input =
@@ -388,7 +384,6 @@ test cancel_milestone_spend_Developer_passing_diff_PId() fail{
   let tx =
     transaction.placeholder
       |> add_tx_input(tx_input)
-
       |> add_tx_output(tx_output_1)
 
   utils1.milestone_spend_cancel(tx, prj_datum, config_datum, policy_id)
