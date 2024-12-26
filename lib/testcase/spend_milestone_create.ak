@@ -4,7 +4,7 @@ use cardano/transaction
 use mocktail.{mock_utxo_ref}
 use mocktail/virgin_key_hash.{mock_policy_id}
 use tx_util/builder/txn.{
-  add_asset_to_tx_output, add_mint, add_tx_input, add_tx_output,
+ add_tx_input, add_tx_output,
   with_asset_of_tx_input,
 }
 use types.{ConfigDatum, Milestone, ProjectDatum}

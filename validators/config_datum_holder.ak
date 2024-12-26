@@ -3,7 +3,7 @@ use cardano/assets.{PolicyId}
 use cardano/transaction.{OutputReference, Transaction}
 
 validator config_datum_holder(config_nft: PolicyId) {
-  spend(datum, redeemer, oref: OutputReference, tx: Transaction) {
+  spend(_datum, _redeemer, oref: OutputReference, tx: Transaction) {
     let Transaction { inputs, .. } = tx
     let inputs_with_nft =
       list.filter(

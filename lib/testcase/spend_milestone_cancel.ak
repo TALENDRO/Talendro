@@ -57,8 +57,8 @@ test cancel_milestone_spend_Developer_NONE_pass() {
     }
 
   let address1 = prj_datum.client
-  let value = from_asset(policy_id, "dev_dev_mile", 1)
-  let value1 = from_asset(policy_id, "clt_dev_mile", 1)
+  let value = from_asset(policy_id, "dev_dev_mile", -1)
+  let value1 = from_asset(policy_id, "clt_dev_mile", -1)
 
   let tx_input =
     txn.new_tx_input(campaign_nonce, address1)
