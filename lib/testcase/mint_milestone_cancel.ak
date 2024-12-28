@@ -1,7 +1,6 @@
 use cardano/address.{from_verification_key}
 use cardano/assets.{from_asset}
 use cardano/transaction.{InlineDatum}
-// use mocktail.{mock_utxo_ref}
 use mocktail/virgin_key_hash.{mock_policy_id}
 use testcase/constant.{campaign_nonce, config_datum, mil1, policy_id, prj_datum}
 use tx_util/builder/txn.{
@@ -10,8 +9,6 @@ use tx_util/builder/txn.{
 }
 use types.{ConfigDatum, Milestone, ProjectDatum}
 use utils1
-
-//mil2 , value, value1,
 
 pub const mil: Milestone = Milestone { ..mil1, status: False, pay: 0 }
 
@@ -359,7 +356,7 @@ test cancel_milestone_2False_pay_NOT_0() fail {
     txn.new_tx_input(campaign_nonce, input_project_datum)
       |> set_datum_of_tx_input(InlineDatum(prj_datum))
 
-  let tx_output_1 = 
+  let tx_output_1 =
     txn.new_tx_output(holding_contract_output)
       |> set_datum_of_tx_output(InlineDatum(prj_datum))
       |> add_asset_to_tx_output(assets.from_lovelace(21))
@@ -375,4 +372,3 @@ test cancel_milestone_2False_pay_NOT_0() fail {
 
   utils1.milestone_mint_cancel(tx, config_datum, policy_id)
 }
-   
