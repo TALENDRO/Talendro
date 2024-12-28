@@ -321,9 +321,12 @@ pub fn milestone_tokens_burn_cancel(
   datum: ProjectDatum,
 ) -> Bool {
   let incomplete_milestone =
+    //2
     list.count(datum.milestones, fn(milestone) { milestone.status == False })
 
   let burn_count = must_burn_less_than_0(mint, policy_id)
+  trace @"count": incomplete_milestone
+  trace @"burn": burn_count
   (incomplete_milestone * 2 == burn_count)?
 }
 

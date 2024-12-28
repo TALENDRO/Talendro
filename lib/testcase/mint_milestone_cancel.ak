@@ -359,7 +359,7 @@ test cancel_milestone_2False_pay_NOT_0() fail {
     txn.new_tx_input(campaign_nonce, input_project_datum)
       |> set_datum_of_tx_input(InlineDatum(prj_datum))
 
-  let tx_output_1 =
+  let tx_output_1 = 
     txn.new_tx_output(holding_contract_output)
       |> set_datum_of_tx_output(InlineDatum(prj_datum))
       |> add_asset_to_tx_output(assets.from_lovelace(21))
