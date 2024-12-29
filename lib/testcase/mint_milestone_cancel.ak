@@ -310,7 +310,7 @@ test cancel_milestone_2False_But_Burn3() fail {
   let value = from_asset(policy_id, "dev_title_mile", -1)
   let value1 = from_asset(policy_id, "clt_title_mile", -1)
   let value2 = from_asset(policy_id, "dev_abc_mile", -1)
-  let value3 = from_asset(policy_id, "clt_abc_mile", -1)
+  // let value3 = from_asset(policy_id, "clt_abc_mile", -1)
   let holding_contract_output = config_datum.holding_contract
   let tx_input =
     txn.new_tx_input(campaign_nonce, input_project_datum)

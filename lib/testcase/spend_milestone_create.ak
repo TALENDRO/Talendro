@@ -1,9 +1,9 @@
 use cardano/assets.{from_asset}
 use cardano/transaction
 use mocktail/virgin_key_hash.{mock_policy_id}
-use testcase/constant.{campaign_nonce, config_datum, mil1, policy_id, prj_datum}
+use testcase/constant.{campaign_nonce, config_datum, policy_id, prj_datum}
 use tx_util/builder/txn.{add_tx_input, add_tx_output, with_asset_of_tx_input}
-use types.{ConfigDatum, Milestone, ProjectDatum}
+use types.{ConfigDatum, ProjectDatum}
 use utils1
 
 test create_milestone_spend_pass() {
@@ -50,15 +50,15 @@ test create_milestone_spend_diff_PID() fail {
   utils1.milestone_spend_create(tx, policy_id1, config_datum)
 }
 
-test create_milestone_spend_diff_token_PID() fail {
+test create_milestone_spend_diff_token_PID()  fail{
   let address1 = prj_datum.client
   expect Some(dev_address1) = prj_datum.developer
 
   let tx_input =
     txn.new_tx_input(campaign_nonce, address1)
-      |> with_asset_of_tx_input(from_asset(mock_policy_id(0), "dev_dev_mile", 1))
-      |> with_asset_of_tx_input(from_asset(mock_policy_id(5), "dev", 1))
-  //-----------passing a differnt PID(it be (6) to pass)
+      |> with_asset_of_tx_input(from_asset(mock_policy_id(2), "dev_dev_mile", 1))
+      |> with_asset_of_tx_input(from_asset(mock_policy_id(9), "dev", 1))
+  //-----------passing a differnt PID
   let tx_output_1 = txn.new_tx_output(dev_address1)
 
   let tx =

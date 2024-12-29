@@ -30,4 +30,3 @@ pub fn output_to_arbitration_datum(output: Output) -> ArbitrationDatum {
   expect datum: ArbitrationDatum = data
   datum
 }
-   
