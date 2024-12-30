@@ -1,8 +1,8 @@
-import { network } from '@/config/lucid';
+import { NETWORK } from '@/config/lucid';
 import { configDatumHolderValidator, identificationPolicyid } from '@/config/scripts/scripts';
 import { useWallet } from '@/contexts/walletContext'
 import { ConfigDatum, ConfigDatumSchema } from '@/types/cardano';
-import { Data, fromText, Network, paymentCredentialOf, SpendingValidator, Validator, validatorToAddress } from '@lucid-evolution/lucid';
+import { Data, fromText, paymentCredentialOf, SpendingValidator, Validator, validatorToAddress } from '@lucid-evolution/lucid';
 import React from 'react'
 import { Button } from '../ui/button';
 
@@ -12,11 +12,9 @@ export default function configDatumHolder() {
 
     async function deposit() {
         if (!lucid || !address) throw "Uninitialized Lucid!!!";
-        if (!lucid.config().network) throw "Network undefined"
-        console.log(lucid.config().network, "network")
         const ref_configNFT = { [identificationPolicyid + fromText('ref_configNFT')]: 1n };
         const validator: SpendingValidator = configDatumHolderValidator();
-        const contractAddress = validatorToAddress(lucid.config().network, validator);
+        const contractAddress = validatorToAddress(NETWORK, validator);
 
         const datum: ConfigDatum = {
             identification_nft: "81af3501c07b580374baaf26dd08bc862554869e0d4d9cfff7d04219", //PolicyId
@@ -43,6 +41,7 @@ export default function configDatumHolder() {
         const txHash = await signed.submit();
         console.log("txHash: ", txHash);
     }
+
     return (
         <Button onClick={deposit}>
             configDatumHolder

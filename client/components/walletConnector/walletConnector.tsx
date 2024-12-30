@@ -5,7 +5,7 @@ import { Snippet } from "@nextui-org/snippet";
 import { Button } from "@nextui-org/button";
 import { paymentCredentialOf, stakeCredentialOf, Lucid } from "@lucid-evolution/lucid";
 import { Skeleton } from "@nextui-org/skeleton";
-import { network, provider } from "@/config/lucid";
+import { NETWORK, provider } from "@/config/lucid";
 import { Wallet } from "@/types/cardano";
 import { handleError } from "@/libs/utils";
 import { useWallet } from "@/contexts/walletContext";
@@ -20,7 +20,7 @@ export default function WalletConnectors() {
     useEffect(() => {
         if (isInit) return;
         else isInit = true;
-        Lucid(provider, network)
+        Lucid(provider, NETWORK)
             .then((lucid) => {
                 setWalletConnection((walletConnection) => {
                     return { ...walletConnection, lucid };

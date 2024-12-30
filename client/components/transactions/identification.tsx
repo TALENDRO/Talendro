@@ -29,9 +29,8 @@ export default function Identification() {
         const tx = await lucid
             .newTx()
             .mintAssets(mintedAssets, redeemer)
-            // .pay.ToAddress(address, mintedAssets)
             .attach.MintingPolicy(mintingValidator)
-            .complete({ localUPLCEval: false });
+            .complete();
 
         const signed = await tx.sign.withWallet().complete();
         const txHash = await signed.submit();
