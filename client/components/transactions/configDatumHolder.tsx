@@ -1,5 +1,5 @@
 import { NETWORK } from '@/config/lucid';
-import { ArbitratorTokenValidator, ConfigDatumHolderValidator, HoldingContractValidator, identificationPolicyid, MilestoneMINTValidator, MilestoneSpendValidator, ProjectInitiateValidator } from '@/config/scripts/scripts';
+import { ArbitratorTokenValidator, ConfigDatumHolderValidator, HoldingContractValidator, identificationPolicyid, MilestoneMINTValidator, MilestoneSpendValidator, ProjectInitiateValidator, TalendroTokenValidator } from '@/config/scripts/scripts';
 import { useWallet } from '@/contexts/walletContext'
 import { ConfigDatum, ConfigDatumSchema } from '@/types/cardano';
 import { Data, fromText, mintingPolicyToId, paymentCredentialOf, Script, SpendingValidator, Validator, validatorToAddress, validatorToScriptHash } from '@lucid-evolution/lucid';
@@ -35,7 +35,7 @@ export default function configDatumHolder() {
         const projectinitContract = getAddress(ProjectInitiateValidator)
         const arbitratorMint = getPolicyId(ArbitratorTokenValidator)
         // const arbitratorContract = getAddress()
-        // const talendroMint = getPolicyId()
+        const talendroMint = getPolicyId(TalendroTokenValidator)
 
         const datum: ConfigDatum = {
             identification_nft: identificationPolicyid as string,
@@ -45,7 +45,7 @@ export default function configDatumHolder() {
             projectinit_contract: paymentCredentialOf(projectinitContract).hash,
             arbitrator_nft: arbitratorMint,
             arbitrator_contract: paymentCredentialOf('addr_test1qzqhza3hpgs5nsfmnqfzakczprrlm3yjdeny7wakywm052q3qskkkydwrt982spj6gq46yheeg4aszdqncv4cg92lzfqffnpd5').hash,
-            talendrouser_nft: "41af3501c07b580374baaf26dd08bc862554869e0d4d9cfff7d04219",
+            talendrouser_nft: talendroMint,
         };
 
         const tx = await lucid

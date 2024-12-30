@@ -4,9 +4,10 @@ use cardano/transaction.{Transaction}
 use mint_utils
 
 validator talendro_nft(identification_nft: PolicyId) {
-  mint(_redeemer, policy_id: PolicyId, tx: Transaction) {
+  mint(redeemer: ByteArray, policy_id: PolicyId, tx: Transaction) {
     let Transaction { mint, inputs, .. } = tx
     expect [Pair(_, token_qty)] = mint_utils.tokens_details(mint, policy_id)
+    let x =redeemer
     when token_qty is {
       1 | -1 ->
         mint_utils.must_have_identification_nft(inputs, identification_nft)
