@@ -3,6 +3,7 @@ import {
     identification_nft_identification_nft_mint,
     config_datum_holder_config_datum_holder_spend,
     arbitrator_nft_arbitrator_nft_mint,
+    talendro_usr_talendro_nft_mint,
     project_initiate_project_initiate_spend,
     holding_contract_project_complete_spend,
     milestone_contract_milestone_contract_mint_mint,
@@ -34,7 +35,7 @@ export function ConfigDatumHolderValidator(): Validator {
 };
 
 
-///-------------------------------------------------------------
+//-------------------------------------------------------------
 const arbitratorTokenMint = applyDoubleCborEncoding(
     arbitrator_nft_arbitrator_nft_mint
 );
@@ -42,6 +43,18 @@ export function ArbitratorTokenValidator(): Validator {
     return {
         type: "PlutusV3",
         script: applyParamsToScript(arbitratorTokenMint, [identificationPolicyid]),
+    }
+};
+
+
+//-------------------------------------------------------------
+const talendrousrScript = applyDoubleCborEncoding(
+    talendro_usr_talendro_nft_mint
+);
+export function TalendroTokenValidator(): Validator {
+    return {
+        type: "PlutusV3",
+        script: applyParamsToScript(talendrousrScript, [identificationPolicyid]),
     }
 };
 
