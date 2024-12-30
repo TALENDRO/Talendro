@@ -2,15 +2,13 @@
 import WalletConnector from "@/components/walletConnector/client";
 import Identification from "@/components/transactions/identification";
 import { useWallet } from "@/contexts/walletContext";
-import { useEffect } from "react";
-import { Lucid } from "@lucid-evolution/lucid";
-import { network, provider } from "@/config/lucid";
 import ConfigDatumHolder from "@/components/transactions/configDatumHolder";
+import ArbitratorTokenMinter from "@/components/transactions/arbitratorToken";
 
 export default function Home() {
-  const [walletConnection, setWalletConnection] = useWallet();
+  const [walletConnection] = useWallet();
   const { address, lucid } = walletConnection;
-  let isInit = false;
+
 
   // useEffect(() => {
   //   if (isInit) return;
@@ -35,6 +33,9 @@ export default function Home() {
 
       <h1>configDatumHolder</h1>
       <ConfigDatumHolder />
+
+      <h1>Arbitractor Minting</h1>
+      <ArbitratorTokenMinter />
     </section>
   );
 }

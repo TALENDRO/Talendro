@@ -15,7 +15,7 @@ const identificationNFT_Mint = applyDoubleCborEncoding(
     identification_nft_identification_nft_mint
 );
 
-export function identificationNFT_MintValidator(params: any[]): Validator {
+export function IdentificationNFT_MintValidator(params: any[]): Validator {
     return {
         type: "PlutusV3",
         script: applyParamsToScript(identificationNFT_Mint, params),
@@ -26,7 +26,7 @@ export function identificationNFT_MintValidator(params: any[]): Validator {
 const configDatumHolderScript = applyDoubleCborEncoding(
     config_datum_holder_config_datum_holder_spend
 );
-export function configDatumHolderValidator(): Validator {
+export function ConfigDatumHolderValidator(): Validator {
     return {
         type: "PlutusV3",
         script: applyParamsToScript(configDatumHolderScript, [identificationPolicyid]),
@@ -38,29 +38,36 @@ export function configDatumHolderValidator(): Validator {
 const arbitratorTokenMint = applyDoubleCborEncoding(
     arbitrator_nft_arbitrator_nft_mint
 );
-export const arbitratorTokenMintValidator: Validator = {
-    type: "PlutusV3",
-    script: arbitratorTokenMint,
+export function ArbitratorTokenValidator(): Validator {
+    return {
+        type: "PlutusV3",
+        script: applyParamsToScript(arbitratorTokenMint, [identificationPolicyid]),
+    }
 };
 
 //----------------------------------------------------------------
-const holding_contract_pr_complt_spend = applyDoubleCborEncoding(
-    holding_contract_project_complete_spend
+const ProjectInitiateValidatorScript = applyDoubleCborEncoding(
+    project_initiate_project_initiate_spend
 );
 
-export const holding_contract_pr_complt_SpendValidator: Validator = {
-    type: "PlutusV3",
-    script: holding_contract_pr_complt_spend,
+export function ProjectInitiateValidator(): Validator {
+    return {
+        type: "PlutusV3",
+        script: applyParamsToScript(ProjectInitiateValidatorScript, [identificationPolicyid]),
+    }
 };
+
 
 //-----------------------------------------------------------
 const MilestonecontractMINT = applyDoubleCborEncoding(
     milestone_contract_milestone_contract_mint_mint
 );
 
-export const MilestonecontractMINT_Validator: Validator = {
-    type: "PlutusV3",
-    script: MilestonecontractMINT,
+export function MilestoneMINTValidator(): Validator {
+    return {
+        type: "PlutusV3",
+        script: applyParamsToScript(MilestonecontractMINT, [identificationPolicyid]),
+    }
 };
 
 //------------------------------------------------------
@@ -69,20 +76,23 @@ const MilestonecontractSpend = applyDoubleCborEncoding(
     milestone_contract_milestone_contract_spend_spend
 );
 
-export const MilestonecontractSpned_Validator: Validator = {
-    type: "PlutusV3",
-    script: MilestonecontractSpend,
+export function MilestoneSpendValidator(): Validator {
+    return {
+        type: "PlutusV3",
+        script: applyParamsToScript(MilestonecontractSpend, [identificationPolicyid]),
+    }
 };
 
-//----------------------------------------------------------
-
-const ProjectInitiateValidatorScript = applyDoubleCborEncoding(
-    project_initiate_project_initiate_spend
-);
-
-export const ProjectInitiateValidator: Validator = {
-    type: "PlutusV3",
-    script: ProjectInitiateValidatorScript,
-};
 
 //---------------------------------------------------------
+
+const holding_contract_pr_complt_spend = applyDoubleCborEncoding(
+    holding_contract_project_complete_spend
+);
+
+export function HoldingContractValidator(): Validator {
+    return {
+        type: "PlutusV3",
+        script: applyParamsToScript(holding_contract_pr_complt_spend, [identificationPolicyid]),
+    }
+}
