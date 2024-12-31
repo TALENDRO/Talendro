@@ -2,7 +2,7 @@ use aiken/collection/dict
 use aiken/collection/list
 use aiken/crypto.{VerificationKeyHash}
 use aiken/primitive/bytearray
-use cardano/address.{Address}
+use cardano/address.{Address, VerificationKey, from_verification_key}
 use cardano/assets.{AssetName, Lovelace, PolicyId, Value}
 use cardano/transaction.{InlineDatum,
   Input, Output, OutputReference, find_input}
@@ -80,12 +80,12 @@ pub fn datum_address_update(
 ) -> Bool {
   expect InlineDatum(projectdatum) = holding_output.datum
   expect project_datum: ProjectDatum = projectdatum
-
+  expect VerificationKey(vkh) = address.payment_credential
   and {
     project_datum.title == input_datum.title,
     project_datum.client == input_datum.client,
     project_datum.pay == input_datum.pay,
-    project_datum.developer == Some(address),
+    project_datum.developer == Some(vkh),
   }
 }
 
@@ -372,12 +372,14 @@ pub fn output_must_have_dev_token(
 
 pub fn must_pay_to_developer(output: List<Output>, datum: ProjectDatum) -> Bool {
   expect Some(dev_address) = datum.developer
-  let developer_output = find_output_with_address(output, dev_address)
+  let developer_output =
+    find_output_with_address(output, from_verification_key(dev_address))
   must_pay_to_x(developer_output, datum.pay)
 }
 
 pub fn must_pay_to_client(output: List<Output>, datum: ProjectDatum) -> Bool {
-  let client_output = find_output_with_address(output, datum.client)
+  let client_output =
+    find_output_with_address(output, from_verification_key(datum.client))
   must_pay_to_x(client_output, datum.pay)
 }
 

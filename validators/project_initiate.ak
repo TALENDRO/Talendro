@@ -39,7 +39,7 @@ validator project_initiate(config_nft: PolicyId) {
     // (output_datum.developer == nft )
     and {
       utils.must_have_x_token(inputs, config_datum.talendrouser_nft),
-      output_datum.developer == Some(dev_output.address),
+      output_datum.developer == Some(vk_hash),
       utils.must_send_to_correct_script(
         contract_output,
         datum.pay,

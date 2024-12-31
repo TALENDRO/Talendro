@@ -1,11 +1,12 @@
+use aiken/crypto.{VerificationKeyHash}
 use cardano/address.{Address}
 use cardano/assets.{Lovelace, PolicyId}
 
 pub type ProjectDatum {
   title: ByteArray,
   pay: Option<Lovelace>,
-  developer: Option<Address>,
-  client: Address,
+  developer: Option<VerificationKeyHash>,
+  client: VerificationKeyHash,
   milestones: List<Milestone>,
   current_milestone: Option<Milestone>,
   next_milestone: Option<Milestone>,

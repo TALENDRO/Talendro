@@ -4,6 +4,7 @@ import Identification from "@/components/transactions/identification";
 import { useWallet } from "@/contexts/walletContext";
 import ConfigDatumHolder from "@/components/transactions/configDatumHolder";
 import ArbitratorTokenMinter from "@/components/transactions/arbitratorToken";
+import ProjectInitiate from "@/components/transactions/projectInit";
 
 export default function Home() {
   const [walletConnection] = useWallet();
@@ -36,6 +37,9 @@ export default function Home() {
 
       <h1>Arbitractor Minting</h1>
       <ArbitratorTokenMinter />
+
+      <h1>Project Initiate</h1>
+      <ProjectInitiate />
     </section>
   );
 }

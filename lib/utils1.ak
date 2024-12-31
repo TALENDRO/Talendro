@@ -1,7 +1,7 @@
 ////-------------------XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX-------------------------
 
 use aiken/primitive/bytearray
-use cardano/address.{Address, Script}
+use cardano/address.{Address, Script, from_verification_key}
 use cardano/assets.{PolicyId}
 use cardano/transaction.{Input, Output, OutputReference, Transaction}
 use datum_file as d
@@ -48,7 +48,10 @@ pub fn milestone_mint_create(
     d.output_to_project_datum(holding_contract_utxo)
   expect Some(dev_address) = milestone_datum.developer
   let dev_output: Output =
-    utils.find_output_with_address(tx.outputs, dev_address)
+    utils.find_output_with_address(
+      tx.outputs,
+      from_verification_key(dev_address),
+    )
   and {
     utils.output_must_have_dev_or_clt_tokens(
       dev_output,
