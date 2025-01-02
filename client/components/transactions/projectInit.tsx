@@ -44,7 +44,7 @@ export default function ProjectInitiate() {
                 .newTx()
                 .readFrom(ref_utxo)
                 .collectFrom(UTxO_Talendro)
-                .pay.ToContract(
+                .pay.ToAddressWithData(
                     contractAddress,
                     { kind: "inline", value: Data.to(datum, ProjectDatum) },
                     { lovelace: 5_000_000n, ...dev_token }
@@ -53,7 +53,6 @@ export default function ProjectInitiate() {
                 .attach.MintingPolicy(mintingValidator)
                 .complete();
 
-            console.log(tx, "complete")
             const signed = await tx.sign.withWallet().complete();
             const txHash = await signed.submit();
             console.log("txHash: ", txHash);

@@ -74,16 +74,17 @@ export async function refUtxo(lucid: LucidEvolution) {
     // const address = getAddress(ConfigDatumHolderValidator)
     const v = ConfigDatumHolderValidator()
     const address = validatorToAddress(NETWORK, v)
-    const utxos = await lucid.utxosAt(address);
+    // const utxos = await lucid.utxosAt(address);
+    const utxos = await lucid.utxosAtWithUnit(address, identificationPolicyid + fromText('ref_configNFT'));
 
-    const ref_configNFT = { [identificationPolicyid + fromText('ref_configNFT')]: 1n };
-    const utxoWithIdentificationToken = utxos.filter((utxo) => {
-        const assets = utxo.assets;
+    // const ref_configNFT = { [identificationPolicyid + fromText('ref_configNFT')]: 1n };
+    // const utxoWithIdentificationToken = utxos.filter((utxo) => {
+    //     const assets = utxo.assets;
 
-        return Object.keys(ref_configNFT).some((key) =>
-            assets[key] === ref_configNFT[key]
-        );
-    });
-
-    return utxoWithIdentificationToken;
+    //     return Object.keys(ref_configNFT).some((key) =>
+    //         assets[key] === ref_configNFT[key]
+    //     );
+    // });
+    console.log(address, utxos)
+    return utxos;
 }

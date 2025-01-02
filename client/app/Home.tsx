@@ -6,6 +6,7 @@ import { useWallet } from "@/contexts/walletContext";
 import ConfigDatumHolder from "@/components/transactions/configDatumHolder";
 import ArbitratorTokenMinter from "@/components/transactions/arbitratorToken";
 import ProjectInitiate from "@/components/transactions/projectInit";
+import TalendroTokenMinter from "@/components/transactions/TalendroToken";
 
 export default function Home() {
   const [walletConnection] = useWallet();
@@ -18,16 +19,14 @@ export default function Home() {
       {/* <WalletConnector /> */}
       <EmulatorConnector />
 
-      <h1>Identification</h1>
       <Identification />
 
-      <h1>configDatumHolder</h1>
       <ConfigDatumHolder />
 
-      <h1>Arbitractor Minting</h1>
       <ArbitratorTokenMinter />
 
-      <h1>Project Initiate</h1>
+      <TalendroTokenMinter />
+
       <ProjectInitiate />
     </section>
   );

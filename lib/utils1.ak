@@ -69,7 +69,9 @@ pub fn milestone_mint_create(
       holding_contract_utxo,
       holding_contract_datum.current_milestone,
     )?,
-    (holding_contract_utxo.address == from_verification_key(config_datum.holding_contract))?,
+    (holding_contract_utxo.address == from_verification_key(
+      config_datum.holding_contract,
+    ))?,
   }
 }
 
@@ -79,11 +81,17 @@ pub fn milestone_mint_compelete(
   policy_id: PolicyId,
 ) {
   let input_project_datum: ProjectDatum =
-    utils.find_input_with_address(tx.inputs, from_verification_key(config_datum.holding_contract))
+    utils.find_input_with_address(
+      tx.inputs,
+      from_verification_key(config_datum.holding_contract),
+    )
       |> d.input_to_project_datum
 
   let holding_contract_output =
-    utils.find_output_with_address(tx.outputs, from_verification_key(config_datum.holding_contract))
+    utils.find_output_with_address(
+      tx.outputs,
+      from_verification_key(config_datum.holding_contract),
+    )
   let output_project_datum: ProjectDatum =
     d.output_to_project_datum(holding_contract_output)
   and {
@@ -106,7 +114,10 @@ pub fn milestone_mint_cancel(
   policy_id: PolicyId,
 ) {
   let holding_contract_input: Input =
-    utils.find_input_with_address(tx.inputs, from_verification_key(config_datum.holding_contract))
+    utils.find_input_with_address(
+      tx.inputs,
+      from_verification_key(config_datum.holding_contract),
+    )
   let holding_contract_datum: ProjectDatum =
     d.input_to_project_datum(holding_contract_input)
   and {
@@ -131,9 +142,9 @@ pub fn spend_milestone(
   expect Some(datum) = datum
   let config_datum: ConfigDatum = utils.get_config_datum(tx.inputs, config_nft)
   expect project_init_policyid = config_datum.projectinit_contract
-  // expect Script(project_init_policyid) = 
-    // config_datum.projectinit_contract.payment_credential
 
+  // expect Script(project_init_policyid) = 
+  // config_datum.projectinit_contract.payment_credential
   when redeemer is {
     Create -> tx |> milestone_spend_create(project_init_policyid, config_datum)
     Cancel ->

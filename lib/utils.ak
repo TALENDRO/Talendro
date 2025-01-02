@@ -2,7 +2,7 @@ use aiken/collection/dict
 use aiken/collection/list
 use aiken/crypto.{VerificationKeyHash}
 use aiken/primitive/bytearray
-use cardano/address.{Address, VerificationKey, from_verification_key, Script}
+use cardano/address.{Address, Script, VerificationKey, from_verification_key}
 use cardano/assets.{AssetName, Lovelace, PolicyId, Value}
 use cardano/transaction.{InlineDatum,
   Input, Output, OutputReference, find_input}
@@ -97,9 +97,7 @@ pub fn must_be_signed_by(
 }
 
 pub fn must_have_x_token(inputs: List<Input>, policy_id: PolicyId) -> Bool {
-  trace @" talendro Pid": policy_id
   let input <- list.any(inputs)
-  trace @"input value": assets.policies(input.output.value)
   list.has(input.output.value |> assets.policies, policy_id)?
 }
 
@@ -167,17 +165,23 @@ pub fn must_send_to_correct_script(
   pay: Option<Int>,
   config_datum: ConfigDatum,
 ) -> Bool {
+
   when (pay, output.address.payment_credential) is {
     (Some(ada), Script(vkh)) -> and {
-        ada <= assets.lovelace_of(output.value),
+        (ada <= assets.lovelace_of(output.value))?,
         // when output.address.payment_credential is {
         // Script(vkh) -> 
-        vkh == config_datum.holding_contract,
+        trace @"vkh": vkh
+        trace @"holdingcontract": config_datum.holding_contract
+        (vkh == config_datum.holding_contract)?,
       }
     // _ -> False
     // },
-    (None, Script(vkh)) -> vkh == config_datum.milestone_contract_address
-    _ -> False
+    (None, Script(vkh)) -> (vkh == config_datum.milestone_contract_address)?
+    _ -> {
+      trace @"in false"
+      False
+    }
   }
 }
 
