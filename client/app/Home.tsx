@@ -1,5 +1,6 @@
 'use client'
 import WalletConnector from "@/components/walletConnector/client";
+import EmulatorConnector from "@/components/walletConnector/emulatorClient";
 import Identification from "@/components/transactions/identification";
 import { useWallet } from "@/contexts/walletContext";
 import ConfigDatumHolder from "@/components/transactions/configDatumHolder";
@@ -11,23 +12,11 @@ export default function Home() {
   const { address, lucid } = walletConnection;
 
 
-  // useEffect(() => {
-  //   if (isInit) return;
-  //   else isInit = true;
-
-  //   Lucid(provider, network)
-  //     .then((lucid) =>
-  //       setWalletConnection((walletConnection) => {
-  //         return { ...walletConnection, lucid };
-  //       }),
-  //     )
-  //     .catch((error) => console.log(`${error}`));
-  // }, []);
   return (
     <section className="flex flex-col items-center justify-center gap-4 py-8 md:py-10">
-      {lucid ? "lucid initalized" : "lucid not initialized"}
-      {address ? <span>{address}</span> : "not connected"}
-      <WalletConnector />
+      {address ? <span>{`${address.slice(0, 30)}...${address.slice(-5)}`}</span> : "not connected"}
+      {/* <WalletConnector /> */}
+      <EmulatorConnector />
 
       <h1>Identification</h1>
       <Identification />

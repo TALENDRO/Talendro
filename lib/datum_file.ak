@@ -21,6 +21,7 @@ pub fn output_to_config_datum(output: Output) -> ConfigDatum {
 
 pub fn input_to_config_datum(input: Input) -> ConfigDatum {
   expect InlineDatum(data) = input.output.datum
+  trace @"datum Data": data
   expect datum: ConfigDatum = data
   datum
 }

@@ -37,7 +37,7 @@ export default function ProjectInitiate() {
 
             const ref_utxo = await refUtxo(lucid)
 
-
+            const redeemer = Data.void();
             const tx = await lucid
                 .newTx()
                 .readFrom(ref_utxo)
@@ -46,7 +46,7 @@ export default function ProjectInitiate() {
                     { kind: "inline", value: Data.to(datum, ProjectDatum) },
                     { lovelace: 5_000_000n, ...dev_token }
                 )
-                .mintAssets({ ...clt_token, ...dev_token }, Data.void())
+                .mintAssets({ ...clt_token, ...dev_token }, redeemer)
                 .attach.MintingPolicy(mintingValidator)
                 .complete();
 

@@ -55,7 +55,6 @@ validator project_initiate(config_nft: PolicyId) {
     let ref_input =
       utils.find_ref_input_with_config_nft(reference_inputs, config_nft)
     // expect InlineDatum(output_datum) = ref_input.output.datum
-    trace @"ref_Input": ref_input
     let config_datum: ConfigDatum = d.input_to_config_datum(ref_input)
     trace @"config Datum": config_datum
     // -----

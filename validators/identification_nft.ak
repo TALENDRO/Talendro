@@ -4,6 +4,7 @@ use utils1
 
 validator identification_nft(oref: OutputReference) {
   mint(_redeemer, policy_id: PolicyId, tx: Transaction) {
+    trace @"identification Nft policyId": tx.inputs
     utils1.identification_nft(tx, policy_id, oref)
   }
 

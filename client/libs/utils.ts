@@ -2,7 +2,7 @@
 
 import { NETWORK } from "@/config/lucid";
 import { ConfigDatumHolderValidator, identificationPolicyid } from "@/config/scripts/scripts";
-import { fromText, LucidEvolution, mintingPolicyToId, Script, Validator, validatorToAddress, Constr } from "@lucid-evolution/lucid";
+import { fromText, LucidEvolution, mintingPolicyToId, Script, Validator, validatorToAddress, Constr, MintingPolicy } from "@lucid-evolution/lucid";
 
 export async function req(path: string, req?: RequestInit) {
     const rsp = await fetch(path, { ...req, cache: "no-cache" });
@@ -64,14 +64,17 @@ export function getAddress(validatorFunction: { (): Validator; (): Script; }) {
     return address
 }
 export function getPolicyId(validatorFunction: { (): Validator; (): Script; }) {
-    const validator: Validator = validatorFunction();
+    const validator: MintingPolicy = validatorFunction();
     const policyID = mintingPolicyToId(validator);
     return policyID
 }
 
 
 export async function refUtxo(lucid: LucidEvolution) {
-    const address = getAddress(ConfigDatumHolderValidator)
+    // const address = getAddress(ConfigDatumHolderValidator)
+    const v = ConfigDatumHolderValidator()
+    const address = validatorToAddress(NETWORK, v)
+    console.log(address)
     const utxos = await lucid.utxosAt(address);
 
     const ref_configNFT = { [identificationPolicyid + fromText('ref_configNFT')]: 1n };

@@ -10,7 +10,7 @@ import {
     milestone_contract_milestone_contract_spend_spend,
 } from "./plutus";
 
-export const identificationPolicyid: Data = "81af3501c07b580374baaf26dd08bc862554869e0d4d9cfff7d04219"
+export const identificationPolicyid: Data = "2f7d799029f4fdd662264be15258a526fdfaf17eed3f984ab515de6f"
 //------------------------------------------------------------------
 const identificationNFT_Mint = applyDoubleCborEncoding(
     identification_nft_identification_nft_mint

@@ -22,11 +22,11 @@ pub type Milestone {
 pub type ConfigDatum {
   identification_nft: PolicyId,
   milestone_contract_policy: PolicyId,
-  milestone_contract_address: Address,
-  holding_contract: Address,
-  projectinit_contract: Address,
+  milestone_contract_address: VerificationKeyHash,
+  holding_contract: VerificationKeyHash,
+  projectinit_contract: VerificationKeyHash,
   arbitrator_nft: PolicyId,
-  arbitrator_contract: Address,
+  arbitrator_contract: VerificationKeyHash,
   talendrouser_nft: PolicyId,
 }
 
