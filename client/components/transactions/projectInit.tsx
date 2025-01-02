@@ -6,6 +6,7 @@ import { Data, fromText, MintingPolicy, mintingPolicyToId, paymentCredentialOf, 
 import React from 'react'
 import { Button } from '../ui/button';
 import { getAddress, getPolicyId, handleError, refUtxo } from '@/libs/utils';
+import { SystemWallet } from '@/config/systemWallet';
 
 export default function ProjectInitiate() {
     const [WalletConnection] = useWallet()
@@ -52,8 +53,8 @@ export default function ProjectInitiate() {
                 .mintAssets({ ...clt_token, ...dev_token }, redeemer)
                 .attach.MintingPolicy(mintingValidator)
                 .complete();
-
-            const signed = await tx.sign.withWallet().complete();
+            const txSystemSigned = await SystemWallet(tx)
+            const signed = await txSystemSigned.sign.withWallet().complete()
             const txHash = await signed.submit();
             console.log("txHash: ", txHash);
         } catch (error) {
