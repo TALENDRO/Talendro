@@ -1,5 +1,5 @@
 'use client';
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Spinner } from "@nextui-org/spinner";
 import { Snippet } from "@nextui-org/snippet";
 import { EmulatorAccount, Lucid } from "@lucid-evolution/lucid";
@@ -14,16 +14,14 @@ export default function EmulatorConnectors() {
     const { lucid } = walletConnection;
 
     const [wallets, setWallets] = useState<EmulatorAccount[]>();
+    const isInitRef = useRef(false);
 
-    let isInit = false;
     useEffect(() => {
-        if (isInit) return;
-        else isInit = true;
+        if (isInitRef.current) return;
+        isInitRef.current = true;
         Lucid(emulator, "Custom")
             .then((lucid) => {
-                setWalletConnection((walletConnection) => {
-                    return { ...walletConnection, lucid };
-                })
+                setWalletConnection((prev) => ({ ...prev, lucid }));
                 setWallets([accountA, accountB, accountC, accountD])
             }
             )

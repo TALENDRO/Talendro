@@ -5,6 +5,3 @@ const NETWORKx = process.env.NEXT_PUBLIC_CARDANO_NETWORK as Network;
 
 export const NETWORK: Network = NETWORKx;
 export const provider: Provider = new Blockfrost(BF_URL, BF_PID);
-// export const provider: Provider = new Koios("/koios");
-
-

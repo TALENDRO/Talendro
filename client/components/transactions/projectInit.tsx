@@ -1,5 +1,5 @@
 import { NETWORK } from '@/config/lucid';
-import { ArbitratorTokenValidator, ConfigDatumHolderValidator, HoldingContractValidator, identificationPolicyid, MilestoneMINTValidator, MilestoneSpendValidator, ProjectInitiateValidator } from '@/config/scripts/scripts';
+import { ArbitratorTokenValidator, ConfigDatumHolderValidator, HoldingContractValidator, identificationPolicyid, MilestoneMINTValidator, MilestoneSpendValidator, ProjectInitiateValidator, TalendroTokenValidator } from '@/config/scripts/scripts';
 import { useWallet } from '@/contexts/walletContext'
 import { ConfigDatum, ConfigDatumSchema, ProjectDatum } from '@/types/cardano';
 import { Data, fromText, MintingPolicy, mintingPolicyToId, paymentCredentialOf, Script, SpendingValidator, Validator, validatorToAddress, validatorToScriptHash } from '@lucid-evolution/lucid';
@@ -18,6 +18,7 @@ export default function ProjectInitiate() {
         const contractAddress = getAddress(ProjectInitiateValidator)
         const mintingValidator: MintingPolicy = ProjectInitiateValidator();
         const policyID = getPolicyId(ProjectInitiateValidator);
+        const talendroPid = getPolicyId(TalendroTokenValidator)
 
         try {
             const datum: ProjectDatum = {
@@ -36,11 +37,13 @@ export default function ProjectInitiate() {
             const dev_token = { [policyID + dev_assetname]: 1n }
 
             const ref_utxo = await refUtxo(lucid)
+            const UTxO_Talendro = await lucid.utxosAtWithUnit(address, "c10a8f990a13e616bf4af0bc99b119b5ec0d0d8da2a9c739f5eb03aa61726269747261746f7241") //talendroPolicyID+assetName
 
             const redeemer = Data.void();
             const tx = await lucid
                 .newTx()
                 .readFrom(ref_utxo)
+                .collectFrom(UTxO_Talendro)
                 .pay.ToContract(
                     contractAddress,
                     { kind: "inline", value: Data.to(datum, ProjectDatum) },

@@ -56,13 +56,11 @@ validator project_initiate(config_nft: PolicyId) {
       utils.find_ref_input_with_config_nft(reference_inputs, config_nft)
     // expect InlineDatum(output_datum) = ref_input.output.datum
     let config_datum: ConfigDatum = d.input_to_config_datum(ref_input)
-    trace @"config Datum": config_datum
     // -----
     // finding script output and Inlinedatum
     expect [script_output]: List<Output> =
       find_script_outputs(outputs, policy_id)
     let script_datum: ProjectDatum = d.output_to_project_datum(script_output)
-    trace @"scriptDatum": script_datum
     // -----
     // finding clt_ dev_ tokens 
     expect [Pair(clt_token_name, 1),

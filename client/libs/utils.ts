@@ -74,7 +74,6 @@ export async function refUtxo(lucid: LucidEvolution) {
     // const address = getAddress(ConfigDatumHolderValidator)
     const v = ConfigDatumHolderValidator()
     const address = validatorToAddress(NETWORK, v)
-    console.log(address)
     const utxos = await lucid.utxosAt(address);
 
     const ref_configNFT = { [identificationPolicyid + fromText('ref_configNFT')]: 1n };

@@ -35,7 +35,7 @@ export default function ArbitratorTokenMinter() {
 
         const signed = await tx.sign.withWallet().complete();
         const txHash = await signed.submit();
-        console.log("Arbitrator PiD", policyID);
+        console.log("TalentToken PiD", policyID);
         console.log("txHash: ", txHash);
     }
 

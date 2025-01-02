@@ -27,7 +27,6 @@ export default function configDatumHolder() {
         const validator: SpendingValidator = ConfigDatumHolderValidator();
         const contractAddress = validatorToAddress(NETWORK, validator);
 
-
         const milestioneMint = getPolicyId(MilestoneMINTValidator)
         const milestoneSpend = getAddress(MilestoneSpendValidator)
         const holdingContract = getAddress(HoldingContractValidator)
@@ -37,17 +36,13 @@ export default function configDatumHolder() {
         const talendroMint = getPolicyId(TalendroTokenValidator)
 
         const datum: ConfigDatum = {
-            identification_nft: identificationPolicyid as string,
+            identification_nft: process.env.NEXT_PUBLIC_IDENTIFICATION_POLICY_ID as string,
             milestone_contract_policy: milestioneMint,
-            // milestone_contract_address: paymentCredentialOf(milestoneSpend).hash,
-            milestone_contract_address: fromText(milestoneSpend),
-            holding_contract: fromText(holdingContract),
-            // holding_contract: paymentCredentialOf(holdingContract).hash,
-            // projectinit_contract: paymentCredentialOf(projectinitContract).hash,
-            projectinit_contract: fromText(projectinitContract),
+            milestone_contract_address: paymentCredentialOf(milestoneSpend).hash,
+            holding_contract: paymentCredentialOf(holdingContract).hash,
+            projectinit_contract: paymentCredentialOf(projectinitContract).hash,
             arbitrator_nft: arbitratorMint,
-            arbitrator_contract: fromText('addr_test1qzqhza3hpgs5nsfmnqfzakczprrlm3yjdeny7wakywm052q3qskkkydwrt982spj6gq46yheeg4aszdqncv4cg92lzfqffnpd5'),
-            // arbitrator_contract: paymentCredentialOf('addr_test1qzqhza3hpgs5nsfmnqfzakczprrlm3yjdeny7wakywm052q3qskkkydwrt982spj6gq46yheeg4aszdqncv4cg92lzfqffnpd5').hash,
+            arbitrator_contract: paymentCredentialOf('addr_test1qzqhza3hpgs5nsfmnqfzakczprrlm3yjdeny7wakywm052q3qskkkydwrt982spj6gq46yheeg4aszdqncv4cg92lzfqffnpd5').hash,
             talendrouser_nft: talendroMint,
         };
 
@@ -58,7 +53,7 @@ export default function configDatumHolder() {
                 { kind: "inline", value: Data.to(datum, ConfigDatum) },
                 { lovelace: 5_000_000n, ...ref_configNFT }
             )
-            .complete({ localUPLCEval: false });
+            .complete();
 
 
         const signed = await tx.sign.withWallet().complete();

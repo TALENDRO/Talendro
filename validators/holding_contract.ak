@@ -1,5 +1,5 @@
 use aiken/collection/dict
-use cardano/address.{Script}
+use cardano/address.{Script, from_verification_key}
 use cardano/assets.{PolicyId}
 use cardano/transaction.{
   Output, OutputReference, Transaction, find_input, find_script_outputs,
@@ -24,8 +24,9 @@ validator project_complete(config_nft: PolicyId) {
     // input have dev_ -> than if YES run client part, if NOT than run developer
     expect Some(script_input) = find_input(inputs, oref)
     let config_datum = utils.get_config_datum(reference_inputs, config_nft)
-    expect Script(project_init_policyid) =
-      config_datum.projectinit_contract.payment_credential
+    let project_init_policyid = config_datum.projectinit_contract
+    // expect Script(project_init_policyid) =
+    //   config_datum.projectinit_contract.payment_credential
     expect Script(script_hash) = script_input.output.address.payment_credential
 
     let dev_token =
@@ -102,7 +103,7 @@ validator project_complete(config_nft: PolicyId) {
         let arbitrator_output: Output =
           utils.find_output_with_address(
             outputs,
-            config_datum.arbitrator_contract,
+            from_verification_key(config_datum.arbitrator_contract),
           )
         let arbitration_datum = d.output_to_arbitration_datum(arbitrator_output)
         and {

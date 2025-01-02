@@ -23,7 +23,6 @@ export default function Identification() {
 
             const mintingValidator: MintingPolicy = IdentificationNFT_MintValidator([oref]);
             const policyID = mintingPolicyToId(mintingValidator);
-            console.log(policyID)
             const ref_assetName = "ref_configNFT";
             const usr_assetName = "usr_configNFT";
             const mintedAssets = { [policyID + fromText(ref_assetName)]: 1n, [policyID + fromText(usr_assetName)]: 1n };
