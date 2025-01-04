@@ -2,7 +2,7 @@ use aiken/collection/dict
 use aiken/collection/list
 use aiken/crypto.{VerificationKeyHash}
 use aiken/primitive/bytearray
-use cardano/address.{Address}
+use cardano/address.{Address, Script, VerificationKey, from_verification_key}
 use cardano/assets.{AssetName, Lovelace, PolicyId, Value}
 use cardano/transaction.{InlineDatum,
   Input, Output, OutputReference, find_input}
@@ -48,7 +48,7 @@ pub fn get_config_datum(
 pub fn find_input_with_policy(inputs: List<Input>, nft: PolicyId) -> Bool {
   list.any(
     inputs,
-    fn(input) { list.has(input.output.value |> assets.policies, nft) },
+    fn(input) { list.has(input.output.value |> assets.policies, nft)? },
   )
 }
 
@@ -80,12 +80,12 @@ pub fn datum_address_update(
 ) -> Bool {
   expect InlineDatum(projectdatum) = holding_output.datum
   expect project_datum: ProjectDatum = projectdatum
-
+  expect VerificationKey(vkh) = address.payment_credential
   and {
     project_datum.title == input_datum.title,
     project_datum.client == input_datum.client,
     project_datum.pay == input_datum.pay,
-    project_datum.developer == Some(address),
+    project_datum.developer == Some(vkh),
   }
 }
 
@@ -98,15 +98,21 @@ pub fn must_be_signed_by(
 
 pub fn must_have_x_token(inputs: List<Input>, policy_id: PolicyId) -> Bool {
   let input <- list.any(inputs)
-  list.has(input.output.value |> assets.policies, policy_id)
+  list.has(input.output.value |> assets.policies, policy_id)?
 }
+
+// pub fn find_input_with_policy(inputs: List<Input>, nft: PolicyId) -> Bool {
+//   list.any(
+//     inputs,
+//     fn(input) { (list.has(input.output.value |> assets.policies, nft))? },
+//   )
 
 pub fn must_have_token_in_output(
   output: Output,
   token: AssetName,
   policy_id: PolicyId,
 ) -> Bool {
-  assets.quantity_of(output.value, policy_id, token) == 1
+  (assets.quantity_of(output.value, policy_id, token) == 1)?
 }
 
 pub fn ada_to_script_address(output: Output, pay: Option<Lovelace>) -> Bool {
@@ -159,12 +165,22 @@ pub fn must_send_to_correct_script(
   pay: Option<Int>,
   config_datum: ConfigDatum,
 ) -> Bool {
-  when pay is {
-    Some(ada) -> and {
-        ada <= assets.lovelace_of(output.value),
-        output.address == config_datum.holding_contract,
+  when (pay, output.address.payment_credential) is {
+    (Some(ada), Script(vkh)) -> and {
+        (ada <= assets.lovelace_of(output.value))?,
+        // when output.address.payment_credential is {
+        // Script(vkh) -> 
+        trace @"vkh": vkh
+        trace @"holdingcontract": config_datum.holding_contract
+        (vkh == config_datum.holding_contract)?,
       }
-    None -> output.address == config_datum.milestone_contract_address
+    // _ -> False
+    // },
+    (None, Script(vkh)) -> (vkh == config_datum.milestone_contract_address)?
+    _ -> {
+      trace @"in false"
+      False
+    }
   }
 }
 
@@ -315,12 +331,13 @@ pub fn milestone_tokens_burn_cancel(
   datum: ProjectDatum,
 ) -> Bool {
   let incomplete_milestone =
+    //2
     list.count(datum.milestones, fn(milestone) { milestone.status == False })
 
   let burn_count = must_burn_less_than_0(mint, policy_id)
-   (incomplete_milestone * 2 == burn_count)?
-
-
+  trace @"count": incomplete_milestone
+  trace @"burn": burn_count
+  (incomplete_milestone * 2 == burn_count)?
 }
 
 pub fn must_burn_less_than_0(mint: Value, policy_id: PolicyId) -> Int {
@@ -334,16 +351,16 @@ pub fn must_burn_less_than_0(mint: Value, policy_id: PolicyId) -> Int {
 }
 
 pub fn must_burn_dev_clt_token(mint: Value, policy_id: PolicyId) -> Bool {
-  expect [Pair(clt_token_name, 1),
-    Pair(dev_token_name, 1)] =
+  expect [Pair(clt_token_name, -1),
+    Pair(dev_token_name, -1)] =
     mint
       |> assets.tokens(policy_id)
       |> dict.to_pairs
 
   and {
-    "dev_" == bytearray.take(dev_token_name, 4),
-    "clt_" == bytearray.take(clt_token_name, 4),
-    bytearray.drop(dev_token_name, 4) == bytearray.drop(clt_token_name, 4),
+    ("dev_" == bytearray.take(dev_token_name, 4))?,
+    ("clt_" == bytearray.take(clt_token_name, 4))?,
+    (bytearray.drop(dev_token_name, 4) == bytearray.drop(clt_token_name, 4))?,
   }
 }
 
@@ -365,12 +382,14 @@ pub fn output_must_have_dev_token(
 
 pub fn must_pay_to_developer(output: List<Output>, datum: ProjectDatum) -> Bool {
   expect Some(dev_address) = datum.developer
-  let developer_output = find_output_with_address(output, dev_address)
+  let developer_output =
+    find_output_with_address(output, from_verification_key(dev_address))
   must_pay_to_x(developer_output, datum.pay)
 }
 
 pub fn must_pay_to_client(output: List<Output>, datum: ProjectDatum) -> Bool {
-  let client_output = find_output_with_address(output, datum.client)
+  let client_output =
+    find_output_with_address(output, from_verification_key(datum.client))
   must_pay_to_x(client_output, datum.pay)
 }
 

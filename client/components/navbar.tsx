@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import {
   Navbar as NextUINavbar,
   NavbarContent,
@@ -24,29 +24,25 @@ export const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   return (
-    <NextUINavbar maxWidth="xl" onMenuOpenChange={setIsMenuOpen} shouldHideOnScroll isBordered className="font-comfortaa">
+    <NextUINavbar
+      maxWidth="xl"
+      onMenuOpenChange={setIsMenuOpen}
+      shouldHideOnScroll
+      isBordered
+      className="font-comfortaa"
+    >
       <NavbarContent className="basis-1/5 sm:basis-full" justify="start">
-
         <NavbarBrand as="li" className="gap-3 max-w-fit">
           <NextLink className="flex justify-start items-center gap-1" href="/">
             <Logo />
             <TalendroLogo />
           </NextLink>
         </NavbarBrand>
-
-
-
       </NavbarContent>
 
+      <NavbarContent></NavbarContent>
 
-      <NavbarContent>
-
-      </NavbarContent>
-
-      <NavbarContent
-        className="flex basis-1/5 sm:basis-full"
-        justify="end"
-      >
+      <NavbarContent className="flex basis-1/5 sm:basis-full" justify="end">
         <ul className="hidden lg:flex gap-4 justify-start ml-2">
           {siteConfig.navItems.map((item) => (
             <NavbarItem key={item.href}>
@@ -71,7 +67,6 @@ export const Navbar = () => {
           </Link>
           <ThemeSwitch />
         </NavbarItem>
-
 
         <NavbarItem className="hidden md:flex">
           {/* <WalletConnectors /> */}

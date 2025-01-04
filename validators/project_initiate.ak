@@ -39,7 +39,7 @@ validator project_initiate(config_nft: PolicyId) {
     // (output_datum.developer == nft )
     and {
       utils.must_have_x_token(inputs, config_datum.talendrouser_nft),
-      output_datum.developer == Some(dev_output.address),
+      output_datum.developer == Some(vk_hash),
       utils.must_send_to_correct_script(
         contract_output,
         datum.pay,
@@ -74,17 +74,13 @@ validator project_initiate(config_nft: PolicyId) {
     // must have talendro token -> ref input -> ConfigDatum Match .talendro
     // must send correct datum to script
     and {
-      utils.must_have_x_token(inputs, config_datum.talendrouser_nft),
+      utils.must_have_x_token(inputs, config_datum.talendrouser_nft)?,
       // token name must be same
-      bytearray.drop(dev_token_name, 4) == bytearray.drop(clt_token_name, 4),
+      (bytearray.drop(dev_token_name, 4) == bytearray.drop(clt_token_name, 4))?,
       // dev_ must go to script
-      utils.must_have_token_in_output(script_output, dev_token_name, policy_id),
+      utils.must_have_token_in_output(script_output, dev_token_name, policy_id)?,
       // projectDatum.pay == ada to script output if None then True
-      utils.must_send_to_correct_script(
-        script_output,
-        script_datum.pay,
-        config_datum,
-      ),
+      utils.ada_to_script_address(script_output, script_datum.pay)?,
     }
   }
 
