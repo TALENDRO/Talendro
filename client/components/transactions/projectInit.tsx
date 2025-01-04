@@ -38,13 +38,13 @@ export default function ProjectInitiate() {
             const dev_token = { [policyID + dev_assetname]: 1n }
 
             const ref_utxo = await refUtxo(lucid)
-            const UTxO_Talendro = await lucid.utxosAtWithUnit(address, "c10a8f990a13e616bf4af0bc99b119b5ec0d0d8da2a9c739f5eb03aa61726269747261746f7241") //talendroPolicyID+assetName
+            const UTxO_Talendro = await lucid.utxoByUnit((talendroPid + fromText(address.slice(-10)))) //talendroPolicyID+assetName assetname is user address
 
             const redeemer = Data.void();
             const tx = await lucid
                 .newTx()
                 .readFrom(ref_utxo)
-                .collectFrom(UTxO_Talendro)
+                .collectFrom([UTxO_Talendro])
                 .pay.ToAddressWithData(
                     contractAddress,
                     { kind: "inline", value: Data.to(datum, ProjectDatum) },
@@ -53,12 +53,13 @@ export default function ProjectInitiate() {
                 .mintAssets({ ...clt_token, ...dev_token }, redeemer)
                 .attach.MintingPolicy(mintingValidator)
                 .complete();
-            const txSystemSigned = await SystemWallet(tx)
-            const signed = await txSystemSigned.sign.withWallet().complete()
+
+            // const txSystemSigned = await SystemWallet(tx)
+            const signed = await tx.sign.withWallet().complete()
             const txHash = await signed.submit();
             console.log("txHash: ", txHash);
         } catch (error) {
-            handleError(error);
+            console.log(error);
         }
 
     }
@@ -68,9 +69,9 @@ export default function ProjectInitiate() {
             <Button onClick={createProject}>
                 create Project
             </Button>
-            <Button onClick={createProject}>
+            <Button disabled>
                 Accept Project
             </Button>
-        </div>
+        </div >
     )
 }
