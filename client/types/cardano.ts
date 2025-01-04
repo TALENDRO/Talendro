@@ -8,7 +8,6 @@ export type Wallet = {
   isEnabled(): Promise<boolean>;
 };
 
-
 //#region Alias
 export const PaymentKeyHashSchema = Data.Bytes();
 export const StakeKeyHashSchema = Data.Bytes();
@@ -31,8 +30,6 @@ export const ConfigDatumSchema = Data.Object({
 export type ConfigDatum = Data.Static<typeof ConfigDatumSchema>;
 export const ConfigDatum = ConfigDatumSchema as unknown as ConfigDatum;
 
-
-
 export const MilestoneDatumSchema = Data.Object({
   name: Data.Bytes(),
   status: Data.Boolean(),
@@ -40,7 +37,6 @@ export const MilestoneDatumSchema = Data.Object({
 });
 export type MilestoneDatum = Data.Static<typeof MilestoneDatumSchema>;
 export const MilestoneDatum = MilestoneDatumSchema as unknown as MilestoneDatum;
-
 
 export const ProjectDatumSchema = Data.Object({
   title: Data.Bytes(),
@@ -54,18 +50,14 @@ export const ProjectDatumSchema = Data.Object({
 export type ProjectDatum = Data.Static<typeof ProjectDatumSchema>;
 export const ProjectDatum = ProjectDatumSchema as unknown as ProjectDatum;
 
-
-
 export const ArbitratorDatumSchema = Data.Object({
   project_datum: ProjectDatumSchema,
   pow: Data.Bytes(),
 });
 export type ArbitratorDatum = Data.Static<typeof ArbitratorDatumSchema>;
-export const ArbitratorDatum = ArbitratorDatumSchema as unknown as ArbitratorDatum;
+export const ArbitratorDatum =
+  ArbitratorDatumSchema as unknown as ArbitratorDatum;
 //#endregion
-
-
-
 
 //#region Redeemer
 export const ProjectRedeemer = {

@@ -47,7 +47,7 @@
     {
       "label": "Prettier: Fix",
       "type": "shell",
-      "command": "npx prettier --write ."
+      "command": "cd client && npx prettier --write ."
     },
     {
       "label": "ESLint: Fix",

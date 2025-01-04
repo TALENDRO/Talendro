@@ -165,7 +165,6 @@ pub fn must_send_to_correct_script(
   pay: Option<Int>,
   config_datum: ConfigDatum,
 ) -> Bool {
-
   when (pay, output.address.payment_credential) is {
     (Some(ada), Script(vkh)) -> and {
         (ada <= assets.lovelace_of(output.value))?,
