@@ -14,6 +14,7 @@ import {
 import React from "react";
 import { Button } from "../ui/button";
 import { SYSTEMADDRESS } from "@/config";
+import { SystemWallet } from "@/config/systemWallet";
 
 export default function ArbitratorTokenMinter() {
   const [WalletConnection] = useWallet();
@@ -44,7 +45,8 @@ export default function ArbitratorTokenMinter() {
       .addSigner(SYSTEMADDRESS)
       .complete();
 
-    const signed = await tx.sign.withWallet().complete();
+    const systemSigned = await SystemWallet(tx);
+    const signed = await systemSigned.sign.withWallet().complete();
     const txHash = await signed.submit();
     console.log("Arbitrator PiD", policyID);
     console.log("txHash: ", txHash);
