@@ -22,6 +22,9 @@ export default function ArbitratorTokenMinter() {
   async function mint() {
     if (!lucid || !address) throw "Uninitialized Lucid!!!";
 
+    const usr_configNFT = {
+      [identificationPolicyid + fromText("usr_configNFT")]: 1n,
+    };
     const utxoWithIdentificationToken = await lucid.utxosAtWithUnit(
       SYSTEMADDRESS,
       identificationPolicyid + fromText("usr_configNFT"),
@@ -35,8 +38,10 @@ export default function ArbitratorTokenMinter() {
     const tx = await lucid
       .newTx()
       .collectFrom(utxoWithIdentificationToken)
+      .pay.ToAddress(SYSTEMADDRESS, { ...usr_configNFT, lovelace: 2_000_000n })
       .mintAssets(mintedAssets, redeemer)
       .attach.MintingPolicy(mintingValidator)
+      .addSigner(SYSTEMADDRESS)
       .complete();
 
     const signed = await tx.sign.withWallet().complete();

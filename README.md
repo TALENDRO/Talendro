@@ -1,4 +1,4 @@
-TODO: find_output_with_datum
+TODO: must send usr_configNFT back to original address for (Talendro token, arbitrator nft minter)
 
 ```mermaid
 graph LR
@@ -63,7 +63,7 @@ graph LR
     MC63(must burn clt_ & dev_ project token)
     MC64(check datum.developer is None)
 
-    
+
 
     T --> C1
     T --> C2
@@ -72,7 +72,7 @@ graph LR
     T --> C5
     C4 --> Pinit
     Pinit --> C4mint
-    C4mint --> c4c01 
+    C4mint --> c4c01
     C4mint --> c4c02
     C4mint --> c4c03
     C4mint --> c4c04
@@ -116,7 +116,7 @@ graph LR
 
     PcnlB --> MC51
     PcnlB --> MC52
-    
+
     MC51 --> MC53
     MC52 --> MC54
 
