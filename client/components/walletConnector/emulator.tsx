@@ -52,7 +52,6 @@ export default function EmulatorConnectors() {
   }
 
   async function emulatorlog() {
-    await awaitlog();
     emulator.log();
   }
   async function awaitlog() {

@@ -42,7 +42,7 @@ pub fn get_config_datum(
       inputs,
       fn(input) { list.has(input.output.value |> assets.policies, config_nft) },
     )
-  d.input_to_config_datum(ref_input)
+  d.output_to_config_datum(ref_input.output)
 }
 
 pub fn find_input_with_policy(inputs: List<Input>, nft: PolicyId) -> Bool {
@@ -93,7 +93,7 @@ pub fn must_be_signed_by(
   signatories: List<VerificationKeyHash>,
   signer: VerificationKeyHash,
 ) -> Bool {
-  list.has(signatories, signer)
+  list.has(signatories, signer)?
 }
 
 pub fn must_have_x_token(inputs: List<Input>, policy_id: PolicyId) -> Bool {
@@ -134,26 +134,26 @@ pub fn find_output_with_datum(
           InlineDatum(datum_data) -> {
             expect output_datum: ProjectDatum = datum_data
             and {
-              output_datum.title == datum.title,
-              output_datum.pay == datum.pay,
-              output_datum.client == datum.client,
+              (output_datum.title == datum.title)?,
+              (output_datum.pay == datum.pay)?,
+              (output_datum.client == datum.client)?,
               if output_datum.developer == datum.developer {
                 and {
-                  output_datum.milestones != datum.milestones,
-                  output_datum.current_milestone != datum.current_milestone,
-                  output_datum.next_milestone == datum.next_milestone,
+                  (output_datum.milestones != datum.milestones)?,
+                  (output_datum.current_milestone != datum.current_milestone)?,
+                  (output_datum.next_milestone == datum.next_milestone)?,
                 }
               } else {
                 and {
-                  output_datum.milestones == datum.milestones,
-                  output_datum.current_milestone == datum.current_milestone,
-                  output_datum.next_milestone == datum.next_milestone,
+                  (output_datum.milestones == datum.milestones)?,
+                  (output_datum.current_milestone == datum.current_milestone)?,
+                  (output_datum.next_milestone == datum.next_milestone)?,
                 }
               },
             }
           }
 
-          _ -> True
+          _ -> False
         }
       },
     )
@@ -170,8 +170,6 @@ pub fn must_send_to_correct_script(
         (ada <= assets.lovelace_of(output.value))?,
         // when output.address.payment_credential is {
         // Script(vkh) -> 
-        trace @"vkh": vkh
-        trace @"holdingcontract": config_datum.holding_contract
         (vkh == config_datum.holding_contract)?,
       }
     // _ -> False

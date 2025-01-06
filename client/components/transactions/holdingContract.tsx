@@ -30,7 +30,7 @@ import { SystemWallet } from "@/config/systemWallet";
 import { accountA } from "@/config/emulator";
 import { before } from "node:test";
 
-export default function ProjectInitiate() {
+export default function HoldingContract() {
   const [WalletConnection] = useWallet();
   const { lucid, address } = WalletConnection;
 

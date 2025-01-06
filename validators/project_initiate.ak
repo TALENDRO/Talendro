@@ -31,21 +31,21 @@ validator project_initiate(config_nft: PolicyId) {
     expect Script(policy_id) = input_utxo.output.address.payment_credential
     let dev_output = utils.find_output_with_policy(outputs, policy_id)
     expect VerificationKey(vk_hash) = dev_output.address.payment_credential
-
     // must have talendro token
     // same datum expect projectDatum.developer
     let contract_output = utils.find_output_with_datum(outputs, datum)
     let output_datum: ProjectDatum = d.output_to_project_datum(contract_output)
+
     // (output_datum.developer == nft )
     and {
-      utils.must_have_x_token(inputs, config_datum.talendrouser_nft),
-      output_datum.developer == Some(vk_hash),
+      utils.must_have_x_token(inputs, config_datum.talendrouser_nft)?,
+      (output_datum.developer == Some(vk_hash))?,
       utils.must_send_to_correct_script(
         contract_output,
         datum.pay,
         config_datum,
-      ),
-      utils.must_be_signed_by(extra_signatories, vk_hash),
+      )?,
+      utils.must_be_signed_by(extra_signatories, vk_hash)?,
     }
   }
 

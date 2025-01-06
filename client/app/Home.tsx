@@ -7,6 +7,7 @@ import ConfigDatumHolder from "@/components/transactions/configDatumHolder";
 import ArbitratorTokenMinter from "@/components/transactions/arbitratorToken";
 import ProjectInitiate from "@/components/transactions/projectInit";
 import TalendroTokenMinter from "@/components/transactions/TalendroToken";
+import HoldingContract from "@/components/transactions/holdingContract";
 
 export default function Home() {
   const [walletConnection] = useWallet();
@@ -31,6 +32,7 @@ export default function Home() {
       <TalendroTokenMinter />
 
       <ProjectInitiate />
+      <HoldingContract />
     </section>
   );
 }
