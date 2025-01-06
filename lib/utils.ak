@@ -66,10 +66,18 @@ pub fn find_ref_input_with_config_nft(
 
 pub fn find_output_with_address(
   outputs: List<Output>,
-  address: Address,
+  address: VerificationKeyHash,
 ) -> Output {
   expect Some(some_utxo) =
-    list.find(outputs, fn(output) { output.address == address })
+    list.find(
+      outputs,
+      fn(output) {
+        when output.address.payment_credential is {
+          VerificationKey(vkh) -> vkh == address
+          _ -> False
+        }
+      },
+    )
   some_utxo
 }
 
@@ -381,13 +389,13 @@ pub fn output_must_have_dev_token(
 pub fn must_pay_to_developer(output: List<Output>, datum: ProjectDatum) -> Bool {
   expect Some(dev_address) = datum.developer
   let developer_output =
-    find_output_with_address(output, from_verification_key(dev_address))
+    find_output_with_address(output, dev_address)
   must_pay_to_x(developer_output, datum.pay)
 }
 
 pub fn must_pay_to_client(output: List<Output>, datum: ProjectDatum) -> Bool {
   let client_output =
-    find_output_with_address(output, from_verification_key(datum.client))
+    find_output_with_address(output, datum.client)
   must_pay_to_x(client_output, datum.pay)
 }
 

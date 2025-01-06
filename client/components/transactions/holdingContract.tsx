@@ -117,7 +117,6 @@ export default function HoldingContract() {
       //   talendroPid + fromText(address.slice(-10)),
       // ); //talendroPolicyID+assetName assetname is user address
       const UTxO_Talendro = await lucid.utxosAt(address)
-      console.log(UTxO_Talendro)
       const script_UTxO = (await lucid.utxosAt(holdingContractAddress))[0]; // accept utxo as parameter
       const redeemer = Data.to("Complete", ProjectRedeemer);
       const minterRedeemer = Data.to(1n);
@@ -145,7 +144,7 @@ export default function HoldingContract() {
   return (
     <div className="flex gap-4">
       <Button onClick={devComplete}>Dev Complete</Button>
-      <Button onClick={cltComplete} disabled>client Complete accept</Button>
+      <Button onClick={cltComplete} >client Complete accept</Button>
       <Button disabled>Cancel</Button>
       <Button disabled>Arbitrator</Button>
     </div>

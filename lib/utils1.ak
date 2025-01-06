@@ -50,7 +50,7 @@ pub fn milestone_mint_create(
   let dev_output: Output =
     utils.find_output_with_address(
       tx.outputs,
-      from_verification_key(dev_address),
+      dev_address,
     )
   and {
     utils.output_must_have_dev_or_clt_tokens(
@@ -90,7 +90,7 @@ pub fn milestone_mint_compelete(
   let holding_contract_output =
     utils.find_output_with_address(
       tx.outputs,
-      from_verification_key(config_datum.holding_contract),
+      config_datum.holding_contract,
     )
   let output_project_datum: ProjectDatum =
     d.output_to_project_datum(holding_contract_output)
