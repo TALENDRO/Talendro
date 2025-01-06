@@ -62,7 +62,7 @@ export default function ProjectInitiate() {
         talendroPid + fromText(address.slice(-10)),
       ); //talendroPolicyID+assetName assetname is user address
 
-      const redeemer = Data.void();
+      const redeemer = Data.to(0n);
       const tx = await lucid
         .newTx()
         .readFrom(ref_utxo)
