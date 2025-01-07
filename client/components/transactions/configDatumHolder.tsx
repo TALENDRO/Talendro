@@ -24,6 +24,7 @@ import {
 } from "@lucid-evolution/lucid";
 import React from "react";
 import { Button } from "../ui/button";
+import { accountD } from "@/config/emulator";
 
 export default function ConfigDatumHolder() {
   const [WalletConnection] = useWallet();
@@ -65,7 +66,7 @@ export default function ConfigDatumHolder() {
       projectinit_contract: paymentCredentialOf(projectinitContract).hash,
       arbitrator_nft: arbitratorMint,
       arbitrator_contract: paymentCredentialOf(
-        "addr_test1qzqhza3hpgs5nsfmnqfzakczprrlm3yjdeny7wakywm052q3qskkkydwrt982spj6gq46yheeg4aszdqncv4cg92lzfqffnpd5",
+        accountD.address,
       ).hash,
       talendrouser_nft: talendroMint,
     };

@@ -110,11 +110,11 @@ validator project_complete(config_nft: PolicyId) {
             arbitrator_output,
             project_init_policyid,
             datum,
-          ),
-          arbitration_datum.project_datum == datum,
-          assets.lovelace_of(arbitrator_output.value) >= assets.lovelace_of(
+          )?,
+          (arbitration_datum.project_datum == datum)?,
+          (assets.lovelace_of(arbitrator_output.value) >= assets.lovelace_of(
             script_input.output.value,
-          ),
+          ))?,
         }
       }
       _ -> False

@@ -9,6 +9,7 @@ import ProjectInitiate from "@/components/transactions/projectInit";
 import TalendroTokenMinter from "@/components/transactions/TalendroToken";
 import HoldingContract from "@/components/transactions/holdingContract_complete";
 import HoldingContractCancel from "@/components/transactions/holdingContract_cancel";
+import HoldingContractArbitration from "@/components/transactions/holdingContract_arbitration";
 
 export default function Home() {
   const [walletConnection] = useWallet();
@@ -33,9 +34,10 @@ export default function Home() {
       <TalendroTokenMinter />
 
       <ProjectInitiate />
-      <div className="flex gap-4">
+      <div className="flex gap-4 flex-wrap max-w-96">
         <HoldingContract />
         <HoldingContractCancel />
+        <HoldingContractArbitration />
       </div>
     </section>
   );
