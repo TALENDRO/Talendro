@@ -60,11 +60,11 @@ validator project_complete(config_nft: PolicyId) {
       // DEVELOEPR = must send dev_ -> holding_script
       // proectdatum.deveolper & pay ==NONE
       // output should have dev_ token and assets.value(input.valiue)==assets.value(input.output.valiue) 
-      Cancel -> {
-        expect [script_output] = find_script_outputs(outputs, script_hash)
+      Cancel ->
         when dict.is_empty(dev_token) is {
           // Developer
           True -> {
+            expect [script_output] = find_script_outputs(outputs, script_hash)
             let project_script_datum = d.output_to_project_datum(script_output)
             and {
               utils.output_must_have_dev_token(
@@ -83,11 +83,10 @@ validator project_complete(config_nft: PolicyId) {
           // CLIENT =  should burn dev_ & clt_
           //    ada goes to datum.client
           False -> and {
-              utils.must_burn_dev_clt_token(mint, project_init_policyid),
-              utils.must_pay_to_client(outputs, datum),
+              utils.must_burn_dev_clt_token(mint, project_init_policyid)?,
+              utils.must_pay_to_client(outputs, datum)?,
             }
         }
-      }
 
       // DEVELOEPR
       //  DONE = must send dev_ -> aribration contract

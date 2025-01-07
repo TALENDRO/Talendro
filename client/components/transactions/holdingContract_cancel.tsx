@@ -27,14 +27,14 @@ import React from "react";
 import { Button } from "../ui/button";
 import { getAddress, getPolicyId, handleError, refUtxo } from "@/libs/utils";
 import { SystemWallet } from "@/config/systemWallet";
-import { accountA, accountD } from "@/config/emulator";
+import { accountA, accountB, accountD } from "@/config/emulator";
 import { before } from "node:test";
 
-export default function HoldingContract() {
+export default function HoldingContractCancel() {
   const [WalletConnection] = useWallet();
   const { lucid, address } = WalletConnection;
 
-  async function devComplete() {
+  async function devCancel() {
     if (!lucid || !address) throw "Uninitialized Lucid!!!";
     const holdingContractAddress = getAddress(HoldingContractValidator);
     const policyID = getPolicyId(ProjectInitiateValidator);
@@ -47,8 +47,8 @@ export default function HoldingContract() {
     try {
       const datum: ProjectDatum = {
         title: fromText("firstProject"),
-        pay: 5_000_000n,
-        developer: paymentCredentialOf(address).hash,
+        pay: null,
+        developer: null,
         client: paymentCredentialOf(accountA.address).hash,
         milestones: [],
         current_milestone: null,
@@ -63,7 +63,8 @@ export default function HoldingContract() {
         talendroPid + fromText(address.slice(-10)),
       ); //talendroPolicyID+assetName assetname is user address
       const script_UTxO = (await lucid.utxosAt(holdingContractAddress))[0]; // accept utxo as parameter
-      const redeemer = Data.to("Complete", ProjectRedeemer);
+      const redeemer = Data.to("Cancel", ProjectRedeemer);
+      console.log("before tx",)
       const tx = await lucid
         .newTx()
         .readFrom(ref_utxo)
@@ -71,7 +72,7 @@ export default function HoldingContract() {
         .pay.ToAddressWithData(
           holdingContractAddress,
           { kind: "inline", value: Data.to(datum, ProjectDatum) },
-          { lovelace: datum.pay as bigint, ...dev_token },
+          { lovelace: 5_000_000n as bigint, ...dev_token },
         )
         .attach.SpendingValidator(HoldingContractValidator())
         .complete();
@@ -86,7 +87,7 @@ export default function HoldingContract() {
   }
 
 
-  async function cltComplete() {
+  async function cltCancel() {
     if (!lucid || !address) throw "Uninitialized Lucid!!!";
     const holdingContractAddress = getAddress(HoldingContractValidator);
     const policyID = getPolicyId(ProjectInitiateValidator);
@@ -117,18 +118,19 @@ export default function HoldingContract() {
       //   talendroPid + fromText(address.slice(-10)),
       // ); //talendroPolicyID+assetName assetname is user address
       const UTxO_Talendro = await lucid.utxosAt(address)
-      const script_UTxO = (await lucid.utxosAt(holdingContractAddress))[0]; // accept utxo as parameter
-      const redeemer = Data.to("Complete", ProjectRedeemer);
+      const script_UTxO = (await lucid.utxosAt(holdingContractAddress)); // accept utxo as parameter
+      console.log(script_UTxO)
+      const redeemer = Data.to("Cancel", ProjectRedeemer);
       const minterRedeemer = Data.to(1n);
       const tx = await lucid
         .newTx()
         .readFrom(ref_utxo)
-        .collectFrom([script_UTxO], redeemer)
+        .collectFrom(script_UTxO, redeemer)
         .collectFrom(UTxO_Talendro)
         .pay.ToAddress(
-          accountD.address,
-          { lovelace: datum.pay as bigint },
-        ).mintAssets({ ...clt_token, ...dev_token }, minterRedeemer)
+          accountA.address, //pay back to client
+          { lovelace: datum.pay as bigint },)
+        .mintAssets({ ...clt_token, ...dev_token }, minterRedeemer)
         .attach.MintingPolicy(mintingValidator)
         .attach.SpendingValidator(HoldingContractValidator())
         .complete();
@@ -143,10 +145,8 @@ export default function HoldingContract() {
   }
   return (
     <div className="flex gap-4">
-      <Button onClick={devComplete}>Dev Complete</Button>
-      <Button onClick={cltComplete} >client Complete accept</Button>
-      <Button disabled>Cancel</Button>
-      <Button disabled>Arbitrator</Button>
+      <Button onClick={devCancel}>Dev Cancel</Button>
+      <Button onClick={cltCancel}>client Cancel</Button>
     </div>
   );
 }

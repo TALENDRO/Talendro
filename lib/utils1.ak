@@ -48,10 +48,7 @@ pub fn milestone_mint_create(
     d.output_to_project_datum(holding_contract_utxo)
   expect Some(dev_address) = milestone_datum.developer
   let dev_output: Output =
-    utils.find_output_with_address(
-      tx.outputs,
-      dev_address,
-    )
+    utils.find_output_with_address(tx.outputs, dev_address)
   and {
     utils.output_must_have_dev_or_clt_tokens(
       dev_output,
@@ -88,10 +85,7 @@ pub fn milestone_mint_compelete(
       |> d.input_to_project_datum
 
   let holding_contract_output =
-    utils.find_output_with_address(
-      tx.outputs,
-      config_datum.holding_contract,
-    )
+    utils.find_output_with_address(tx.outputs, config_datum.holding_contract)
   let output_project_datum: ProjectDatum =
     d.output_to_project_datum(holding_contract_output)
   and {
