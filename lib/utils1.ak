@@ -36,7 +36,7 @@ pub fn milestone_mint_create(
   let milestone_input: Input =
     utils.find_input_with_address(
       tx.inputs,
-      from_verification_key(config_datum.milestone_contract_address),
+      config_datum.milestone_contract_address,
     )
 
   let milestone_datum: ProjectDatum = d.input_to_project_datum(milestone_input)
@@ -78,10 +78,7 @@ pub fn milestone_mint_compelete(
   policy_id: PolicyId,
 ) {
   let input_project_datum: ProjectDatum =
-    utils.find_input_with_address(
-      tx.inputs,
-      from_verification_key(config_datum.holding_contract),
-    )
+    utils.find_input_with_address(tx.inputs, config_datum.holding_contract)
       |> d.input_to_project_datum
 
   let holding_contract_output =
@@ -108,10 +105,7 @@ pub fn milestone_mint_cancel(
   policy_id: PolicyId,
 ) {
   let holding_contract_input: Input =
-    utils.find_input_with_address(
-      tx.inputs,
-      from_verification_key(config_datum.holding_contract),
-    )
+    utils.find_input_with_address(tx.inputs, config_datum.holding_contract)
   let holding_contract_datum: ProjectDatum =
     d.input_to_project_datum(holding_contract_input)
   and {

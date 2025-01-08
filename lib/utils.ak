@@ -190,9 +190,20 @@ pub fn must_send_to_correct_script(
   }
 }
 
-pub fn find_input_with_address(inputs: List<Input>, address: Address) -> Input {
+pub fn find_input_with_address(
+  inputs: List<Input>,
+  address: VerificationKeyHash,
+) -> Input {
   expect Some(some_utxo) =
-    list.find(inputs, fn(input) { input.output.address == address })
+    list.find(
+      inputs,
+      fn(input) {
+        when input.output.address.payment_credential is {
+          VerificationKey(vkh) -> vkh == address
+          _ -> False
+        }
+      },
+    )
   some_utxo
 }
 
