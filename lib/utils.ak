@@ -2,7 +2,7 @@ use aiken/collection/dict
 use aiken/collection/list
 use aiken/crypto.{VerificationKeyHash}
 use aiken/primitive/bytearray
-use cardano/address.{Address, Script, VerificationKey, from_verification_key}
+use cardano/address.{Address, Script, VerificationKey}
 use cardano/assets.{AssetName, Lovelace, PolicyId, Value}
 use cardano/transaction.{InlineDatum,
   Input, Output, OutputReference, find_input}

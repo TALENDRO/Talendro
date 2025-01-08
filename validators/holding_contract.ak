@@ -1,5 +1,5 @@
 use aiken/collection/dict
-use cardano/address.{Script, from_verification_key}
+use cardano/address.{Script}
 use cardano/assets.{PolicyId}
 use cardano/transaction.{
   Output, OutputReference, Transaction, find_input, find_script_outputs,

@@ -1,7 +1,7 @@
 ////-------------------XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX-------------------------
 
 use aiken/primitive/bytearray
-use cardano/address.{Address, Script, from_verification_key}
+use cardano/address.{from_verification_key}
 use cardano/assets.{PolicyId}
 use cardano/transaction.{Input, Output, OutputReference, Transaction}
 use datum_file as d
@@ -135,7 +135,7 @@ pub fn spend_milestone(
 ) {
   expect Some(datum) = datum
   let config_datum: ConfigDatum = utils.get_config_datum(tx.inputs, config_nft)
-  expect project_init_policyid = config_datum.projectinit_contract
+  let project_init_policyid = config_datum.projectinit_contract
 
   // expect Script(project_init_policyid) = 
   // config_datum.projectinit_contract.payment_credential
@@ -166,7 +166,7 @@ pub fn milestone_spend_cancel(
 ) {
   when datum.developer is {
     Some(_) -> {
-      expect script_hash = config_datum.milestone_contract_address
+      let script_hash = config_datum.milestone_contract_address
       // expect Script(script_hash) =
       //   config_datum.milestone_contract_address.payment_credential
       expect [script_utxo] =

@@ -1,6 +1,4 @@
-use aiken/cbor.{serialise}
 use aiken/crypto.{VerificationKeyHash}
-use cardano/address.{Address}
 use cardano/assets.{Lovelace, PolicyId}
 
 pub type ProjectDatum {
