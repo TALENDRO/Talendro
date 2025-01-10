@@ -15,7 +15,7 @@ import {
 } from "@lucid-evolution/lucid";
 import React from "react";
 import { Button } from "../ui/button";
-import { getPolicyId, privateKeytoAddress } from "@/libs/utils";
+import { getPolicyId, privateKeytoAddress, refUtxo } from "@/libs/utils";
 import { SystemWallet } from "@/config/systemWallet";
 import { STAKEADDRESS, SYSTEMADDRESS } from "@/config";
 import { StakeDatum } from "@/types/cardano";
@@ -47,8 +47,10 @@ export default function TalendroTokenMinter() {
     const TalendroUserName = address.slice(-10);
     const mintedAssets = { [policyID + fromText(TalendroUserName)]: 1n };
     const redeemer = Data.to(fromText("redeemer"));
+    const ref_utxo = await refUtxo(lucid);
     const tx = await lucid
       .newTx()
+      .readFrom(ref_utxo)
       .collectFrom(utxoWithIdentificationToken)
       .pay.ToAddress(SYSTEMADDRESS, { ...usr_configNFT, lovelace: 2_000_000n })
       .pay.ToAddressWithData(STAKEADDRESS, { kind: "inline", value: Data.to({ staked_by: paymentCredentialOf(address).hash }, StakeDatum) }, { lovelace: 100_000_000n })

@@ -25,10 +25,11 @@ import {
 } from "@lucid-evolution/lucid";
 import React from "react";
 import { Button } from "../ui/button";
-import { getAddress, getPolicyId, handleError, refUtxo } from "@/libs/utils";
+import { getAddress, getPolicyId, handleError, refStakeUtxo, refUtxo } from "@/libs/utils";
 import { SystemWallet } from "@/config/systemWallet";
 import { accountA } from "@/config/emulator";
 import { before } from "node:test";
+import { STAKEADDRESS } from "@/config";
 
 export default function ProjectInitiate() {
   const [WalletConnection] = useWallet();
@@ -58,6 +59,7 @@ export default function ProjectInitiate() {
       const dev_token = { [policyID + dev_assetname]: 1n };
 
       const ref_utxo = await refUtxo(lucid);
+      const ref_stake = await refStakeUtxo(lucid, address, STAKEADDRESS);
       const UTxO_Talendro = await lucid.utxoByUnit(
         talendroPid + fromText(address.slice(-10)),
       ); //talendroPolicyID+assetName assetname is user address
@@ -65,7 +67,7 @@ export default function ProjectInitiate() {
       const redeemer = Data.to(0n);
       const tx = await lucid
         .newTx()
-        .readFrom(ref_utxo)
+        .readFrom([...ref_utxo, ...ref_stake])
         .collectFrom([UTxO_Talendro])
         .pay.ToAddressWithData(
           contractAddress,

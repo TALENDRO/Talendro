@@ -5,6 +5,7 @@ import {
   ConfigDatumHolderValidator,
   identificationPolicyid,
 } from "@/config/scripts/scripts";
+import { StakeDatum } from "@/types/cardano";
 import {
   fromText,
   LucidEvolution,
@@ -16,6 +17,8 @@ import {
   MintingPolicy,
   TxSignBuilder,
   makeWalletFromPrivateKey,
+  paymentCredentialOf,
+  Data,
 } from "@lucid-evolution/lucid";
 
 export async function req(path: string, req?: RequestInit) {
@@ -102,6 +105,17 @@ export async function refUtxo(lucid: LucidEvolution) {
   return utxos;
 }
 
+
+export async function refStakeUtxo(lucid: LucidEvolution, address: string, STAKEADDRESS: string) {
+  const utxos = await lucid.utxosAt(STAKEADDRESS);
+  const datum = { staked_by: paymentCredentialOf(address).hash }
+  const stake_utxo = utxos.filter((utxo) => {
+    if (!utxo.datum) return false; // Skip UTxOs without a datum
+    const isEqual = utxo.datum === Data.to(datum, StakeDatum); // Compare using references
+    return isEqual; // Ensure this result is returned
+  })
+  return stake_utxo;
+}
 export async function signWithPrivateKey(
   tx: TxSignBuilder,
   privateKey: string,
@@ -111,10 +125,11 @@ export async function signWithPrivateKey(
 }
 
 export async function privateKeytoAddress(privateKey: string) {
-  const privateeyAddress = await makeWalletFromPrivateKey(
+  const privatekeyAddress = await makeWalletFromPrivateKey(
     provider,
     NETWORK,
     privateKey,
   ).address();
-  return privateeyAddress;
+  return privatekeyAddress;
 }
+
