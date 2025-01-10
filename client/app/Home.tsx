@@ -31,7 +31,7 @@ export default function Home() {
 
       <ArbitratorTokenMinter />
 
-      <TalendroTokenMinter />
+      <TalendroTokenMinter />       {/*//page routing */}
 
       <ProjectInitiate />
       <div className="flex gap-4 flex-wrap max-w-96">
