@@ -16,36 +16,51 @@ use utils
 validator project_initiate(config_nft: PolicyId) {
   spend(
     datum: Option<ProjectDatum>,
-    _redeemer: Int,
+    redeemer: Int,
     oref: OutputReference,
     tx: Transaction,
   ) {
     expect Some(datum) = datum
-    let Transaction { inputs, reference_inputs, outputs, extra_signatories, .. } =
-      tx
-
-    // find ref_input and Datum type
-    let config_datum = utils.get_config_datum(reference_inputs, config_nft)
-    // -----
+    let Transaction {
+      inputs,
+      reference_inputs,
+      outputs,
+      extra_signatories,
+      mint,
+      ..
+    } = tx
     expect Some(input_utxo) = find_input(inputs, oref)
     expect Script(policy_id) = input_utxo.output.address.payment_credential
-    let dev_output = utils.find_output_with_policy(outputs, policy_id)
-    expect VerificationKey(vk_hash) = dev_output.address.payment_credential
-    // must have talendro token
-    // same datum expect projectDatum.developer
-    let contract_output = utils.find_output_with_datum(outputs, datum)
-    let output_datum: ProjectDatum = d.output_to_project_datum(contract_output)
+    when redeemer is {
+      1 -> {
+        // find ref_input and Datum type
+        let config_datum = utils.get_config_datum(reference_inputs, config_nft)
+        // -----
+        let dev_output = utils.find_output_with_policy(outputs, policy_id)
+        expect VerificationKey(vk_hash) = dev_output.address.payment_credential
+        // must have talendro token
+        // same datum expect projectDatum.developer
+        let contract_output = utils.find_output_with_datum(outputs, datum)
+        let output_datum: ProjectDatum =
+          d.output_to_project_datum(contract_output)
 
-    // (output_datum.developer == nft )
-    and {
-      utils.must_have_x_token(inputs, config_datum.talendrouser_nft)?,
-      (output_datum.developer == Some(vk_hash))?,
-      utils.must_send_to_correct_script(
-        contract_output,
-        datum.pay,
-        config_datum,
-      )?,
-      utils.must_be_signed_by(extra_signatories, vk_hash)?,
+        // (output_datum.developer == nft )
+        and {
+          utils.must_have_x_token(inputs, config_datum.talendrouser_nft)?,
+          (output_datum.developer == Some(vk_hash))?,
+          utils.must_send_to_correct_script(
+            contract_output,
+            datum.pay,
+            config_datum,
+          )?,
+          utils.must_be_signed_by(extra_signatories, vk_hash)?,
+        }
+      }
+      2 -> and {
+          utils.must_pay_to_client(outputs, datum)?,
+          utils.must_burn_dev_clt_token(mint, policy_id)?,
+        }
+      _ -> False
     }
   }
 
@@ -78,6 +93,10 @@ validator project_initiate(config_nft: PolicyId) {
         // must have talendro token -> ref input -> ConfigDatum Match .talendro
         // must send correct datum to script
         and {
+          utils.find_stake_input_by_address(
+            reference_inputs,
+            config_datum.stake_vkh,
+          ),
           utils.must_have_x_token(inputs, config_datum.talendrouser_nft)?,
           // token name must be same
           (bytearray.drop(dev_token_name, 4) == bytearray.drop(

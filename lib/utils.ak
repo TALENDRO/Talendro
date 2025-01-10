@@ -7,7 +7,7 @@ use cardano/assets.{AssetName, Lovelace, PolicyId, Value}
 use cardano/transaction.{InlineDatum,
   Input, Output, OutputReference, find_input}
 use datum_file as d
-use types.{ConfigDatum, Milestone, ProjectDatum}
+use types.{ConfigDatum, Milestone, ProjectDatum, StakeDatum}
 
 pub fn must_consume_oref(inputs: List<Input>, oref: OutputReference) -> Bool {
   expect Some(_) = find_input(inputs, oref)
@@ -62,6 +62,21 @@ pub fn find_ref_input_with_config_nft(
       fn(input) { list.has(input.output.value |> assets.policies, nft) },
     )
   ref_input
+}
+
+pub fn find_stake_input_by_address(
+  inputs: List<Input>,
+  address: VerificationKeyHash,
+) {
+  list.any(
+    inputs,
+    fn(input) {
+      when input.output.address.payment_credential is {
+        VerificationKey(vkh) -> vkh == address
+        _ -> False
+      }
+    },
+  )
 }
 
 pub fn find_output_with_address(
@@ -423,4 +438,29 @@ pub fn output_must_have_prj_token(
   expect [Pair(assetname, 1)] =
     assets.tokens(output.value, policy_id) |> dict.to_pairs()
   bytearray.drop(assetname, 4) == datum.title
+}
+
+pub fn must_send_stake_ada(
+  outputs: List<Output>,
+  stake_vkh: VerificationKeyHash,
+  amount: Int,
+) {
+  list.any(
+    outputs,
+    fn(output) {
+      when output.address.payment_credential is {
+        VerificationKey(vkh) -> and {
+            vkh == stake_vkh,
+            assets.lovelace_of(output.value) == amount,
+            must_send_stake_datum(output),
+          }
+        _ -> False
+      }
+    },
+  )
+}
+
+fn must_send_stake_datum(output: Output) {
+  expect _: StakeDatum = d.output_to_stake_datum(output)
+  True
 }
