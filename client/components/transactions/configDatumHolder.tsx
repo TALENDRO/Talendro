@@ -25,6 +25,7 @@ import {
 import React from "react";
 import { Button } from "../ui/button";
 import { accountD } from "@/config/emulator";
+import { STAKEADDRESS } from "@/config";
 
 export default function ConfigDatumHolder() {
   const [WalletConnection] = useWallet();
@@ -69,6 +70,8 @@ export default function ConfigDatumHolder() {
         accountD.address,
       ).hash,
       talendrouser_nft: talendroMint,
+      stake_vkh: paymentCredentialOf(STAKEADDRESS).hash,
+      stake_amount: 100_000_000n,
     };
 
     const tx = await lucid
