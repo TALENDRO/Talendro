@@ -27,6 +27,7 @@ pub type ConfigDatum {
   arbitrator_contract: VerificationKeyHash,
   talendrouser_nft: PolicyId,
   stake_vkh: VerificationKeyHash,
+  stake_amount: Int,
 }
 
 // the contract that holds the assets
@@ -34,6 +35,13 @@ pub type ArbitrationDatum {
   project_datum: ProjectDatum,
   pow: ByteArray,
 }
+
+pub type StakeDatum {
+  staked_by: VerificationKeyHash,
+}
+
+// staked_on: 
+// last_claim:
 
 // pub type MilestoneRedeemer {
 //   Create
