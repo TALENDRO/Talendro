@@ -64,6 +64,21 @@ pub fn find_ref_input_with_config_nft(
   ref_input
 }
 
+pub fn find_stake_input_by_address(
+  inputs: List<Input>,
+  address: VerificationKeyHash,
+) {
+  list.any(
+    inputs,
+    fn(input) {
+      when input.output.address.payment_credential is {
+        VerificationKey(vkh) -> vkh == address
+        _ -> False
+      }
+    },
+  )
+}
+
 pub fn find_output_with_address(
   outputs: List<Output>,
   address: VerificationKeyHash,
