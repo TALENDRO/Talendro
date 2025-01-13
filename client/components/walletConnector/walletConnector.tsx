@@ -11,7 +11,7 @@ import {
 } from "@lucid-evolution/lucid";
 
 import { Skeleton } from "@nextui-org/skeleton";
-import { NETWORK, provider } from "@/config/lucid";
+import { NETWORK, PROVIDER } from "@/config/lucid";
 import { Wallet } from "@/types/cardano";
 import { handleError } from "@/lib/utils";
 import { useWallet } from "@/context/walletContext";
@@ -26,7 +26,7 @@ export default function WalletConnectors() {
   useEffect(() => {
     if (isInit) return;
     else isInit = true;
-    Lucid(provider, NETWORK)
+    Lucid(PROVIDER, NETWORK)
       .then((lucid) => {
         setWalletConnection((walletConnection) => {
           return { ...walletConnection, lucid };
