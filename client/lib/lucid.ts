@@ -1,6 +1,7 @@
 import { NETWORK, PROVIDER } from "@/config/lucid";
 import { WalletConnection } from "@/context/walletContext";
-import { Lucid } from "@lucid-evolution/lucid";
+import { Wallet } from "@/types/cardano";
+import { Lucid, LucidEvolution, paymentCredentialOf, stakeCredentialOf } from "@lucid-evolution/lucid";
 
 
 export const mkLucid = async (
@@ -18,5 +19,29 @@ export const mkLucid = async (
         }));
     } catch (error) {
         console.error("Error initializing Lucid:", error);
+    }
+};
+
+
+
+export const walletConnect = async (setWalletConnection: (value: React.SetStateAction<WalletConnection>) => void,
+    wallet: Wallet, lucid: LucidEvolution): Promise<void> => {
+    try {
+        const api = await wallet.enable();
+        const balance = parseInt(await api.getBalance());
+        lucid.selectWallet.fromAPI(api);
+
+        const address = await lucid.wallet().address();
+        const pkh = paymentCredentialOf(address).hash;
+
+        const stakeAddress = (await lucid.wallet().rewardAddress()) ?? "";
+        const skh = stakeAddress ? stakeCredentialOf(stakeAddress).hash : "";
+
+        setWalletConnection((walletConnection) => {
+            return { ...walletConnection, wallet, address, pkh, stakeAddress, skh, balance };
+        });
+        return;
+    } catch (error) {
+        console.error("Error Connecting Wallet:", error);
     }
 };
