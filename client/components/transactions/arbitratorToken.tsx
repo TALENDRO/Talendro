@@ -3,7 +3,7 @@ import {
   ArbitratorTokenValidator,
   identificationPolicyid,
 } from "@/config/scripts/scripts";
-import { useWallet } from "@/contexts/walletContext";
+import { useWallet } from "@/context/walletContext";
 import {
   Constr,
   Data,

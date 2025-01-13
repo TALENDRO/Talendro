@@ -2,7 +2,7 @@
 // import WalletConnector from "@/components/walletConnector/client";
 import EmulatorConnector from "@/components/walletConnector/emulatorClient";
 import Identification from "@/components/transactions/identification";
-import { useWallet } from "@/contexts/walletContext";
+import { useWallet } from "@/context/walletContext";
 import ConfigDatumHolder from "@/components/transactions/configDatumHolder";
 import ArbitratorTokenMinter from "@/components/transactions/arbitratorToken";
 import ProjectInitiate from "@/components/transactions/projectInit";

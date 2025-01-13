@@ -5,7 +5,7 @@ import { Snippet } from "@nextui-org/snippet";
 import { EmulatorAccount, Lucid } from "@lucid-evolution/lucid";
 import { Skeleton } from "@nextui-org/skeleton";
 import { handleError } from "@/lib/utils";
-import { useWallet } from "@/contexts/walletContext";
+import { useWallet } from "@/context/walletContext";
 import {
   accountA,
   accountB,

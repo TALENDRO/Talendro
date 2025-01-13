@@ -9,7 +9,7 @@ import {
   ProjectInitiateValidator,
   TalendroTokenValidator,
 } from "@/config/scripts/scripts";
-import { useWallet } from "@/contexts/walletContext";
+import { useWallet } from "@/context/walletContext";
 import { ConfigDatum, ConfigDatumSchema, ProjectDatum } from "@/types/cardano";
 import {
   Data,
