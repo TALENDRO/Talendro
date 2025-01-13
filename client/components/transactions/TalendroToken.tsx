@@ -15,7 +15,7 @@ import {
 } from "@lucid-evolution/lucid";
 import React from "react";
 import { Button } from "../ui/button";
-import { getPolicyId, privateKeytoAddress, refUtxo } from "@/libs/utils";
+import { getPolicyId, privateKeytoAddress, refUtxo } from "@/lib/utils";
 import { SystemWallet } from "@/config/systemWallet";
 import { STAKEADDRESS, SYSTEMADDRESS } from "@/config";
 import { StakeDatum } from "@/types/cardano";

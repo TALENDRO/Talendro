@@ -11,7 +11,7 @@ import {
 } from "@lucid-evolution/lucid";
 import React from "react";
 import { Button } from "../ui/button";
-import { handleError } from "@/libs/utils";
+import { handleError } from "@/lib/utils";
 import { SYSTEMADDRESS } from "@/config";
 
 export default function Identification() {

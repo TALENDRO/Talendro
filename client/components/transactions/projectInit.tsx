@@ -25,7 +25,7 @@ import {
 } from "@lucid-evolution/lucid";
 import React from "react";
 import { Button } from "../ui/button";
-import { getAddress, getPolicyId, handleError, refStakeUtxo, refUtxo } from "@/libs/utils";
+import { getAddress, getPolicyId, handleError, refStakeUtxo, refUtxo } from "@/lib/utils";
 import { SystemWallet } from "@/config/systemWallet";
 import { accountA } from "@/config/emulator";
 import { before } from "node:test";

@@ -13,7 +13,7 @@ import {
 import { Skeleton } from "@nextui-org/skeleton";
 import { NETWORK, provider } from "@/config/lucid";
 import { Wallet } from "@/types/cardano";
-import { handleError } from "@/libs/utils";
+import { handleError } from "@/lib/utils";
 import { useWallet } from "@/contexts/walletContext";
 
 export default function WalletConnectors() {
