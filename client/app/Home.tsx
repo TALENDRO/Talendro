@@ -1,6 +1,4 @@
 "use client";
-import WalletConnector from "@/components/walletConnector/client";
-import EmulatorConnector from "@/components/walletConnector/emulatorClient";
 import Identification from "@/components/transactions/identification";
 import { useWallet } from "@/context/walletContext";
 import ConfigDatumHolder from "@/components/transactions/configDatumHolder";
@@ -22,8 +20,6 @@ export default function Home() {
       ) : (
         "not connected"
       )}
-      <EmulatorConnector />
-
       <Identification />
 
       <ConfigDatumHolder />

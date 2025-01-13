@@ -7,19 +7,19 @@ import { Skeleton } from "@nextui-org/skeleton";
 import { handleError } from "@/lib/utils";
 import { useWallet } from "@/context/walletContext";
 import {
-  accountA,
-  accountB,
-  accountC,
-  accountD,
+  UserA,
+  UserB,
+  UserC,
+  Admin,
   emulator,
 } from "@/config/emulator";
 import { Button } from "../ui/button";
 
-export default function EmulatorConnectors() {
+export default function EmulatorConnector() {
   const [walletConnection, setWalletConnection] = useWallet();
   const { lucid } = walletConnection;
 
-  const [wallets, setWallets] = useState<EmulatorAccount[]>();
+  const [wallets, setWallets] = useState<Record<string, { account: EmulatorAccount, connected: boolean }>>({});
   const isInitRef = useRef(false);
 
   useEffect(() => {
@@ -28,7 +28,12 @@ export default function EmulatorConnectors() {
     Lucid(emulator, "Custom")
       .then((lucid) => {
         setWalletConnection((prev) => ({ ...prev, lucid }));
-        setWallets([accountA, accountB, accountC, accountD]);
+        setWallets({
+          Admin: { account: Admin, connected: false },
+          UserA: { account: UserA, connected: false },
+          UserB: { account: UserB, connected: false },
+          UserC: { account: UserC, connected: false },
+        });
       })
       .catch((error) =>
         // toast error
@@ -41,7 +46,19 @@ export default function EmulatorConnectors() {
       if (!lucid) throw "Uninitialized Lucid!!!";
       lucid.selectWallet.fromSeed(account.seedPhrase);
       const address = await lucid.wallet().address();
-
+      setWallets((prevWallets) => {
+        return Object.fromEntries(
+          Object.entries(prevWallets).map(([key, wallet]) => {
+            return [
+              key,
+              {
+                ...wallet,
+                connected: wallet.account.seedPhrase === account.seedPhrase,
+              },
+            ];
+          })
+        );
+      });
       setWalletConnection((walletConnection) => {
         return { ...walletConnection, address };
       });
@@ -59,44 +76,54 @@ export default function EmulatorConnectors() {
     console.log("block Height +1: ", emulator.blockHeight);
   }
 
-  if (!wallets)
-    return (
-      <Snippet hideCopyButton hideSymbol variant="bordered">
-        <Spinner label="Browsing Cardano Wallets" />
-      </Snippet>
-    );
-
-  if (!wallets.length)
-    return (
-      <Snippet hideCopyButton hideSymbol variant="bordered">
-        <p className="uppercase">No Cardano Wallet</p>
-      </Snippet>
-    );
 
   return (
-    <div className="flex flex-col gap-4 w-full items-center">
-      {wallets.map((wallet, w) => {
-        return (
-          <>
-            <Skeleton
-              key={`wallet.${w}`}
-              className="rounded-full"
-              isLoaded={!!lucid}
-            >
-              <Button
-                className="capitalize"
-                color="primary"
-                onClick={() => onConnectWallet(wallet)}
+    <div className="flex flex-col gap-4 justify-center items-center">
+      <div className="flex flex-wrap gap-4 w-56 items-center justify-center">
+        {/* {wallets.map((wallet, w) => {
+          return (
+            <>
+              <Skeleton
+                key={`wallet.${w}`}
+                className="rounded-full"
+                isLoaded={!!lucid}
               >
-                {`${wallet.address.slice(0, 30)}...${wallet.address.slice(-5)}`}
-              </Button>
-            </Skeleton>
-          </>
-        );
-      })}
+                <Button
+                  className="capitalize"
+                  color="primary"
+                  onClick={() => onConnectWallet(wallet[1])}
+                >
+                  {`${wallet[0]}`}
+                </Button>
+              </Skeleton>
+            </>
+          );
+        })} */}
+        {Object.keys(wallets).map((key, index) => {
+          const wallet = wallets[key];
+          return (
+            <>
+              <Skeleton
+                key={`wallet.${index}`}
+                className="rounded-full"
+                isLoaded={!!lucid}
+              >
+                <Button
+                  className="capitalize"
+                  color="primary"
+                  variant={wallet.connected ? "default" : "outline"}
+                  onClick={() => onConnectWallet(wallet.account)}
+                >
+                  {key}
+                </Button>
+              </Skeleton>
+            </>
+          );
+        })}
+      </div>
       <div className="flex gap-4 ">
         <Button onClick={emulatorlog} className="w-fit">
-          Emulator Log
+          Log
         </Button>
         <Button onClick={awaitlog} className="w-fit">
           Await Block
