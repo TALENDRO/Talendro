@@ -16,11 +16,10 @@ import clsx from "clsx";
 import { siteConfig } from "@/config/site";
 import { GithubIcon, Logo, TalendroLogo } from "@/components/icons";
 import { useState } from "react";
-// import WalletClient from "./WalletConnector/WalletClient";
 import { ThemeSwitch } from "./theme-switch";
+import WalletConnector from "./walletConnector/client";
 
 export const Navbar = () => {
-  // const { onConnectWallet, resetLucid, balance } = props;
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   return (
@@ -69,8 +68,7 @@ export const Navbar = () => {
         </NavbarItem>
 
         <NavbarItem className="hidden md:flex">
-          {/* <WalletConnectors /> */}
-          {/* <WalletClient /> */}
+          <WalletConnector />
         </NavbarItem>
       </NavbarContent>
 
@@ -80,6 +78,7 @@ export const Navbar = () => {
             <GithubIcon className="text-default-500" />
           </Link>
           <ThemeSwitch />
+          <WalletConnector />
         </NavbarItem>
         <NavbarMenuToggle
           aria-label={isMenuOpen ? "Close menu" : "Open menu"}
