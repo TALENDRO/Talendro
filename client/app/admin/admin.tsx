@@ -1,17 +1,19 @@
 'use client'
 import { Button } from '@/components/ui/button'
 import { IDENTIFICATIONPID, MILESTONEPID, MILESTONEADDR, HOLDINGADDR, PROJECTINITADDR, ARBITRATORPID, ARBITRATIONADDR, TALENDROPID, STAKEADDRESS, CONFIGADDR, SYSTEMADDRESS } from '@/config';
-import { IdentificationNFT_MintValidator } from '@/config/scripts/scripts';
+import { NETWORK } from '@/config/lucid';
+import { configDatumHolderScript, IdentificationNFT_MintValidator } from '@/config/scripts/scripts';
 import { useWallet } from '@/context/walletContext';
 import { handleError } from '@/lib/utils';
 import { ConfigDatum } from '@/types/cardano';
-import { Constr, Data, fromText, MintingPolicy, mintingPolicyToId, paymentCredentialOf } from '@lucid-evolution/lucid';
+import { applyParamsToScript, Constr, Data, fromText, MintingPolicy, mintingPolicyToId, paymentCredentialOf, Validator, validatorToAddress } from '@lucid-evolution/lucid';
 import React, { useState } from 'react'
 
 export default function Page() {
     const [WalletConnection] = useWallet();
     const { lucid, address } = WalletConnection;
     const [submitting, setSubmitting] = useState(false)
+
     const CONFIGDATUM: ConfigDatum = {
         identification_nft: IDENTIFICATIONPID,
         milestone_contract_policy: MILESTONEPID,
@@ -24,7 +26,6 @@ export default function Page() {
         stake_vkh: paymentCredentialOf(STAKEADDRESS).hash,
         stake_amount: 100_000_000n,
     };
-
 
 
     async function mint() {
@@ -46,6 +47,7 @@ export default function Page() {
             const usr_configNFT = { [policyID + fromText("usr_configNFT")]: 1n };
             const mintedAssets = { ...ref_configNFT, ...usr_configNFT };
 
+
             const redeemer = Data.void();
 
             const tx = await lucid
@@ -55,11 +57,6 @@ export default function Page() {
                     ...usr_configNFT,
                     lovelace: 2_000_000n,
                 })
-                .pay.ToAddressWithData(
-                    CONFIGADDR,
-                    { kind: "inline", value: Data.to(CONFIGDATUM, ConfigDatum) },
-                    { lovelace: 5_000_000n, ...ref_configNFT },
-                )
                 .mintAssets(mintedAssets, redeemer)
                 .attach.MintingPolicy(mintingValidator)
                 .complete();
@@ -72,6 +69,29 @@ export default function Page() {
         }
         setSubmitting(false)
     }
+
+
+
+    async function sendConfigDatum() {
+        if (!lucid || !address) throw "Uninitialized Lucid!!!";
+        const ref_configNFT = {
+            [IDENTIFICATIONPID + fromText("ref_configNFT")]: 1n,
+        };
+
+        const tx = await lucid
+            .newTx()
+            .pay.ToAddressWithData(
+                CONFIGADDR,
+                { kind: "inline", value: Data.to(CONFIGDATUM, ConfigDatum) },
+                { lovelace: 5_000_000n, ...ref_configNFT },
+            )
+            .complete();
+
+        const signed = await tx.sign.withWallet().complete();
+        const txHash = await signed.submit();
+        console.log("txHash: ", txHash);
+    }
+
     return (
         <div>
             <p>
@@ -83,7 +103,11 @@ export default function Page() {
             </p>
 
             <Button onClick={mint} disabled={submitting}>
-                Mint and Attach Config Datum
+                Mint Identification Token
+            </Button>
+
+            <Button onClick={sendConfigDatum} disabled={submitting}>
+                Attach Config Datum
             </Button>
         </div>
     )

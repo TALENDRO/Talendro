@@ -5,11 +5,15 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-
+export function toAda(value: BigInt) {
+  return (Number(value) / 1_000_000);
+}
+export function toLovelace(value: number) {
+  return BigInt(value * 1_000_000);
+}
 
 // import { toast } from "react-toastify";
 
-import { NETWORK, provider } from "@/config/lucid";
 import {
   ConfigDatumHolderValidator,
   identificationPolicyid,
@@ -29,6 +33,7 @@ import {
   paymentCredentialOf,
   Data,
 } from "@lucid-evolution/lucid";
+import { NETWORK, PROVIDER } from "@/config/lucid";
 
 export async function req(path: string, req?: RequestInit) {
   const rsp = await fetch(path, { ...req, cache: "no-cache" });
@@ -110,7 +115,6 @@ export async function refUtxo(lucid: LucidEvolution) {
   //         assets[key] === ref_configNFT[key]
   //     );
   // });
-  console.log(address, utxos);
   return utxos;
 }
 
@@ -135,7 +139,7 @@ export async function signWithPrivateKey(
 
 export async function privateKeytoAddress(privateKey: string) {
   const privatekeyAddress = await makeWalletFromPrivateKey(
-    provider,
+    PROVIDER,
     NETWORK,
     privateKey,
   ).address();

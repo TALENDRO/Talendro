@@ -1,12 +1,10 @@
 import React from 'react'
+import Client from './client'
 
 export default function Page() {
     return (
         <div>
-            - show available project from (projectInit Contract)
-            option to accept project
-
-            - option to create a project
+            <Client />
         </div>
     )
 }

@@ -17,7 +17,7 @@ import React from "react";
 import { Button } from "../ui/button";
 import { getPolicyId, privateKeytoAddress, refUtxo } from "@/lib/utils";
 import { SystemWallet } from "@/config/systemWallet";
-import { STAKEADDRESS, SYSTEMADDRESS } from "@/config";
+import { CONFIGADDR, STAKEADDRESS, SYSTEMADDRESS } from "@/config";
 import { StakeDatum } from "@/types/cardano";
 
 export default function TalendroTokenMinter() {

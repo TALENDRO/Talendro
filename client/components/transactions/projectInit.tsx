@@ -27,7 +27,7 @@ import React from "react";
 import { Button } from "../ui/button";
 import { getAddress, getPolicyId, handleError, refStakeUtxo, refUtxo } from "@/lib/utils";
 import { SystemWallet } from "@/config/systemWallet";
-import { accountA } from "@/config/emulator";
+import { Admin } from "@/config/emulator";
 import { before } from "node:test";
 import { STAKEADDRESS } from "@/config";
 
@@ -99,7 +99,7 @@ export default function ProjectInitiate() {
         title: fromText("firstProject"),
         pay: 5_000_000n,
         developer: paymentCredentialOf(address).hash,
-        client: paymentCredentialOf(accountA.address).hash,
+        client: paymentCredentialOf(Admin.address).hash,
         milestones: [],
         current_milestone: null,
         next_milestone: null,

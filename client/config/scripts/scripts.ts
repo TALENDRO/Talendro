@@ -31,7 +31,7 @@ export function IdentificationNFT_MintValidator(params: any[]): Validator {
 }
 
 // --------------------------------------------------------------
-const configDatumHolderScript = applyDoubleCborEncoding(
+export const configDatumHolderScript = applyDoubleCborEncoding(
   config_datum_holder_config_datum_holder_spend,
 );
 export function ConfigDatumHolderValidator(): Validator {

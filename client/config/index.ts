@@ -13,6 +13,7 @@ export const MILESTONEADDR = getAddress(MilestoneSpendValidator);
 export const MILESTONEPID = getPolicyId(MilestoneMINTValidator);
 export const HOLDINGADDR = getAddress(HoldingContractValidator);
 export const PROJECTINITADDR = getAddress(ProjectInitiateValidator);
+export const PROJECTINITPID = getPolicyId(ProjectInitiateValidator);
 export const ARBITRATORPID = getPolicyId(ArbitratorTokenValidator);
 export const TALENDROPID = getPolicyId(TalendroTokenValidator);
 export const ARBITRATIONADDR = getAddress(ArbitrationContractValidator)
