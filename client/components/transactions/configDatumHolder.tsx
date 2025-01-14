@@ -24,8 +24,7 @@ import {
 } from "@lucid-evolution/lucid";
 import React from "react";
 import { Button } from "../ui/button";
-import { accountD } from "@/config/emulator";
-import { STAKEADDRESS } from "@/config";
+import { ARBITRATIONADDR, ARBITRATORPID, CONFIGADDR, HOLDINGADDR, IDENTIFICATIONPID, MILESTONEADDR, MILESTONEPID, PROJECTINITADDR, STAKEADDRESS, TALENDROPID } from "@/config";
 
 export default function ConfigDatumHolder() {
   const [WalletConnection] = useWallet();
@@ -47,29 +46,16 @@ export default function ConfigDatumHolder() {
     const ref_configNFT = {
       [identificationPolicyid + fromText("ref_configNFT")]: 1n,
     };
-    const validator: SpendingValidator = ConfigDatumHolderValidator();
-    const contractAddress = validatorToAddress(NETWORK, validator);
-
-    const milestioneMint = getPolicyId(MilestoneMINTValidator);
-    const milestoneSpend = getAddress(MilestoneSpendValidator);
-    const holdingContract = getAddress(HoldingContractValidator);
-    const projectinitContract = getAddress(ProjectInitiateValidator);
-    const arbitratorMint = getPolicyId(ArbitratorTokenValidator);
-    // const arbitratorContract = getAddress()
-    const talendroMint = getPolicyId(TalendroTokenValidator);
 
     const datum: ConfigDatum = {
-      identification_nft: process.env
-        .NEXT_PUBLIC_IDENTIFICATION_POLICY_ID as string,
-      milestone_contract_policy: milestioneMint,
-      milestone_contract_address: paymentCredentialOf(milestoneSpend).hash,
-      holding_contract: paymentCredentialOf(holdingContract).hash,
-      projectinit_contract: paymentCredentialOf(projectinitContract).hash,
-      arbitrator_nft: arbitratorMint,
-      arbitrator_contract: paymentCredentialOf(
-        accountD.address,
-      ).hash,
-      talendrouser_nft: talendroMint,
+      identification_nft: IDENTIFICATIONPID,
+      milestone_contract_policy: MILESTONEPID,
+      milestone_contract_address: paymentCredentialOf(MILESTONEADDR).hash,
+      holding_contract: paymentCredentialOf(HOLDINGADDR).hash,
+      projectinit_contract: paymentCredentialOf(PROJECTINITADDR).hash,
+      arbitrator_nft: ARBITRATORPID,
+      arbitrator_contract: paymentCredentialOf(ARBITRATIONADDR).hash,
+      talendrouser_nft: TALENDROPID,
       stake_vkh: paymentCredentialOf(STAKEADDRESS).hash,
       stake_amount: 100_000_000n,
     };
@@ -77,7 +63,7 @@ export default function ConfigDatumHolder() {
     const tx = await lucid
       .newTx()
       .pay.ToAddressWithData(
-        contractAddress,
+        CONFIGADDR,
         { kind: "inline", value: Data.to(datum, ConfigDatum) },
         { lovelace: 5_000_000n, ...ref_configNFT },
       )

@@ -19,7 +19,8 @@ export default function Identification() {
 
   const { lucid, address } = WalletConnection;
   async function mint() {
-    if (!lucid || !address) throw "Uninitialized Lucid!!!";
+    if (!lucid) throw "Uninitialized Lucid!!!";
+    if (!address) throw "Wallet not Connected!!!";
 
     try {
       const utxos = await lucid.utxosAt(address);
