@@ -1,11 +1,10 @@
 import React from 'react'
+import Client from './client'
 
 export default function Page() {
     return (
         <div>
-            Accepted Project + My created Projects
-
-            - option to cancel | complete | arbitration
+            <Client />
         </div>
     )
 }

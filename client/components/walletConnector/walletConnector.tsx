@@ -135,9 +135,9 @@ export default function WalletComponent() {
                 :
                 // {/* regular Wallets */}
 
-                wallets.map((w) => (
+                wallets.map((w, i) => (
                   <Button
-                    key={w.name}
+                    key={i}
                     variant={"ghost"}
                     className="group hover:bg-transparent h-24 p-0 w-16"
                     onClick={() => onConnectWallet(w)}
