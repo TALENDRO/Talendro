@@ -1,38 +1,67 @@
 'use client'
 import { CreateProject } from '@/components/createProjectModal';
 import { Button } from '@/components/ui/button';
-import { HOLDINGADDR, PROJECTINITADDR, PROJECTINITPID } from '@/config';
+import { HOLDINGADDR, MILESTONEADDR, PROJECTINITADDR, PROJECTINITPID } from '@/config';
 import { useWallet } from '@/context/walletContext';
-import { UTxO } from '@lucid-evolution/lucid';
+import { Address, Data, paymentCredentialOf, UTxO } from '@lucid-evolution/lucid';
 import React, { useEffect, useState } from 'react'
 import ProjectItem from '../../components/projectItem';
+import { ProjectDatum } from '@/types/cardano';
 
 export default function Page() {
     const [walletContext, setWalletContext] = useWallet();
-    const { lucid } = walletContext
-    const [projects, setProjects] = useState<UTxO[]>([])
-    useEffect(() => {
-        async function fetchutxos() {
-            if (!lucid) return;
-            const utxos = await lucid.utxosAt(HOLDINGADDR)
-            const filteredUtxos = utxos.filter((utxo) => {
-                return Object.keys(utxo.assets).some((key) => key.includes(PROJECTINITPID));
-            });
-            console.log(filteredUtxos)
-            // lucid.metadataOf()
-            setProjects(filteredUtxos)
-        }
-        fetchutxos()
+    const { lucid, address } = walletContext
+    const [client, setClient] = useState<Set<UTxO>>(new Set());
+    const [dev, setDev] = useState<Set<UTxO>>(new Set());
 
-    }, [lucid])
+    async function returnFilteredUtxos(contractAddress: Address) {
+        if (!lucid || !address) return;
+
+        const utxos = await lucid.utxosAt(contractAddress)
+        const newClient = new Set<UTxO>();
+        const newDev = new Set<UTxO>();
+        for (const utxo of utxos) {
+            const data = await lucid.datumOf(utxo);
+            try {
+                const datum = Data.castFrom(data as Data, ProjectDatum);
+                const hash = paymentCredentialOf(address).hash;
+                if (datum.developer === hash) {
+                    newDev.add(utxo);
+                } else if (datum.client === hash) {
+                    newClient.add(utxo);
+                }
+            } catch (error) {
+                console.error("Error processing UTxO datum:", error);
+            }
+        }
+        setClient((prev) => new Set([...prev, ...newClient]));
+        setDev((prev) => new Set([...prev, ...newDev]));
+    }
+
+
+
+    useEffect(() => {
+        returnFilteredUtxos(PROJECTINITADDR)
+        returnFilteredUtxos(HOLDINGADDR)
+        returnFilteredUtxos(MILESTONEADDR)
+    }, [lucid, address])
+
+    useEffect(() => {
+        setClient(new Set());
+        setDev(new Set());
+    }, [address]);
     return (
         <div>
             <CreateProject />
-            {projects.map((project, i) =>
+            CLIENT PROJECTS
+            {Array.from(client).map((project, i) => (
+                <ProjectItem project={project} key={i} from="myProjects_client" />
+            ))}
 
-                <ProjectItem project={project} key={i} />
-
-            )}
+            DEV PROJECTS i.e. accepted projects
+            {Array.from(dev).map((project, i) => (
+                <ProjectItem project={project} key={i} from="myProjects_dev" />
+            ))}
         </div>
     )
 }

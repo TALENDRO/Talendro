@@ -28,7 +28,7 @@ export default function Page() {
             <CreateProject />
             {projects.map((project, i) =>
 
-                <ProjectItem project={project} key={i} />
+                <ProjectItem project={project} key={i} from='projects' />
 
             )}
         </div>

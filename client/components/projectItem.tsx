@@ -22,9 +22,10 @@ import React, { use, useEffect, useState } from "react";
 
 interface Props {
     project: UTxO;
+    from: string
 }
 
-export default function ProjectItem({ project }: Props) {
+export default function ProjectItem({ project, from }: Props) {
     const [walletConnection] = useWallet();
     const { lucid, address } = walletConnection;
 
@@ -92,9 +93,18 @@ export default function ProjectItem({ project }: Props) {
                     {" "}
                     projectType: {datum.pay ? "Regular" : "Milestone"}
                 </p>
-                <Button onClick={acceptProject} disabled={submitting}>
-                    Accept
-                </Button>
+                {from == "projects" &&
+                    <Button onClick={acceptProject} disabled={submitting}>
+                        Accept
+                    </Button>
+                }
+                {(from == "myProjects_dev" || from == "myProjects_client") &&
+                    <>
+                        <Button>Complete</Button>
+                        <Button>Cancel</Button>
+                        <Button>Arbitration</Button>
+                    </>
+                }
             </div>
         )
     );
