@@ -5,7 +5,7 @@ import { PROJECTINITADDR, PROJECTINITPID } from '@/config';
 import { useWallet } from '@/context/walletContext';
 import { UTxO } from '@lucid-evolution/lucid';
 import React, { useEffect, useState } from 'react'
-import ProjectItem from './projectItem';
+import ProjectItem from '../../components/projectItem';
 
 export default function Page() {
     const [walletContext, setWalletContext] = useWallet();
@@ -26,9 +26,9 @@ export default function Page() {
     return (
         <div>
             <CreateProject />
-            {projects.map((project) =>
+            {projects.map((project, i) =>
 
-                <ProjectItem project={project} />
+                <ProjectItem project={project} key={i} />
 
             )}
         </div>
