@@ -21,13 +21,9 @@ export default function Home() {
         "not connected"
       )}
       {/* <Identification /> */}
-
       {/* <ConfigDatumHolder /> */}
-
       <ArbitratorTokenMinter />
-
-      <TalendroTokenMinter />       {/*//page routing */}
-
+      {/* <TalendroTokenMinter /> //page routing */}
       <ProjectInitiate />
       <div className="flex gap-4 flex-wrap max-w-96">
         <HoldingContract />
