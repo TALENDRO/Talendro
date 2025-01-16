@@ -32,6 +32,8 @@ import {
   makeWalletFromPrivateKey,
   paymentCredentialOf,
   Data,
+  keyHashToCredential,
+  credentialToAddress,
 } from "@lucid-evolution/lucid";
 import { NETWORK, PROVIDER } from "@/config/lucid";
 
@@ -146,3 +148,8 @@ export async function privateKeytoAddress(privateKey: string) {
   return privatekeyAddress;
 }
 
+export function keyHashtoAddress(keyHash: string) {
+  const credentials = keyHashToCredential(keyHash);
+  const address = credentialToAddress(NETWORK, credentials);
+  return address;
+}

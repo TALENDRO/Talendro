@@ -5,7 +5,7 @@ import ConfigDatumHolder from "@/components/transactions/configDatumHolder";
 import ArbitratorTokenMinter from "@/components/transactions/arbitratorToken";
 import ProjectInitiate from "@/components/transactions/projectInit";
 import TalendroTokenMinter from "@/components/transactions/TalendroToken";
-import HoldingContract from "@/components/transactions/holdingContract_complete";
+// import HoldingContract from "@/components/transactions/holdingContract_complete";
 import HoldingContractCancel from "@/components/transactions/holdingContract_cancel";
 import HoldingContractArbitration from "@/components/transactions/holdingContract_arbitration";
 
@@ -26,7 +26,7 @@ export default function Home() {
       {/* <TalendroTokenMinter /> //page routing */}
       <ProjectInitiate />
       <div className="flex gap-4 flex-wrap max-w-96">
-        <HoldingContract />
+        {/* <HoldingContract /> */}
         <HoldingContractCancel />
         <HoldingContractArbitration />
       </div>

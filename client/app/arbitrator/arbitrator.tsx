@@ -9,17 +9,20 @@ import {
   Data,
   fromText,
   mintingPolicyToId,
+  UTxO,
   Validator,
 } from "@lucid-evolution/lucid";
-import React from "react";
-import { SYSTEMADDRESS } from "@/config";
+import React, { useEffect, useState } from "react";
+import { ARBITRATIONADDR, PROJECTINITPID, SYSTEMADDRESS } from "@/config";
 import { SystemWallet } from "@/config/systemWallet";
 import { Button } from "@/components/ui/button";
+import ProjectItem from "@/components/projectItem";
 
 export default function ArbitratorTokenMinter() {
   const [WalletConnection] = useWallet();
 
   const { lucid, address } = WalletConnection;
+  const [projects, setProjects] = useState<UTxO[]>([]);
   async function mint() {
     if (!lucid || !address) throw "Uninitialized Lucid!!!";
 
@@ -52,5 +55,26 @@ export default function ArbitratorTokenMinter() {
     console.log("txHash: ", txHash);
   }
 
-  return <Button onClick={mint}>Arbitrator mint</Button>;
+  useEffect(() => {
+    async function fetchutxos() {
+      if (!lucid) return;
+      const utxos = await lucid.utxosAt(ARBITRATIONADDR)
+      const filteredUtxos = utxos.filter((utxo) => {
+        return Object.keys(utxo.assets).some((key) => key.includes(PROJECTINITPID));
+      });
+      setProjects(filteredUtxos)
+    }
+    fetchutxos()
+
+  }, [lucid])
+
+  return (
+    <>
+      <Button onClick={mint}>Arbitrator mint</Button>
+
+      {projects.map((project, i) => (
+        <ProjectItem project={project} key={i} from='arbitrator' />
+      ))}
+    </>
+  )
 }

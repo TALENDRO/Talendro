@@ -19,6 +19,7 @@ import {
     UTxO,
 } from "@lucid-evolution/lucid";
 import React, { use, useEffect, useState } from "react";
+import { ProjectComplete } from "./transactions/ProjectComplete";
 
 interface Props {
     project: UTxO;
@@ -84,6 +85,15 @@ export default function ProjectItem({ project, from }: Props) {
         }
         setSubmitting(false);
     }
+
+
+    async function projectCompleteClick() {
+        console.log("ssss")
+        if (!lucid || !address || !datum) throw "Uninitialized Lucid!!!";
+        // console.log("ssss2", lucid, address, datum)
+        const calledByDev = from.includes("dev")
+        await ProjectComplete(lucid, project, datum, calledByDev, address)
+    }
     return (
         datum && (
             <div className="border p-2">
@@ -100,7 +110,9 @@ export default function ProjectItem({ project, from }: Props) {
                 }
                 {(from == "myProjects_dev" || from == "myProjects_client") &&
                     <>
-                        <Button>Complete</Button>
+                        <Button onClick={projectCompleteClick}>Complete</Button>
+                        {/* TODO: if project(utxo in props) have dev token in asset then don't show complete button */}
+                        {/* TDOD: show complete button only if project client have completed  */}
                         <Button>Cancel</Button>
                         <Button>Arbitration</Button>
                     </>
