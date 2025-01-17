@@ -121,7 +121,11 @@ export default async function ProjectItem({ project, from }: Props) {
             )}
             {/* TODO: if project(utxo in props) have dev token in asset then don't show complete button */}
             {/* TDOD: show complete button only if project client have completed  */}
-            <Button>Cancel</Button>
+            {(await Alreadycmplt) ? (
+              <Button disabled>Cancel</Button>
+            ) : (
+              <Button>Cancel</Button>
+            )}
             <Button>Arbitration</Button>
           </>
         )}
