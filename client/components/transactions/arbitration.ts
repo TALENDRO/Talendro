@@ -1,8 +1,9 @@
-import { ARBITRATIONADDR, HOLDINGADDR, PROJECTINITPID, TALENDROPID } from "@/config";
-import { HoldingContractValidator } from "@/config/scripts/scripts";
+import { ARBITRATIONADDR, ARBITRATORPID, HOLDINGADDR, PROJECTINITPID, STAKEADDRESS, TALENDROPID } from "@/config";
+import { ArbitrationContractValidator, HoldingContractValidator } from "@/config/scripts/scripts";
+import { StakeWallet } from "@/config/systemWallet";
 import { WalletConnection } from "@/context/walletContext";
-import { refUtxo } from "@/lib/utils";
-import { ArbitratorDatum, ProjectDatum, ProjectRedeemer } from "@/types/cardano";
+import { keyHashtoAddress, refStakeUtxo, refUtxo } from "@/lib/utils";
+import { ArbitratorDatum, ArbitratorRedeemer, ProjectDatum, ProjectRedeemer } from "@/types/cardano";
 import { Data, fromText, UTxO } from "@lucid-evolution/lucid";
 
 
@@ -50,21 +51,37 @@ export async function arbitration(walletConnection: WalletConnection, utxo: UTxO
 }
 
 
-export async function ArbitratorAction() {
+export async function ArbitratorAction(walletConnection: WalletConnection, utxo: UTxO, devAtFault: boolean) {
+  const { lucid, address } = walletConnection;
+  if (!lucid || !address) throw "Uninitialized Lucid!!!";
   try {
+    const data = await lucid.datumOf(utxo)
+    const currentDatum = Data.castFrom(data, ArbitratorDatum);
+    const cltAddress = keyHashtoAddress(currentDatum.project_datum.client)
+    const devAddress = keyHashtoAddress(currentDatum.project_datum.developer as string)
+    let PaytoAddress = (devAtFault ? cltAddress : devAddress)
+    let AtFaultAddress = (devAtFault ? devAddress : cltAddress)
+    let stakedUtxo = (await refStakeUtxo(lucid, AtFaultAddress, STAKEADDRESS))[0];
 
+
+    const ref_utxo = await refUtxo(lucid)
+    const UTxO_Arbitrator = await lucid.utxosAtWithUnit(address, ARBITRATORPID + fromText(address.slice(-10)));
+    const redeemer: ArbitratorRedeemer = { payto: devAtFault ? 0n : 1n }
+    console.log(ARBITRATORPID)
     const tx = await lucid
       .newTx()
       .readFrom(ref_utxo)
-      .collectFrom([UTxO_Talendro, utxo], redeemer)
-      .pay.ToAddressWithData(
-        ARBITRATIONADDR,
-        { kind: "inline", value: Data.to(arbDatum, ArbitratorDatum) },
-        { lovelace: datum.pay as bigint, ...projecttoken },
-      )
-      .attach.SpendingValidator(HoldingContractValidator())
+      .collectFrom([...UTxO_Arbitrator, utxo, stakedUtxo], Data.to(redeemer, ArbitratorRedeemer))
+      .pay.ToAddress(PaytoAddress, { lovelace: currentDatum.project_datum.pay as bigint })
+      .pay.ToAddress(address, { lovelace: stakedUtxo.assets["lovelace"] as bigint })
+      .attach.SpendingValidator(ArbitrationContractValidator())
+      .addSigner(STAKEADDRESS)
       .complete();
 
+    const stakeSigned = await StakeWallet(tx);
+    const signed = await stakeSigned.sign.withWallet().complete();
+    const txHash = await signed.submit();
+    console.log("txHash: ", txHash);
   } catch (error) {
     console.log(error);
   }

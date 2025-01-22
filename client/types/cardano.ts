@@ -106,4 +106,17 @@ export const ProjectRedeemerSchema = Data.Enum([
 export type ProjectRedeemer = Data.Static<typeof ProjectRedeemerSchema>;
 export const ProjectRedeemer =
   ProjectRedeemerSchema as unknown as ProjectRedeemer;
+
+
+
+
+
+export const ArbitratorRedeemerSchema = Data.Object({
+  payto: Data.Integer(),
+});
+export type ArbitratorRedeemer = Data.Static<typeof ArbitratorRedeemerSchema>;
+export const ArbitratorRedeemer =
+  ArbitratorRedeemerSchema as unknown as ArbitratorRedeemer;
+
+
 //#endregion

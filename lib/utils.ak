@@ -120,6 +120,7 @@ pub fn must_be_signed_by(
 }
 
 pub fn must_have_x_token(inputs: List<Input>, policy_id: PolicyId) -> Bool {
+  trace @"policyID": policy_id
   let input <- list.any(inputs)
   list.has(input.output.value |> assets.policies, policy_id)?
 }

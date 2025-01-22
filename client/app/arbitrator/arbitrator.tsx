@@ -36,8 +36,8 @@ export default function ArbitratorTokenMinter() {
 
     const mintingValidator: Validator = ArbitratorTokenValidator();
     const policyID = mintingPolicyToId(mintingValidator);
-    const usr_assetName = "arbitratorA";
-    const mintedAssets = { [policyID + fromText(usr_assetName)]: 1n };
+    const ArbitratorID = address.slice(-10);
+    const mintedAssets = { [policyID + fromText(ArbitratorID)]: 1n };
     const redeemer = Data.void();
     const tx = await lucid
       .newTx()
