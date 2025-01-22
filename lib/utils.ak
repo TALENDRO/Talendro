@@ -89,7 +89,7 @@ pub fn find_output_with_address(
       fn(output) {
         when output.address.payment_credential is {
           VerificationKey(vkh) -> vkh == address
-          _ -> False
+          Script(vkh) -> vkh == address
         }
       },
     )

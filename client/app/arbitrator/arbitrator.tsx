@@ -16,7 +16,7 @@ import React, { useEffect, useState } from "react";
 import { ARBITRATIONADDR, PROJECTINITPID, SYSTEMADDRESS } from "@/config";
 import { SystemWallet } from "@/config/systemWallet";
 import { Button } from "@/components/ui/button";
-import ProjectItem from "@/components/projectItem";
+import ArbitratorProjectItem from "@/components/arbitratorProjectItem";
 
 export default function ArbitratorTokenMinter() {
   const [WalletConnection] = useWallet();
@@ -59,6 +59,7 @@ export default function ArbitratorTokenMinter() {
     async function fetchutxos() {
       if (!lucid) return;
       const utxos = await lucid.utxosAt(ARBITRATIONADDR)
+      console.log(utxos)
       const filteredUtxos = utxos.filter((utxo) => {
         return Object.keys(utxo.assets).some((key) => key.includes(PROJECTINITPID));
       });
@@ -73,7 +74,7 @@ export default function ArbitratorTokenMinter() {
       <Button onClick={mint}>Arbitrator mint</Button>
 
       {projects.map((project, i) => (
-        <ProjectItem project={project} key={i} from='arbitrator' />
+        <ArbitratorProjectItem project={project} key={i} />
       ))}
     </>
   )
