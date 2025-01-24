@@ -15,54 +15,52 @@ import {
 } from "@/config/emulator";
 import { Button } from "../ui/button";
 
-export default function EmulatorConnector() {
+interface props {
+  setWallets: (wallets: Record<string, { account: EmulatorAccount, connected: boolean }>) => void;
+  wallets: Record<string, { account: EmulatorAccount, connected: boolean }>;
+}
+export default function EmulatorConnector({ setWallets, wallets }: (props)) {
   const [walletConnection, setWalletConnection] = useWallet();
   const { lucid } = walletConnection;
 
-  const [wallets, setWallets] = useState<Record<string, { account: EmulatorAccount, connected: boolean }>>({});
   const isInitRef = useRef(false);
 
-  useEffect(() => {
-    if (isInitRef.current) return;
-    isInitRef.current = true;
-    Lucid(emulator, "Custom")
-      .then((lucid) => {
-        setWalletConnection((prev) => ({ ...prev, lucid }));
-        setWallets({
-          Admin: { account: Admin, connected: false },
-          UserA: { account: UserA, connected: false },
-          UserB: { account: UserB, connected: false },
-          UserC: { account: UserC, connected: false },
-        });
-      })
-      .catch((error) =>
-        // toast error
-        console.log(error),
-      );
-  }, []);
+  // useEffect(() => {
+  //   if (isInitRef.current) return;
+  //   isInitRef.current = true;
+  //   Lucid(emulator, "Custom")
+  //     .then((lucid) => {
+  //       setWalletConnection((prev) => ({ ...prev, lucid }));
+  //       setWallets({
+  //         Admin: { account: Admin, connected: false },
+  //         UserA: { account: UserA, connected: false },
+  //         UserB: { account: UserB, connected: false },
+  //         UserC: { account: UserC, connected: false },
+  //       });
+  //     })
+  //     .catch((error) =>
+  //       // toast error
+  //       console.log(error),
+  //     );
+  // }, []);
 
   async function onConnectWallet(account: EmulatorAccount) {
     try {
       if (!lucid) throw "Uninitialized Lucid!!!";
       lucid.selectWallet.fromSeed(account.seedPhrase);
       const address = await lucid.wallet().address();
-      setWallets((prevWallets) => {
-        return Object.fromEntries(
-          Object.entries(prevWallets).map(([key, wallet]) => {
-            return [
-              key,
-              {
-                ...wallet,
-                connected: wallet.account.seedPhrase === account.seedPhrase,
-              },
-            ];
-          })
-        );
-      });
+      const updatedWallets = Object.keys(wallets).reduce((acc, key) => {
+        acc[key] = {
+          ...wallets[key],
+          connected: wallets[key].account.seedPhrase === account.seedPhrase
+        };
+        return acc;
+      }, {} as Record<string, { account: EmulatorAccount, connected: boolean }>);
+      setWallets(updatedWallets);
       setWalletConnection((walletConnection) => {
         return { ...walletConnection, address };
       });
-      console.log("connected emulator wallet");
+      console.log("connected emulator wallet\n", address);
     } catch (error) {
       handleError(error);
     }

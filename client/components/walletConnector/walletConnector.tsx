@@ -13,6 +13,8 @@ import { Popover, PopoverContent, PopoverTrigger } from "@radix-ui/react-popover
 import { Switch } from "../ui/switch";
 import { Label } from "@radix-ui/react-label";
 import EmulatorConnector from "./emulator";
+import { EmulatorAccount } from "@lucid-evolution/lucid";
+import { Admin, UserA, UserB, UserC } from "@/config/emulator";
 
 export default function WalletComponent() {
   const [walletConnection, setWalletConnection] = useWallet();
@@ -21,6 +23,12 @@ export default function WalletComponent() {
   const [isOpen, setIsOpen] = useState(false);
   const [connecting, setConnecting] = useState(false);
   const [emulator, setEmulator] = useState(false)
+  const [emulatorWallets, setEmulatorWallets] = useState<Record<string, { account: EmulatorAccount, connected: boolean }>>({
+    Admin: { account: Admin, connected: false },
+    UserA: { account: UserA, connected: false },
+    UserB: { account: UserB, connected: false },
+    UserC: { account: UserC, connected: false },
+  });
 
   useEffect(() => {
     const wallets: Wallet[] = [];
@@ -34,9 +42,9 @@ export default function WalletComponent() {
       return l.name.toUpperCase() < r.name.toUpperCase() ? -1 : 1;
     });
     setWallets(wallets);
-    mkLucid(setWalletConnection);
+    mkLucid(setWalletConnection, emulator);
 
-  }, []);
+  }, [emulator]);
 
   async function onConnectWallet(wallet: Wallet) {
     setIsOpen(false);
@@ -131,7 +139,7 @@ export default function WalletComponent() {
             <div className="flex flex-wrap py-2 justify-center gap-2">
 
               {emulator ?
-                <EmulatorConnector />
+                <EmulatorConnector setWallets={setEmulatorWallets} wallets={emulatorWallets} />
                 :
                 // {/* regular Wallets */}
 

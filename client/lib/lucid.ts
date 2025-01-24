@@ -1,3 +1,4 @@
+import { emulator } from "@/config/emulator";
 import { NETWORK, PROVIDER } from "@/config/lucid";
 import { WalletConnection } from "@/context/walletContext";
 import { Wallet } from "@/types/cardano";
@@ -5,14 +6,19 @@ import { Lucid, LucidEvolution, paymentCredentialOf, stakeCredentialOf } from "@
 
 
 export const mkLucid = async (
-    setWalletConnection: (value: React.SetStateAction<WalletConnection>) => void
+    setWalletConnection: (value: React.SetStateAction<WalletConnection>) => void, isEmulator: boolean
 ): Promise<void> => {
     try {
-        const lucidInstance = await Lucid(
-            PROVIDER,
-            NETWORK
-        );
+        let lucidInstance;
+        if (isEmulator) {
+            lucidInstance = await Lucid(emulator, "Custom")
+        } else {
+            lucidInstance = await Lucid(
+                PROVIDER,
+                NETWORK
+            );
 
+        }
         setWalletConnection((prev) => ({
             ...prev,
             lucid: lucidInstance,
