@@ -67,12 +67,14 @@ export const Navbar = () => {
           <ThemeSwitch />
         </NavbarItem>
 
-        <NavbarItem className="hidden md:flex">
+        <NavbarItem className="hidden md:block">
           <WalletConnector />
         </NavbarItem>
+
       </NavbarContent>
 
-      <NavbarContent justify="end" className="sm:hidden">
+
+      <NavbarContent justify="end" className="md:hidden">
         <NavbarItem className="flex gap-2">
           <Link isExternal aria-label="Github" href={siteConfig.links.github}>
             <GithubIcon className="text-default-500" />
@@ -82,7 +84,7 @@ export const Navbar = () => {
         </NavbarItem>
         <NavbarMenuToggle
           aria-label={isMenuOpen ? "Close menu" : "Open menu"}
-          className="sm:hidden justify-end"
+          className="md:hidden justify-end"
         />
       </NavbarContent>
       {/* mobile menu open */}

@@ -1,8 +1,8 @@
 export type SiteConfig = typeof siteConfig;
 
 export const siteConfig = {
-  name: "Next.js + NextUI",
-  description: "Make beautiful websites regardless of your design experience.",
+  name: "Talendro",
+  description: "Empowering your search for trusted talent—Talendro connects you with skilled professionals you can rely on.",
   navItems: [
     {
       label: "Home",
@@ -31,36 +31,28 @@ export const siteConfig = {
   ],
   navMenuItems: [
     {
-      label: "Profile",
-      href: "/profile",
+      label: "Home",
+      href: "/",
     },
     {
-      label: "Dashboard",
-      href: "/dashboard",
+      label: "Admin",
+      href: "/admin",
     },
     {
       label: "Projects",
       href: "/projects",
     },
     {
-      label: "Team",
-      href: "/team",
+      label: "Myprojects",
+      href: "/myprojects",
     },
     {
-      label: "Calendar",
-      href: "/calendar",
+      label: "Profile",
+      href: "/profile",
     },
     {
-      label: "Settings",
-      href: "/settings",
-    },
-    {
-      label: "Help & Feedback",
-      href: "/help-feedback",
-    },
-    {
-      label: "Logout",
-      href: "/logout",
+      label: "Arbitrator",
+      href: "/arbitrator",
     },
   ],
   links: {
