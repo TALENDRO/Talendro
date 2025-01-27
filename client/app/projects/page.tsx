@@ -1,10 +1,10 @@
-import React from 'react'
-import Client from './client'
+import React from "react";
+import Client from "./client";
 
 export default function Page() {
-    return (
-        <div>
-            <Client />
-        </div>
-    )
+  return (
+    <div>
+      <Client />
+    </div>
+  );
 }

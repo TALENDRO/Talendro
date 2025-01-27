@@ -6,7 +6,7 @@ export function cn(...inputs: ClassValue[]) {
 }
 
 export function toAda(value: BigInt) {
-  return (Number(value) / 1_000_000);
+  return Number(value) / 1_000_000;
 }
 export function toLovelace(value: number) {
   return BigInt(value * 1_000_000);
@@ -120,15 +120,18 @@ export async function refUtxo(lucid: LucidEvolution) {
   return utxos;
 }
 
-
-export async function refStakeUtxo(lucid: LucidEvolution, address: string, STAKEADDRESS: string) {
+export async function refStakeUtxo(
+  lucid: LucidEvolution,
+  address: string,
+  STAKEADDRESS: string,
+) {
   const utxos = await lucid.utxosAt(STAKEADDRESS);
-  const datum = { staked_by: paymentCredentialOf(address).hash }
+  const datum = { staked_by: paymentCredentialOf(address).hash };
   const stake_utxo = utxos.filter((utxo) => {
     if (!utxo.datum) return false; // Skip UTxOs without a datum
     const isEqual = utxo.datum === Data.to(datum, StakeDatum); // Compare using references
     return isEqual; // Ensure this result is returned
-  })
+  });
   return stake_utxo;
 }
 export async function signWithPrivateKey(

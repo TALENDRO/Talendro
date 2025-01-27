@@ -25,7 +25,13 @@ import {
 } from "@lucid-evolution/lucid";
 import React from "react";
 import { Button } from "../ui/button";
-import { getAddress, getPolicyId, handleError, refStakeUtxo, refUtxo } from "@/lib/utils";
+import {
+  getAddress,
+  getPolicyId,
+  handleError,
+  refStakeUtxo,
+  refUtxo,
+} from "@/lib/utils";
 import { SystemWallet } from "@/config/systemWallet";
 import { Admin } from "@/config/emulator";
 import { before } from "node:test";
@@ -129,7 +135,7 @@ export default function ProjectInitiate() {
         .attach.SpendingValidator(ProjectInitiateValidator())
         .addSigner(address)
         .complete();
-      console.log("after  tx")
+      console.log("after  tx");
       // const txSystemSigned = await SystemWallet(tx)
       const signed = await tx.sign.withWallet().complete();
       const txHash = await signed.submit();

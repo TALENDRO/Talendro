@@ -10,7 +10,12 @@ import {
   TalendroTokenValidator,
 } from "@/config/scripts/scripts";
 import { useWallet } from "@/context/walletContext";
-import { ConfigDatum, ConfigDatumSchema, ProjectDatum, ProjectRedeemer } from "@/types/cardano";
+import {
+  ConfigDatum,
+  ConfigDatumSchema,
+  ProjectDatum,
+  ProjectRedeemer,
+} from "@/types/cardano";
 import {
   Data,
   fromText,
@@ -27,7 +32,7 @@ import React from "react";
 import { Button } from "../ui/button";
 import { getAddress, getPolicyId, handleError, refUtxo } from "@/lib/utils";
 import { SystemWallet } from "@/config/systemWallet";
-import { accountA, accountB, accountD } from "@/config/emulator";
+import { Admin } from "@/config/emulator";
 import { before } from "node:test";
 
 export default function HoldingContractCancel() {
@@ -40,16 +45,15 @@ export default function HoldingContractCancel() {
     const policyID = getPolicyId(ProjectInitiateValidator);
     const talendroPid = getPolicyId(TalendroTokenValidator);
 
-
     // should send dev_token to holding contract
-    // 
+    //
 
     try {
       const datum: ProjectDatum = {
         title: fromText("firstProject"),
         pay: null,
         developer: null,
-        client: paymentCredentialOf(accountA.address).hash,
+        client: paymentCredentialOf(Admin.address).hash,
         milestones: [],
         current_milestone: null,
         next_milestone: null,
@@ -64,7 +68,7 @@ export default function HoldingContractCancel() {
       ); //talendroPolicyID+assetName assetname is user address
       const script_UTxO = (await lucid.utxosAt(holdingContractAddress))[0]; // accept utxo as parameter
       const redeemer = Data.to("Cancel", ProjectRedeemer);
-      console.log("before tx",)
+      console.log("before tx");
       const tx = await lucid
         .newTx()
         .readFrom(ref_utxo)
@@ -86,13 +90,12 @@ export default function HoldingContractCancel() {
     }
   }
 
-
   async function cltCancel() {
     if (!lucid || !address) throw "Uninitialized Lucid!!!";
     const holdingContractAddress = getAddress(HoldingContractValidator);
     const policyID = getPolicyId(ProjectInitiateValidator);
     const talendroPid = getPolicyId(TalendroTokenValidator);
-    const mintingValidator = ProjectInitiateValidator()
+    const mintingValidator = ProjectInitiateValidator();
 
     // must burn dev & clt
     // must pay to dev
@@ -102,7 +105,7 @@ export default function HoldingContractCancel() {
         title: fromText("firstProject"),
         pay: 5_000_000n,
         developer: paymentCredentialOf(address).hash,
-        client: paymentCredentialOf(accountA.address).hash,
+        client: paymentCredentialOf(Admin.address).hash,
         milestones: [],
         current_milestone: null,
         next_milestone: null,
@@ -117,9 +120,9 @@ export default function HoldingContractCancel() {
       // const UTxO_Talendro = await lucid.utxoByUnit(
       //   talendroPid + fromText(address.slice(-10)),
       // ); //talendroPolicyID+assetName assetname is user address
-      const UTxO_Talendro = await lucid.utxosAt(address)
-      const script_UTxO = (await lucid.utxosAt(holdingContractAddress)); // accept utxo as parameter
-      console.log(script_UTxO)
+      const UTxO_Talendro = await lucid.utxosAt(address);
+      const script_UTxO = await lucid.utxosAt(holdingContractAddress); // accept utxo as parameter
+      console.log(script_UTxO);
       const redeemer = Data.to("Cancel", ProjectRedeemer);
       const minterRedeemer = Data.to(1n);
       const tx = await lucid
@@ -128,8 +131,9 @@ export default function HoldingContractCancel() {
         .collectFrom(script_UTxO, redeemer)
         .collectFrom(UTxO_Talendro)
         .pay.ToAddress(
-          accountA.address, //pay back to client
-          { lovelace: datum.pay as bigint },)
+          Admin.address, //pay back to client
+          { lovelace: datum.pay as bigint },
+        )
         .mintAssets({ ...clt_token, ...dev_token }, minterRedeemer)
         .attach.MintingPolicy(mintingValidator)
         .attach.SpendingValidator(HoldingContractValidator())

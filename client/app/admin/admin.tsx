@@ -97,7 +97,7 @@ export default function Page() {
       .pay.ToAddressWithData(
         CONFIGADDR,
         { kind: "inline", value: Data.to(CONFIGDATUM, ConfigDatum) },
-        { lovelace: 5_000_000n, ...ref_configNFT }
+        { lovelace: 5_000_000n, ...ref_configNFT },
       )
       .complete();
 
@@ -114,7 +114,7 @@ export default function Page() {
           CONFIGDATUM,
           (key, value) =>
             typeof value === "bigint" ? value.toString() : value,
-          4
+          4,
         )}
       </p>
 

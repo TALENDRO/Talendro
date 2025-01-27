@@ -6,20 +6,16 @@ import { EmulatorAccount, Lucid } from "@lucid-evolution/lucid";
 import { Skeleton } from "@nextui-org/skeleton";
 import { handleError } from "@/lib/utils";
 import { useWallet } from "@/context/walletContext";
-import {
-  UserA,
-  UserB,
-  UserC,
-  Admin,
-  emulator,
-} from "@/config/emulator";
+import { UserA, UserB, UserC, Admin, emulator } from "@/config/emulator";
 import { Button } from "../ui/button";
 
 interface props {
-  setWallets: (wallets: Record<string, { account: EmulatorAccount, connected: boolean }>) => void;
-  wallets: Record<string, { account: EmulatorAccount, connected: boolean }>;
+  setWallets: (
+    wallets: Record<string, { account: EmulatorAccount; connected: boolean }>,
+  ) => void;
+  wallets: Record<string, { account: EmulatorAccount; connected: boolean }>;
 }
-export default function EmulatorConnector({ setWallets, wallets }: (props)) {
+export default function EmulatorConnector({ setWallets, wallets }: props) {
   const [walletConnection, setWalletConnection] = useWallet();
   const { lucid } = walletConnection;
 
@@ -49,13 +45,16 @@ export default function EmulatorConnector({ setWallets, wallets }: (props)) {
       if (!lucid) throw "Uninitialized Lucid!!!";
       lucid.selectWallet.fromSeed(account.seedPhrase);
       const address = await lucid.wallet().address();
-      const updatedWallets = Object.keys(wallets).reduce((acc, key) => {
-        acc[key] = {
-          ...wallets[key],
-          connected: wallets[key].account.seedPhrase === account.seedPhrase
-        };
-        return acc;
-      }, {} as Record<string, { account: EmulatorAccount, connected: boolean }>);
+      const updatedWallets = Object.keys(wallets).reduce(
+        (acc, key) => {
+          acc[key] = {
+            ...wallets[key],
+            connected: wallets[key].account.seedPhrase === account.seedPhrase,
+          };
+          return acc;
+        },
+        {} as Record<string, { account: EmulatorAccount; connected: boolean }>,
+      );
       setWallets(updatedWallets);
       setWalletConnection((walletConnection) => {
         return { ...walletConnection, address };
@@ -73,7 +72,6 @@ export default function EmulatorConnector({ setWallets, wallets }: (props)) {
     emulator.awaitBlock(1);
     console.log("block Height +1: ", emulator.blockHeight);
   }
-
 
   return (
     <div className="flex flex-col gap-4 justify-center items-center">

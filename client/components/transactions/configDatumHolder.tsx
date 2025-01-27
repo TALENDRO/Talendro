@@ -24,7 +24,18 @@ import {
 } from "@lucid-evolution/lucid";
 import React from "react";
 import { Button } from "../ui/button";
-import { ARBITRATIONADDR, ARBITRATORPID, CONFIGADDR, HOLDINGADDR, IDENTIFICATIONPID, MILESTONEADDR, MILESTONEPID, PROJECTINITADDR, STAKEADDRESS, TALENDROPID } from "@/config";
+import {
+  ARBITRATIONADDR,
+  ARBITRATORPID,
+  CONFIGADDR,
+  HOLDINGADDR,
+  IDENTIFICATIONPID,
+  MILESTONEADDR,
+  MILESTONEPID,
+  PROJECTINITADDR,
+  STAKEADDRESS,
+  TALENDROPID,
+} from "@/config";
 
 export default function ConfigDatumHolder() {
   const [WalletConnection] = useWallet();

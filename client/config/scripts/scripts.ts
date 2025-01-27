@@ -123,8 +123,6 @@ export function HoldingContractValidator(): Validator {
   };
 }
 
-
-
 //---------------------------------------------------------
 
 const arbitration_contract_arbitration_script = applyDoubleCborEncoding(

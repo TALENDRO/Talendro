@@ -60,20 +60,20 @@ export type ArbitratorDatum = Data.Static<typeof ArbitratorDatumSchema>;
 export const ArbitratorDatum =
   ArbitratorDatumSchema as unknown as ArbitratorDatum;
 
-
-
 export const StakeDatumSchema = Data.Object({
   staked_by: Data.Bytes(),
 });
 export type StakeDatum = Data.Static<typeof StakeDatumSchema>;
-export const StakeDatum =
-  StakeDatumSchema as unknown as StakeDatum;
+export const StakeDatum = StakeDatumSchema as unknown as StakeDatum;
 //#endregion
 
 //#region Redeemer
 
-
-export type ProjectRedeemerAction = "Create" | "Complete" | "Cancel" | "Arbitrator";
+export type ProjectRedeemerAction =
+  | "Create"
+  | "Complete"
+  | "Cancel"
+  | "Arbitrator";
 export const ProjectRedeemerAction = {
   Create: {
     Title: "Create",
@@ -107,16 +107,11 @@ export type ProjectRedeemer = Data.Static<typeof ProjectRedeemerSchema>;
 export const ProjectRedeemer =
   ProjectRedeemerSchema as unknown as ProjectRedeemer;
 
-
-
-
-
 export const ArbitratorRedeemerSchema = Data.Object({
   payto: Data.Integer(),
 });
 export type ArbitratorRedeemer = Data.Static<typeof ArbitratorRedeemerSchema>;
 export const ArbitratorRedeemer =
   ArbitratorRedeemerSchema as unknown as ArbitratorRedeemer;
-
 
 //#endregion

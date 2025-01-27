@@ -9,7 +9,11 @@ import { useWallet } from "@/context/walletContext";
 import { mkLucid, walletConnect } from "@/lib/lucid";
 import { Button } from "../ui/button";
 import { LoaderCircle, LogOut, WalletIcon } from "lucide-react";
-import { Popover, PopoverContent, PopoverTrigger } from "@radix-ui/react-popover";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@radix-ui/react-popover";
 
 export default function WalletComponent() {
   const [walletConnection, setWalletConnection] = useWallet();
@@ -31,7 +35,6 @@ export default function WalletComponent() {
     });
     setWallets(wallets);
     mkLucid(setWalletConnection);
-
   }, []);
 
   async function onConnectWallet(wallet: Wallet) {
@@ -47,7 +50,15 @@ export default function WalletComponent() {
     setConnecting(false);
   }
   function disconnect() {
-    setWalletConnection(prev => ({ ...prev, address: undefined, wallet: undefined, pkh: undefined, stakeAddress: undefined, skh: undefined, balance: undefined }))
+    setWalletConnection((prev) => ({
+      ...prev,
+      address: undefined,
+      wallet: undefined,
+      pkh: undefined,
+      stakeAddress: undefined,
+      skh: undefined,
+      balance: undefined,
+    }));
     setIsOpen(false);
   }
 
@@ -64,8 +75,6 @@ export default function WalletComponent() {
         <p className="uppercase">No Cardano Wallet</p>
       </Snippet>
     );
-
-
 
   return (
     <Popover open={isOpen} onOpenChange={setIsOpen}>
@@ -111,22 +120,12 @@ export default function WalletComponent() {
                   className="group hover:bg-transparent h-24 p-0 w-16"
                   onClick={() => onConnectWallet(w)}
                 >
-                  <span
-                    className="flex flex-col items-center justify-center gap-1 bg-transparent shadow-none rounded-sm p-1 w-full hover:border hover:border-muted-foreground"
-                  >
-                    <span
-                      className=
-                      "flex h-14 w-14 items-center justify-center rounded-lg bg-accent bg-opacity-50 group-hover:bg-opacity-100"
-
-                    >
+                  <span className="flex flex-col items-center justify-center gap-1 bg-transparent shadow-none rounded-sm p-1 w-full hover:border hover:border-muted-foreground">
+                    <span className="flex h-14 w-14 items-center justify-center rounded-lg bg-accent bg-opacity-50 group-hover:bg-opacity-100">
                       <img src={w.icon} className="w-7" alt="wallet icon" />
                     </span>
 
-                    <span
-                      className="text-xs capitalize"
-                    >
-                      {w.name}
-                    </span>
+                    <span className="text-xs capitalize">{w.name}</span>
                   </span>
                 </Button>
               ))}

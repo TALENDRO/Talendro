@@ -13,7 +13,7 @@ export async function ProjectComplete(
   utxo: UTxO,
   datum: ProjectDatum,
   calledByDev: boolean,
-  address: string
+  address: string,
 ) {
   const mintingValidator = ProjectInitiateValidator();
 
@@ -28,7 +28,7 @@ export async function ProjectComplete(
 
     const ref_utxo = await refUtxo(lucid);
     const UTxO_Talendro = await lucid.utxoByUnit(
-      TALENDROPID + fromText(address.slice(-10))
+      TALENDROPID + fromText(address.slice(-10)),
     ); //talendroPolicyID+assetName assetname is user address
 
     const redeemer = Data.to("Complete", ProjectRedeemer);
@@ -46,7 +46,7 @@ export async function ProjectComplete(
         .ToAddressWithData(
           HOLDINGADDR,
           { kind: "inline", value: Data.to(datum, ProjectDatum) },
-          { lovelace: datum.pay as bigint, ...dev_token }
+          { lovelace: datum.pay as bigint, ...dev_token },
         )
         .complete();
       signed = await dev.sign.withWallet().complete();
@@ -65,7 +65,6 @@ export async function ProjectComplete(
     // const txSystemSigned = await SystemWallet(tx)
     const txHash = await signed.submit();
     console.log("txHash: ", txHash);
-    console.log(lucid.utxosAtWithUnit(address, dev_assetname));
   } catch (error) {
     console.log(error);
   }
@@ -73,7 +72,7 @@ export async function ProjectComplete(
 
 export async function AlreadyComplete(
   lucid: LucidEvolution,
-  datum: ProjectDatum
+  datum: ProjectDatum,
 ) {
   const [walletConnection] = useWallet();
   const { address } = walletConnection;
@@ -85,7 +84,7 @@ export async function AlreadyComplete(
 
   const have_dev_token = await lucid.utxosAtWithUnit(
     address as string,
-    dev_assetname
+    dev_assetname,
   );
   if (have_dev_token.length > 0) {
     return true;
@@ -94,65 +93,62 @@ export async function AlreadyComplete(
   return false;
 }
 
-// async function cltComplete() {
-//   if (!lucid || !address) throw "Uninitialized Lucid!!!";
-//   const holdingContractAddress = getAddress(HoldingContractValidator);
-//   const policyID = getPolicyId(ProjectInitiateValidator);
-//   const talendroPid = getPolicyId(TalendroTokenValidator);
-//   const mintingValidator = ProjectInitiateValidator()
+export async function CancelProject(
+  lucid: LucidEvolution,
+  utxo: UTxO,
+  datum: ProjectDatum,
+  calledByDev: boolean,
+  address: string,
+) {
+  const mintingValidator = ProjectInitiateValidator();
+  try {
+    const qty = calledByDev ? 1n : -1n;
 
-//   // must burn dev & clt
-//   // must pay to dev
+    const dev_assetname = fromText("dev_") + datum.title;
+    const dev_token = { [PROJECTINITPID + dev_assetname]: qty };
 
-//   try {
-//     const datum: ProjectDatum = {
-//       title: fromText("firstProject"),
-//       pay: 5_000_000n,
-//       developer: paymentCredentialOf(address).hash,
-//       client: paymentCredentialOf(accountA.address).hash,
-//       milestones: [],
-//       current_milestone: null,
-//       next_milestone: null,
-//     };
+    const clt_assetname = fromText("clt_") + datum.title;
+    const clt_token = { [PROJECTINITPID + clt_assetname]: qty };
 
-//     const dev_assetname = fromText("dev_") + datum.title;
-//     const clt_assetname = fromText("clt_") + datum.title;
-//     const dev_token = { [policyID + dev_assetname]: -1n };
-//     const clt_token = { [policyID + clt_assetname]: -1n };
+    const ref_utxo = await refUtxo(lucid);
+    const UTxO_Talendro = await lucid.utxoByUnit(
+      TALENDROPID + fromText(address.slice(-10)),
+    ); //talendroPolicyID+assetName assetname is user address
+    const toPay = datum.pay;
+    datum.pay = null;
+    datum.developer = null;
 
-//     const ref_utxo = await refUtxo(lucid);
-//     // const UTxO_Talendro = await lucid.utxoByUnit(
-//     //   talendroPid + fromText(address.slice(-10)),
-//     // ); //talendroPolicyID+assetName assetname is user address
-//     const UTxO_Talendro = await lucid.utxosAt(address)
-//     const script_UTxO = (await lucid.utxosAt(holdingContractAddress))[0]; // accept utxo as parameter
-//     const redeemer = Data.to("Complete", ProjectRedeemer);
-//     const minterRedeemer = Data.to(1n);
-//     const tx = await lucid
-//       .newTx()
-//       .readFrom(ref_utxo)
-//       .collectFrom([script_UTxO], redeemer)
-//       .collectFrom(UTxO_Talendro)
-//       .pay.ToAddress(
-//         accountB.address,
-//         { lovelace: datum.pay as bigint },
-//       ).mintAssets({ ...clt_token, ...dev_token }, minterRedeemer)
-//       .attach.MintingPolicy(mintingValidator)
-//       .attach.SpendingValidator(HoldingContractValidator())
-//       .complete();
+    const redeemer = Data.to("Cancel", ProjectRedeemer);
 
-//     // const txSystemSigned = await SystemWallet(tx)
-//     const signed = await tx.sign.withWallet().complete();
-//     const txHash = await signed.submit();
-//     console.log("txHash: ", txHash);
-//   } catch (error) {
-//     console.log(error);
-//   }
-// }
-//   return (
-//     <div className="flex gap-4">
-//       {/* <Button onClick={devComplete}>Dev Complete</Button> */}
-//       {/* <Button onClick={cltComplete} >client Complete accept</Button> */}
-//     </div>
-//   );
-// }
+    let dev, clt, signed;
+    const tx = lucid
+      .newTx()
+      .readFrom(ref_utxo)
+      .collectFrom([UTxO_Talendro, utxo], redeemer)
+      .attach.SpendingValidator(HoldingContractValidator());
+
+    if (calledByDev) {
+      dev = await tx.pay
+        .ToAddressWithData(
+          HOLDINGADDR,
+          { kind: "inline", value: Data.to(datum, ProjectDatum) },
+          { lovelace: toPay as bigint, ...dev_token },
+        )
+        .complete();
+      signed = await dev.sign.withWallet().complete();
+    } else {
+      clt = await tx.pay
+        .ToAddress(address, {
+          lovelace: toPay as bigint,
+        })
+        .mintAssets({ ...clt_token, ...dev_token }, Data.to(1n))
+        .attach.MintingPolicy(mintingValidator)
+        .complete();
+      signed = await clt.sign.withWallet().complete();
+    }
+    const txHash = await signed.submit();
+    console.log("txHash: ", txHash);
+  } catch (err) {
+    console.log(err);
+  }
+}

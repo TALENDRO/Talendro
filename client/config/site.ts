@@ -2,7 +2,8 @@ export type SiteConfig = typeof siteConfig;
 
 export const siteConfig = {
   name: "Talendro",
-  description: "Empowering your search for trusted talent—Talendro connects you with skilled professionals you can rely on.",
+  description:
+    "Empowering your search for trusted talent—Talendro connects you with skilled professionals you can rely on.",
   navItems: [
     {
       label: "Home",

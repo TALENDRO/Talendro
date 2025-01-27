@@ -31,7 +31,7 @@ export default function ArbitratorTokenMinter() {
     };
     const utxoWithIdentificationToken = await lucid.utxosAtWithUnit(
       SYSTEMADDRESS,
-      identificationPolicyid + fromText("usr_configNFT")
+      identificationPolicyid + fromText("usr_configNFT"),
     );
 
     const mintingValidator: Validator = ArbitratorTokenValidator();
@@ -58,16 +58,17 @@ export default function ArbitratorTokenMinter() {
   useEffect(() => {
     async function fetchutxos() {
       if (!lucid) return;
-      const utxos = await lucid.utxosAt(ARBITRATIONADDR)
-      console.log(utxos)
+      const utxos = await lucid.utxosAt(ARBITRATIONADDR);
+      console.log(utxos);
       const filteredUtxos = utxos.filter((utxo) => {
-        return Object.keys(utxo.assets).some((key) => key.includes(PROJECTINITPID));
+        return Object.keys(utxo.assets).some((key) =>
+          key.includes(PROJECTINITPID),
+        );
       });
-      setProjects(filteredUtxos)
+      setProjects(filteredUtxos);
     }
-    fetchutxos()
-
-  }, [lucid])
+    fetchutxos();
+  }, [lucid]);
 
   return (
     <>
@@ -77,5 +78,5 @@ export default function ArbitratorTokenMinter() {
         <ArbitratorProjectItem project={project} key={i} />
       ))}
     </>
-  )
+  );
 }

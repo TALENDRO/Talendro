@@ -6,7 +6,8 @@
     "dev": "next dev -H 0.0.0.0",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint . --ext .ts,.tsx -c .eslintrc.json --fix"
+    "lint": "eslint . --ext .ts,.tsx -c .eslintrc.json --fix",
+    "format": "prettier --write ."
   },
   "dependencies": {
     "@lucid-evolution/lucid": "^0.4.18",

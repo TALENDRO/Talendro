@@ -18,6 +18,7 @@ import { GithubIcon, Logo, TalendroLogo } from "@/components/icons";
 import { useState } from "react";
 import { ThemeSwitch } from "./theme-switch";
 import WalletConnector from "./walletConnector/client";
+import EmulatorWallet from "./walletConnector/tmp/emulatorClient";
 
 export const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -68,11 +69,10 @@ export const Navbar = () => {
         </NavbarItem>
 
         <NavbarItem className="hidden md:block">
-          <WalletConnector />
+          {/* <WalletConnector /> */}
+          <EmulatorWallet />
         </NavbarItem>
-
       </NavbarContent>
-
 
       <NavbarContent justify="end" className="md:hidden">
         <NavbarItem className="flex gap-2">
@@ -80,7 +80,8 @@ export const Navbar = () => {
             <GithubIcon className="text-default-500" />
           </Link>
           <ThemeSwitch />
-          <WalletConnector />
+          {/* <WalletConnector /> */}
+          <EmulatorWallet />
         </NavbarItem>
         <NavbarMenuToggle
           aria-label={isMenuOpen ? "Close menu" : "Open menu"}

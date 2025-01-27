@@ -9,7 +9,11 @@ import { useWallet } from "@/context/walletContext";
 import { mkLucid, walletConnect } from "@/lib/lucid";
 import { Button } from "../ui/button";
 import { LoaderCircle, LogOut, WalletIcon } from "lucide-react";
-import { Popover, PopoverContent, PopoverTrigger } from "@radix-ui/react-popover";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@radix-ui/react-popover";
 import { Switch } from "../ui/switch";
 import { Label } from "@radix-ui/react-label";
 import EmulatorConnector from "./emulator";
@@ -22,8 +26,10 @@ export default function WalletComponent() {
   const [wallets, setWallets] = useState<Wallet[]>();
   const [isOpen, setIsOpen] = useState(false);
   const [connecting, setConnecting] = useState(false);
-  const [emulator, setEmulator] = useState(false)
-  const [emulatorWallets, setEmulatorWallets] = useState<Record<string, { account: EmulatorAccount, connected: boolean }>>({
+  const [emulator, setEmulator] = useState(false);
+  const [emulatorWallets, setEmulatorWallets] = useState<
+    Record<string, { account: EmulatorAccount; connected: boolean }>
+  >({
     Admin: { account: Admin, connected: false },
     UserA: { account: UserA, connected: false },
     UserB: { account: UserB, connected: false },
@@ -43,7 +49,6 @@ export default function WalletComponent() {
     });
     setWallets(wallets);
     mkLucid(setWalletConnection, emulator);
-
   }, [emulator]);
 
   async function onConnectWallet(wallet: Wallet) {
@@ -59,7 +64,15 @@ export default function WalletComponent() {
     setConnecting(false);
   }
   function disconnect() {
-    setWalletConnection(prev => ({ ...prev, address: undefined, wallet: undefined, pkh: undefined, stakeAddress: undefined, skh: undefined, balance: undefined }))
+    setWalletConnection((prev) => ({
+      ...prev,
+      address: undefined,
+      wallet: undefined,
+      pkh: undefined,
+      stakeAddress: undefined,
+      skh: undefined,
+      balance: undefined,
+    }));
     setIsOpen(false);
   }
 
@@ -77,8 +90,6 @@ export default function WalletComponent() {
       </Snippet>
     );
 
-
-
   return (
     <Popover open={isOpen} onOpenChange={setIsOpen}>
       <PopoverTrigger asChild>
@@ -88,27 +99,32 @@ export default function WalletComponent() {
           disabled={connecting}
           className={"max-sm:p-2"}
         >
-          {
-            connecting ? (
-              <>
-                <LoaderCircle className="animate-spin" />
-                Connecting
-              </>
-            ) : balance ? (
-              <>
-                <img className="w-4" src={wallet?.icon} alt="wallet icon" />
-                <span className="max-sm:text-xs text-center tracking-wide">
-                  ₳ {balance.toFixed(2)}
+          {connecting ? (
+            <>
+              <LoaderCircle className="animate-spin" />
+              Connecting
+            </>
+          ) : balance ? (
+            <>
+              <img className="w-4" src={wallet?.icon} alt="wallet icon" />
+              <span className="max-sm:text-xs text-center tracking-wide">
+                ₳ {balance.toFixed(2)}
+              </span>
+            </>
+          ) : (
+            <>
+              <WalletIcon size={30} />
+              {emulator ? (
+                <span>
+                  Emulator<span className="max-sm:hidden"> Mode</span>
                 </span>
-              </>
-            ) : (
-              <>
-                <WalletIcon size={30} />
-                {emulator ?
-                  <span>Emulator<span className="max-sm:hidden"> Mode</span></span> :
-                  <span><span className="max-sm:hidden">Connect</span> Wallet</span>}
-              </>
-            )}
+              ) : (
+                <span>
+                  <span className="max-sm:hidden">Connect</span> Wallet
+                </span>
+              )}
+            </>
+          )}
         </Button>
       </PopoverTrigger>
       <PopoverContent className="bg-popover py-1 px-2 min-w-[300px] mx-2 bg-opacity-60 rounded-lg backdrop-blur-[6.8px] shadow-[3px_0px_51px_-35px_rgba(0,_0,_255,_0.6)] border ">
@@ -120,11 +136,7 @@ export default function WalletComponent() {
             {/* Emulator Toggle  */}
             <div className="flex items-center justify-between rounded-lg border p-2 mx-2">
               <div className="space-y-0.5">
-                <Label
-                  className="text-base font-semibold"
-                >
-                  Emulator Mode
-                </Label>
+                <Label className="text-base font-semibold">Emulator Mode</Label>
                 <p className="text-sm text-muted-foreground">
                   This will use Emulator Accounts.
                 </p>
@@ -137,10 +149,12 @@ export default function WalletComponent() {
               />
             </div>
             <div className="flex flex-wrap py-2 justify-center gap-2">
-
-              {emulator ?
-                <EmulatorConnector setWallets={setEmulatorWallets} wallets={emulatorWallets} />
-                :
+              {emulator ? (
+                <EmulatorConnector
+                  setWallets={setEmulatorWallets}
+                  wallets={emulatorWallets}
+                />
+              ) : (
                 // {/* regular Wallets */}
 
                 wallets.map((w, i) => (
@@ -150,31 +164,17 @@ export default function WalletComponent() {
                     className="group hover:bg-transparent h-24 p-0 w-16"
                     onClick={() => onConnectWallet(w)}
                   >
-                    <span
-                      className="flex flex-col items-center justify-center gap-1 bg-transparent shadow-none rounded-sm p-1 w-full hover:border hover:border-muted-foreground"
-                    >
-                      <span
-                        className=
-                        "flex h-14 w-14 items-center justify-center rounded-lg bg-accent bg-opacity-50 group-hover:bg-opacity-100"
-
-                      >
+                    <span className="flex flex-col items-center justify-center gap-1 bg-transparent shadow-none rounded-sm p-1 w-full hover:border hover:border-muted-foreground">
+                      <span className="flex h-14 w-14 items-center justify-center rounded-lg bg-accent bg-opacity-50 group-hover:bg-opacity-100">
                         <img src={w.icon} className="w-7" alt="wallet icon" />
                       </span>
 
-                      <span
-                        className="text-xs capitalize"
-                      >
-                        {w.name}
-                      </span>
+                      <span className="text-xs capitalize">{w.name}</span>
                     </span>
                   </Button>
                 ))
-
-              }
+              )}
             </div>
-
-
-
           </span>
         ) : (
           <>

@@ -16,10 +16,10 @@ export type WalletConnection = {
   pkh?: PaymentKeyHash;
   stakeAddress?: RewardAddress;
   skh?: StakeKeyHash;
-  balance?: number
+  balance?: number;
 };
 
 export const WalletContext = createContext<
   [WalletConnection, Dispatch<SetStateAction<WalletConnection>>]
->([{}, () => { }]);
+>([{}, () => {}]);
 export const useWallet = () => useContext(WalletContext);

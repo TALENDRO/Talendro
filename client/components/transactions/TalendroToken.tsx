@@ -53,7 +53,17 @@ export default function TalendroTokenMinter() {
       .readFrom(ref_utxo)
       .collectFrom(utxoWithIdentificationToken)
       .pay.ToAddress(SYSTEMADDRESS, { ...usr_configNFT, lovelace: 2_000_000n })
-      .pay.ToAddressWithData(STAKEADDRESS, { kind: "inline", value: Data.to({ staked_by: paymentCredentialOf(address).hash }, StakeDatum) }, { lovelace: 100_000_000n })
+      .pay.ToAddressWithData(
+        STAKEADDRESS,
+        {
+          kind: "inline",
+          value: Data.to(
+            { staked_by: paymentCredentialOf(address).hash },
+            StakeDatum,
+          ),
+        },
+        { lovelace: 100_000_000n },
+      )
       .mintAssets(mintedAssets, redeemer)
       .attach.MintingPolicy(mintingValidator)
       .addSigner(SYSTEMADDRESS)
