@@ -70,9 +70,8 @@ export default function WalletComponent() {
       <PopoverTrigger asChild>
         <Button
           variant={!wallet ? "default" : "outline"}
-          size="default"
           disabled={connecting}
-          className={"max-sm:p-2"}
+          className={"max-sm:p-2 max-sm:h-8"}
         >
           {connecting ? (
             <>
