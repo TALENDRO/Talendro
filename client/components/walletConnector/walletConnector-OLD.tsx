@@ -24,7 +24,6 @@ export default function WalletComponent() {
   const [isOpen, setIsOpen] = useState(false);
   const [connecting, setConnecting] = useState(false);
 
-
   useEffect(() => {
     const wallets: Wallet[] = [];
     const { cardano } = window;
@@ -65,22 +64,9 @@ export default function WalletComponent() {
     setIsOpen(false);
   }
 
-  if (!wallets)
-    return (
-      <Snippet hideCopyButton hideSymbol variant="bordered">
-        <Spinner label="Browsing Cardano Wallets" />
-      </Snippet>
-    );
-
-  if (!wallets.length)
-    return (
-      <Snippet hideCopyButton hideSymbol variant="bordered">
-        <p className="uppercase">No Cardano Wallet</p>
-      </Snippet>
-    );
 
   return (
-    (<Popover open={isOpen} onOpenChange={setIsOpen}>
+    <Popover open={isOpen} onOpenChange={setIsOpen}>
       <PopoverTrigger asChild>
         <Button
           variant={!wallet ? "default" : "outline"}
@@ -103,15 +89,19 @@ export default function WalletComponent() {
           ) : (
             <>
               <WalletIcon size={30} />
-                <span>
-                  <span className="max-sm:hidden">Connect</span> Wallet
-                </span>
+              <span>
+                <span className="max-sm:hidden">Connect</span> Wallet
+              </span>
             </>
           )}
         </Button>
       </PopoverTrigger>
       <PopoverContent className="bg-popover py-1 px-2 min-w-[300px] mx-2 bg-opacity-60 rounded-lg backdrop-blur-[6.8px] shadow-[3px_0px_51px_-35px_rgba(0,_0,_255,_0.6)] border ">
-        {!wallet ? (
+        {!wallets ? (
+          <Snippet hideCopyButton hideSymbol variant="bordered">
+            <Spinner label="Browsing Cardano Wallets" />
+          </Snippet>
+        ) : !wallet ? (
           <span>
             <h2 className="text-accent-foreground text-xl font-semibold text-center uppercase py-4">
               Select Wallet
@@ -127,15 +117,22 @@ export default function WalletComponent() {
               <Switch
                 id="marketing"
                 checked={isEmulator}
-                onCheckedChange={(checked) => setWalletConnection((prev) => ({
-                  ...prev, isEmulator: checked }))}
+                onCheckedChange={(checked) =>
+                  setWalletConnection((prev) => ({
+                    ...prev,
+                    isEmulator: checked,
+                  }))
+                }
                 aria-label="Toggle marketing emails"
               />
             </div>
             <div className="flex flex-wrap py-2 justify-center gap-2">
-             
-
-               { (wallets.map((w, i) => (
+              {!wallets.length ? (
+                <Snippet hideCopyButton hideSymbol variant="bordered">
+                  <p className="uppercase">No Cardano Wallet</p>
+                </Snippet>
+              ) : (
+                wallets.map((w, i) => (
                   <Button
                     key={i}
                     variant={"ghost"}
@@ -150,7 +147,8 @@ export default function WalletComponent() {
                       <span className="text-xs capitalize">{w.name}</span>
                     </span>
                   </Button>
-                )))}
+                ))
+              )}
             </div>
           </span>
         ) : (
@@ -166,6 +164,6 @@ export default function WalletComponent() {
           </>
         )}
       </PopoverContent>
-    </Popover>)
+    </Popover>
   );
 }
