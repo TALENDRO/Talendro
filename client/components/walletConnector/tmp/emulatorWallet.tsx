@@ -75,10 +75,10 @@ export default function WalletConnector() {
 
   return (
     <div className="flex gap-2 items-center">
-      <Button onClick={emulatorlog} className="w-fit">
+      <Button onClick={emulatorlog} className="w-fit max-sm:hidden">
         Log
       </Button>
-      <Button onClick={awaitlog} className="w-fit">
+      <Button onClick={awaitlog} className="w-fit max-sm:hidden">
         Await Block
       </Button>
       <Popover open={isOpen} onOpenChange={setIsOpen}>
@@ -128,6 +128,14 @@ export default function WalletConnector() {
                   </Button>
                 );
               })}
+            </div>
+            <div className="flex gap-4">
+            <Button onClick={emulatorlog} className="w-fit sm:hidden">
+        Log
+      </Button>
+      <Button onClick={awaitlog} className="w-fit sm:hidden">
+        Await Block
+      </Button>
             </div>
           </div>
         </PopoverContent>
