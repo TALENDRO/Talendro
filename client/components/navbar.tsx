@@ -17,7 +17,7 @@ import { siteConfig } from "@/config/site";
 import { GithubIcon, Logo, TalendroLogo } from "@/components/icons";
 import { useState } from "react";
 import { ThemeSwitch } from "./theme-switch";
-import EmulatorWallet from "./walletConnector/tmp/emulatorClient";
+import WalletConnector from "./walletConnector/client";
 
 export const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -68,8 +68,7 @@ export const Navbar = () => {
         </NavbarItem>
 
         <NavbarItem className="hidden md:block">
-          {/* <WalletConnector /> */}
-          <EmulatorWallet />
+        <WalletConnector/>
         </NavbarItem>
       </NavbarContent>
 
@@ -79,8 +78,8 @@ export const Navbar = () => {
             <GithubIcon className="text-default-500" />
           </Link>
           <ThemeSwitch />
-          {/* <WalletConnector /> */}
-          <EmulatorWallet />
+          <WalletConnector/>
+
         </NavbarItem>
         <NavbarMenuToggle
           aria-label={isMenuOpen ? "Close menu" : "Open menu"}

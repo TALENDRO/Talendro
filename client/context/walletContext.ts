@@ -17,9 +17,10 @@ export type WalletConnection = {
   stakeAddress?: RewardAddress;
   skh?: StakeKeyHash;
   balance?: number;
+  isEmulator: boolean;
 };
 
 export const WalletContext = createContext<
   [WalletConnection, Dispatch<SetStateAction<WalletConnection>>]
->([{}, () => {}]);
+>([{isEmulator: false}, () => {}]);
 export const useWallet = () => useContext(WalletContext);

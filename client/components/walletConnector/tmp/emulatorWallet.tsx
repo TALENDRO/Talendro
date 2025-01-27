@@ -16,10 +16,13 @@ import { useWallet } from "@/context/walletContext";
 import { handleError } from "@/lib/utils";
 import { Admin, UserA, UserB, UserC, emulator } from "@/config/emulator";
 import { mkLucid } from "@/lib/lucid";
+import { Label } from "@/components/ui/label";
+import { Switch } from "@/components/ui/switch";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 
 export default function WalletConnector() {
   const [walletConnection, setWalletConnection] = useWallet();
-  const { lucid, address } = walletConnection;
+  const { lucid, isEmulator } = walletConnection;
   const [wallets, setWallets] = useState<
     Record<string, { account: EmulatorAccount; connected: boolean }>
   >({
@@ -78,41 +81,57 @@ export default function WalletConnector() {
       <Button onClick={awaitlog} className="w-fit">
         Await Block
       </Button>
-      <Dialog open={isOpen} onOpenChange={setIsOpen}>
-        <DialogTrigger asChild>
+      <Popover open={isOpen} onOpenChange={setIsOpen}>
+        <PopoverTrigger asChild>
           <Button size="icon">
             <WalletIcon />
           </Button>
-        </DialogTrigger>
-        <DialogContent className="sm:max-w-[425px]">
-          <DialogHeader>
-            <DialogTitle>Connect Wallet</DialogTitle>
-            <DialogDescription>
-              Choose a wallet to connect to your account.
-            </DialogDescription>
-          </DialogHeader>
+        </PopoverTrigger>
+        <PopoverContent className="bg-popover p-4 w-[400px] mx-2 bg-opacity-60 rounded-lg backdrop-blur-[6.8px] shadow-[3px_0px_51px_-35px_rgba(0,_0,_255,_0.6)] border">
+           <h2 className="text-accent-foreground text-xl font-semibold text-center uppercase py-4">
+              Select Wallet
+            </h2>
           <div className="flex flex-col gap-4 justify-center items-center">
-            <div className="flex flex-wrap gap-4 w-56 items-center justify-center">
+             {/* Emulator Toggle  */}
+             <div className="flex items-center justify-between rounded-lg border p-2 mx-2 w-full">
+              <div className="space-y-0.5">
+                <Label className="text-base font-semibold">Emulator Mode</Label>
+                <p className="text-sm text-muted-foreground">
+                  This will use Emulator Accounts.
+                </p>
+              </div>
+              <Switch
+                id="marketing"
+                checked={isEmulator}
+                onCheckedChange={(checked) => setWalletConnection((prev) => ({
+                  ...prev, isEmulator: checked }))}
+                aria-label="Toggle marketing emails"
+              />
+            </div>
+            <div className="flex flex-wrap gap-4 w-full items-center justify-center">
               {Object.keys(wallets).map((key) => {
                 const wallet = wallets[key];
                 return (
                   <Button
                     key={key}
-                    className="capitalize"
+                    className="capitalize w-full flex justify-start"
                     variant={wallet.connected ? "default" : "outline"}
                     onClick={() => onConnectWallet(wallet.account)}
                   >
-                    {key}:{" "}
+                    <span>{key}: </span>
+<span>
+
                     {wallet.account.address.slice(0, 10) +
                       "..." +
-                      wallet.account.address.slice(-25)}
+                      wallet.account.address.slice(-24)}
+                      </span>
                   </Button>
                 );
               })}
             </div>
           </div>
-        </DialogContent>
-      </Dialog>
+        </PopoverContent>
+      </Popover>
     </div>
   );
 }
