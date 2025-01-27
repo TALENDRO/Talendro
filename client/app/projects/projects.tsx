@@ -1,6 +1,5 @@
 "use client";
 import { CreateProject } from "@/components/createProjectModal";
-import { Button } from "@/components/ui/button";
 import { PROJECTINITADDR, PROJECTINITPID } from "@/config";
 import { useWallet } from "@/context/walletContext";
 import { UTxO } from "@lucid-evolution/lucid";
@@ -17,7 +16,7 @@ export default function Page() {
       const utxos = await lucid.utxosAt(PROJECTINITADDR);
       const filteredUtxos = utxos.filter((utxo) => {
         return Object.keys(utxo.assets).some((key) =>
-          key.includes(PROJECTINITPID),
+          key.includes(PROJECTINITPID)
         );
       });
       setProjects(filteredUtxos);

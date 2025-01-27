@@ -1,17 +1,16 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
-import { Spinner } from "@heroui/spinner";
-import { Snippet } from "@heroui/snippet";
+
 import { EmulatorAccount, Lucid } from "@lucid-evolution/lucid";
 import { Skeleton } from "@heroui/skeleton";
 import { handleError } from "@/lib/utils";
 import { useWallet } from "@/context/walletContext";
-import { UserA, UserB, UserC, Admin, emulator } from "@/config/emulator";
+import { emulator } from "@/config/emulator";
 import { Button } from "../ui/button";
 
 interface props {
   setWallets: (
-    wallets: Record<string, { account: EmulatorAccount; connected: boolean }>,
+    wallets: Record<string, { account: EmulatorAccount; connected: boolean }>
   ) => void;
   wallets: Record<string, { account: EmulatorAccount; connected: boolean }>;
 }
@@ -20,25 +19,6 @@ export default function EmulatorConnector({ setWallets, wallets }: props) {
   const { lucid } = walletConnection;
 
   const isInitRef = useRef(false);
-
-  // useEffect(() => {
-  //   if (isInitRef.current) return;
-  //   isInitRef.current = true;
-  //   Lucid(emulator, "Custom")
-  //     .then((lucid) => {
-  //       setWalletConnection((prev) => ({ ...prev, lucid }));
-  //       setWallets({
-  //         Admin: { account: Admin, connected: false },
-  //         UserA: { account: UserA, connected: false },
-  //         UserB: { account: UserB, connected: false },
-  //         UserC: { account: UserC, connected: false },
-  //       });
-  //     })
-  //     .catch((error) =>
-  //       // toast error
-  //       console.log(error),
-  //     );
-  // }, []);
 
   async function onConnectWallet(account: EmulatorAccount) {
     try {
@@ -53,7 +33,7 @@ export default function EmulatorConnector({ setWallets, wallets }: props) {
           };
           return acc;
         },
-        {} as Record<string, { account: EmulatorAccount; connected: boolean }>,
+        {} as Record<string, { account: EmulatorAccount; connected: boolean }>
       );
       setWallets(updatedWallets);
       setWalletConnection((walletConnection) => {
@@ -76,25 +56,6 @@ export default function EmulatorConnector({ setWallets, wallets }: props) {
   return (
     <div className="flex flex-col gap-4 justify-center items-center">
       <div className="flex flex-wrap gap-4 w-56 items-center justify-center">
-        {/* {wallets.map((wallet, w) => {
-          return (
-            <>
-              <Skeleton
-                key={`wallet.${w}`}
-                className="rounded-full"
-                isLoaded={!!lucid}
-              >
-                <Button
-                  className="capitalize"
-                  color="primary"
-                  onClick={() => onConnectWallet(wallet[1])}
-                >
-                  {`${wallet[0]}`}
-                </Button>
-              </Skeleton>
-            </>
-          );
-        })} */}
         {Object.keys(wallets).map((key, index) => {
           const wallet = wallets[key];
           return (

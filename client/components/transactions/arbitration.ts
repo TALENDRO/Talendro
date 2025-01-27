@@ -1,7 +1,6 @@
 import {
   ARBITRATIONADDR,
   ARBITRATORPID,
-  HOLDINGADDR,
   PROJECTINITPID,
   STAKEADDRESS,
   TALENDROPID,
@@ -24,7 +23,7 @@ import { Data, fromText, UTxO } from "@lucid-evolution/lucid";
 export async function arbitration(
   walletConnection: WalletConnection,
   utxo: UTxO,
-  isDev: boolean,
+  isDev: boolean
 ) {
   const { lucid, address } = walletConnection;
   if (!lucid || !address) throw "Uninitialized Lucid!!!";
@@ -43,7 +42,7 @@ export async function arbitration(
 
     const ref_utxo = await refUtxo(lucid);
     const UTxO_Talendro = await lucid.utxoByUnit(
-      TALENDROPID + fromText(address.slice(-10)),
+      TALENDROPID + fromText(address.slice(-10))
     ); //talendroPolicyID+assetName assetname is user address
     const redeemer = Data.to("Arbitrator", ProjectRedeemer);
     console.log(TALENDROPID, PROJECTINITPID);
@@ -54,7 +53,7 @@ export async function arbitration(
       .pay.ToAddressWithData(
         ARBITRATIONADDR,
         { kind: "inline", value: Data.to(arbDatum, ArbitratorDatum) },
-        { lovelace: datum.pay as bigint, ...projecttoken },
+        { lovelace: datum.pay as bigint, ...projecttoken }
       )
       .attach.SpendingValidator(HoldingContractValidator())
       .complete();
@@ -71,7 +70,7 @@ export async function arbitration(
 export async function ArbitratorAction(
   walletConnection: WalletConnection,
   utxo: UTxO,
-  devAtFault: boolean,
+  devAtFault: boolean
 ) {
   const { lucid, address } = walletConnection;
   if (!lucid || !address) throw "Uninitialized Lucid!!!";
@@ -80,7 +79,7 @@ export async function ArbitratorAction(
     const currentDatum = Data.castFrom(data, ArbitratorDatum);
     const cltAddress = keyHashtoAddress(currentDatum.project_datum.client);
     const devAddress = keyHashtoAddress(
-      currentDatum.project_datum.developer as string,
+      currentDatum.project_datum.developer as string
     );
     let PaytoAddress = devAtFault ? cltAddress : devAddress;
     let AtFaultAddress = devAtFault ? devAddress : cltAddress;
@@ -91,7 +90,7 @@ export async function ArbitratorAction(
     const ref_utxo = await refUtxo(lucid);
     const UTxO_Arbitrator = await lucid.utxosAtWithUnit(
       address,
-      ARBITRATORPID + fromText(address.slice(-10)),
+      ARBITRATORPID + fromText(address.slice(-10))
     );
     const redeemer: ArbitratorRedeemer = { payto: devAtFault ? 0n : 1n };
     console.log(ARBITRATORPID);
@@ -100,7 +99,7 @@ export async function ArbitratorAction(
       .readFrom(ref_utxo)
       .collectFrom(
         [...UTxO_Arbitrator, utxo, stakedUtxo],
-        Data.to(redeemer, ArbitratorRedeemer),
+        Data.to(redeemer, ArbitratorRedeemer)
       )
       .pay.ToAddress(PaytoAddress, {
         lovelace: currentDatum.project_datum.pay as bigint,

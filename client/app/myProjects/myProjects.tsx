@@ -1,12 +1,6 @@
 "use client";
 import { CreateProject } from "@/components/createProjectModal";
-import { Button } from "@/components/ui/button";
-import {
-  HOLDINGADDR,
-  MILESTONEADDR,
-  PROJECTINITADDR,
-  PROJECTINITPID,
-} from "@/config";
+import { HOLDINGADDR, MILESTONEADDR, PROJECTINITADDR } from "@/config";
 import { useWallet } from "@/context/walletContext";
 import {
   Address,

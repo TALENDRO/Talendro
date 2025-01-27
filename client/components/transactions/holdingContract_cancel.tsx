@@ -1,39 +1,16 @@
 import { NETWORK } from "@/config/lucid";
 import {
-  ArbitratorTokenValidator,
-  ConfigDatumHolderValidator,
   HoldingContractValidator,
-  identificationPolicyid,
-  MilestoneMINTValidator,
-  MilestoneSpendValidator,
   ProjectInitiateValidator,
   TalendroTokenValidator,
 } from "@/config/scripts/scripts";
 import { useWallet } from "@/context/walletContext";
-import {
-  ConfigDatum,
-  ConfigDatumSchema,
-  ProjectDatum,
-  ProjectRedeemer,
-} from "@/types/cardano";
-import {
-  Data,
-  fromText,
-  MintingPolicy,
-  mintingPolicyToId,
-  paymentCredentialOf,
-  Script,
-  SpendingValidator,
-  Validator,
-  validatorToAddress,
-  validatorToScriptHash,
-} from "@lucid-evolution/lucid";
+import { ProjectDatum, ProjectRedeemer } from "@/types/cardano";
+import { Data, fromText, paymentCredentialOf } from "@lucid-evolution/lucid";
 import React from "react";
 import { Button } from "../ui/button";
 import { getAddress, getPolicyId, handleError, refUtxo } from "@/lib/utils";
-import { SystemWallet } from "@/config/systemWallet";
 import { Admin } from "@/config/emulator";
-import { before } from "node:test";
 
 export default function HoldingContractCancel() {
   const [WalletConnection] = useWallet();
@@ -44,9 +21,6 @@ export default function HoldingContractCancel() {
     const holdingContractAddress = getAddress(HoldingContractValidator);
     const policyID = getPolicyId(ProjectInitiateValidator);
     const talendroPid = getPolicyId(TalendroTokenValidator);
-
-    // should send dev_token to holding contract
-    //
 
     try {
       const datum: ProjectDatum = {
@@ -64,9 +38,9 @@ export default function HoldingContractCancel() {
 
       const ref_utxo = await refUtxo(lucid);
       const UTxO_Talendro = await lucid.utxoByUnit(
-        talendroPid + fromText(address.slice(-10)),
-      ); //talendroPolicyID+assetName assetname is user address
-      const script_UTxO = (await lucid.utxosAt(holdingContractAddress))[0]; // accept utxo as parameter
+        talendroPid + fromText(address.slice(-10))
+      ); 
+      const script_UTxO = (await lucid.utxosAt(holdingContractAddress))[0]; 
       const redeemer = Data.to("Cancel", ProjectRedeemer);
       console.log("before tx");
       const tx = await lucid
@@ -76,12 +50,11 @@ export default function HoldingContractCancel() {
         .pay.ToAddressWithData(
           holdingContractAddress,
           { kind: "inline", value: Data.to(datum, ProjectDatum) },
-          { lovelace: 5_000_000n as bigint, ...dev_token },
+          { lovelace: 5_000_000n as bigint, ...dev_token }
         )
         .attach.SpendingValidator(HoldingContractValidator())
         .complete();
 
-      // const txSystemSigned = await SystemWallet(tx)
       const signed = await tx.sign.withWallet().complete();
       const txHash = await signed.submit();
       console.log("txHash: ", txHash);
@@ -97,8 +70,7 @@ export default function HoldingContractCancel() {
     const talendroPid = getPolicyId(TalendroTokenValidator);
     const mintingValidator = ProjectInitiateValidator();
 
-    // must burn dev & clt
-    // must pay to dev
+
 
     try {
       const datum: ProjectDatum = {
@@ -117,11 +89,9 @@ export default function HoldingContractCancel() {
       const clt_token = { [policyID + clt_assetname]: -1n };
 
       const ref_utxo = await refUtxo(lucid);
-      // const UTxO_Talendro = await lucid.utxoByUnit(
-      //   talendroPid + fromText(address.slice(-10)),
-      // ); //talendroPolicyID+assetName assetname is user address
+
       const UTxO_Talendro = await lucid.utxosAt(address);
-      const script_UTxO = await lucid.utxosAt(holdingContractAddress); // accept utxo as parameter
+      const script_UTxO = await lucid.utxosAt(holdingContractAddress); 
       console.log(script_UTxO);
       const redeemer = Data.to("Cancel", ProjectRedeemer);
       const minterRedeemer = Data.to(1n);
@@ -131,8 +101,8 @@ export default function HoldingContractCancel() {
         .collectFrom(script_UTxO, redeemer)
         .collectFrom(UTxO_Talendro)
         .pay.ToAddress(
-          Admin.address, //pay back to client
-          { lovelace: datum.pay as bigint },
+          Admin.address, 
+          { lovelace: datum.pay as bigint }
         )
         .mintAssets({ ...clt_token, ...dev_token }, minterRedeemer)
         .attach.MintingPolicy(mintingValidator)
