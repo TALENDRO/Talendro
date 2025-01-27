@@ -17,7 +17,6 @@ import { siteConfig } from "@/config/site";
 import { GithubIcon, Logo, TalendroLogo } from "@/components/icons";
 import { useState } from "react";
 import { ThemeSwitch } from "./theme-switch";
-import WalletConnector from "./walletConnector/client";
 import EmulatorWallet from "./walletConnector/tmp/emulatorClient";
 
 export const Navbar = () => {
@@ -49,7 +48,7 @@ export const Navbar = () => {
               <NextLink
                 className={clsx(
                   linkStyles({ color: "foreground" }),
-                  "data-[active=true]:text-primary data-[active=true]:font-medium",
+                  "data-[active=true]:text-primary data-[active=true]:font-medium"
                 )}
                 color="foreground"
                 href={item.href}
@@ -95,7 +94,7 @@ export const Navbar = () => {
             <NextLink
               className={clsx(
                 linkStyles({ color: "foreground" }),
-                "data-[active=true]:text-primary data-[active=true]:font-medium",
+                "data-[active=true]:text-primary data-[active=true]:font-medium"
               )}
               color="foreground"
               href={item.href}

@@ -5,7 +5,6 @@ import {
 } from "@/config/scripts/scripts";
 import { useWallet } from "@/context/walletContext";
 import {
-  Constr,
   Data,
   fromText,
   mintingPolicyToId,
@@ -31,7 +30,7 @@ export default function ArbitratorTokenMinter() {
     };
     const utxoWithIdentificationToken = await lucid.utxosAtWithUnit(
       SYSTEMADDRESS,
-      identificationPolicyid + fromText("usr_configNFT"),
+      identificationPolicyid + fromText("usr_configNFT")
     );
 
     const mintingValidator: Validator = ArbitratorTokenValidator();
@@ -62,7 +61,7 @@ export default function ArbitratorTokenMinter() {
       console.log(utxos);
       const filteredUtxos = utxos.filter((utxo) => {
         return Object.keys(utxo.assets).some((key) =>
-          key.includes(PROJECTINITPID),
+          key.includes(PROJECTINITPID)
         );
       });
       setProjects(filteredUtxos);

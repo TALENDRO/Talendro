@@ -3,7 +3,6 @@ import { Button } from "@/components/ui/button";
 import {
   HOLDINGADDR,
   MILESTONEADDR,
-  PROJECTINITADDR,
   PROJECTINITPID,
   TALENDROPID,
 } from "@/config";
@@ -13,18 +12,14 @@ import { refUtxo, toAda } from "@/lib/utils";
 import { ProjectDatum } from "@/types/cardano";
 import {
   Data,
-  fromHex,
   fromText,
   LucidEvolution,
   paymentCredentialOf,
   toText,
   UTxO,
 } from "@lucid-evolution/lucid";
-import React, { use, useEffect, useState } from "react";
-import {
-  AlreadyComplete,
-  ProjectComplete,
-} from "./transactions/ProjectComplete";
+import React, { useEffect, useState } from "react";
+import { ProjectComplete } from "./transactions/ProjectComplete";
 import { arbitration } from "./transactions/arbitration";
 
 interface Props {
@@ -77,7 +72,7 @@ export default function ProjectItem({ project, from }: Props) {
       const ref_utxo = await refUtxo(lucid);
       const UTxO_Talendro = await lucid.utxoByUnit(
         TALENDROPID + fromText(address.slice(-10))
-      ); //talendroPolicyID+assetName assetname is user address
+      );
       const redeemer = Data.to(1n);
 
       const contractAddress = datum.pay ? HOLDINGADDR : MILESTONEADDR;
@@ -85,7 +80,7 @@ export default function ProjectItem({ project, from }: Props) {
         .newTx()
         .readFrom(ref_utxo)
         .collectFrom([UTxO_Talendro, project], redeemer)
-        // .collectFrom([script_UTxO], redeemer)
+
         .pay.ToAddress(address, dev_token)
         .pay.ToAddressWithData(
           contractAddress,
@@ -108,7 +103,6 @@ export default function ProjectItem({ project, from }: Props) {
   async function projectCompleteClick() {
     console.log("ssss");
     if (!lucid || !address || !datum) throw "Uninitialized Lucid!!!";
-    // console.log("ssss2", lucid, address, datum)
     const calledByDev = from.includes("dev");
     await ProjectComplete(lucid, project, datum, calledByDev, address);
   }
@@ -193,8 +187,3 @@ function CancelProject(
 ) {
   throw new Error("Function not implemented.");
 }
-// {isComplete ? (
-//     <button disabled>Complete</button> // If true
-//   ) : (
-//     <button onClick={() => console.log("Clicked!")}>Complete</button> // If false
-//   )}

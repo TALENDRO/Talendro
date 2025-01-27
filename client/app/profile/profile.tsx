@@ -8,7 +8,6 @@ import {
   Validator,
 } from "@lucid-evolution/lucid";
 import React from "react";
-// import { Button } from "../ui/button";
 import { refUtxo } from "@/lib/utils";
 import { SystemWallet } from "@/config/systemWallet";
 import {
@@ -30,18 +29,10 @@ export default function TalendroTokenMinter() {
     const usr_configNFT = {
       [IDENTIFICATIONPID + fromText("usr_configNFT")]: 1n,
     };
-    // const utxos = await lucid.utxosAt(address);
     const utxoWithIdentificationToken = await lucid.utxosAtWithUnit(
       SYSTEMADDRESS,
-      IDENTIFICATIONPID + fromText("usr_configNFT"),
+      IDENTIFICATIONPID + fromText("usr_configNFT")
     );
-    //     utxos.filter((utxo) => {
-    //     const assets = utxo.assets;
-
-    //     return Object.keys(ref_configNFT).some((key) =>
-    //         assets[key] === ref_configNFT[key]
-    //     );
-    // });
 
     const mintingValidator: Validator = TalendroTokenValidator();
     const policyID = TALENDROPID;
@@ -60,10 +51,10 @@ export default function TalendroTokenMinter() {
           kind: "inline",
           value: Data.to(
             { staked_by: paymentCredentialOf(address).hash },
-            StakeDatum,
+            StakeDatum
           ),
         },
-        { lovelace: 100_000_000n },
+        { lovelace: 100_000_000n }
       )
       .mintAssets(mintedAssets, redeemer)
       .attach.MintingPolicy(mintingValidator)
