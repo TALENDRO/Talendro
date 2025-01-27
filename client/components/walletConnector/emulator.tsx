@@ -1,58 +1,51 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
-import { Spinner } from "@nextui-org/spinner";
-import { Snippet } from "@nextui-org/snippet";
+
 import { EmulatorAccount, Lucid } from "@lucid-evolution/lucid";
-import { Skeleton } from "@nextui-org/skeleton";
-import { handleError } from "@/libs/utils";
-import { useWallet } from "@/contexts/walletContext";
-import {
-  accountA,
-  accountB,
-  accountC,
-  accountD,
-  emulator,
-} from "@/config/emulator";
+import { Skeleton } from "@heroui/skeleton";
+import { handleError } from "@/lib/utils";
+import { useWallet } from "@/context/walletContext";
+import { emulator } from "@/config/emulator";
 import { Button } from "../ui/button";
 
-export default function EmulatorConnectors() {
+interface props {
+  setWallets: (
+    wallets: Record<string, { account: EmulatorAccount; connected: boolean }>
+  ) => void;
+  wallets: Record<string, { account: EmulatorAccount; connected: boolean }>;
+}
+export default function EmulatorConnector({ setWallets, wallets }: props) {
   const [walletConnection, setWalletConnection] = useWallet();
   const { lucid } = walletConnection;
 
-  const [wallets, setWallets] = useState<EmulatorAccount[]>();
   const isInitRef = useRef(false);
-
-  useEffect(() => {
-    if (isInitRef.current) return;
-    isInitRef.current = true;
-    Lucid(emulator, "Custom")
-      .then((lucid) => {
-        setWalletConnection((prev) => ({ ...prev, lucid }));
-        setWallets([accountA, accountB, accountC, accountD]);
-      })
-      .catch((error) =>
-        // toast error
-        console.log(error),
-      );
-  }, []);
 
   async function onConnectWallet(account: EmulatorAccount) {
     try {
       if (!lucid) throw "Uninitialized Lucid!!!";
       lucid.selectWallet.fromSeed(account.seedPhrase);
       const address = await lucid.wallet().address();
-
+      const updatedWallets = Object.keys(wallets).reduce(
+        (acc, key) => {
+          acc[key] = {
+            ...wallets[key],
+            connected: wallets[key].account.seedPhrase === account.seedPhrase,
+          };
+          return acc;
+        },
+        {} as Record<string, { account: EmulatorAccount; connected: boolean }>
+      );
+      setWallets(updatedWallets);
       setWalletConnection((walletConnection) => {
         return { ...walletConnection, address };
       });
-      console.log("connected emulator wallet");
+      console.log("connected emulator wallet\n", address);
     } catch (error) {
       handleError(error);
     }
   }
 
   async function emulatorlog() {
-    await awaitlog();
     emulator.log();
   }
   async function awaitlog() {
@@ -60,44 +53,34 @@ export default function EmulatorConnectors() {
     console.log("block Height +1: ", emulator.blockHeight);
   }
 
-  if (!wallets)
-    return (
-      <Snippet hideCopyButton hideSymbol variant="bordered">
-        <Spinner label="Browsing Cardano Wallets" />
-      </Snippet>
-    );
-
-  if (!wallets.length)
-    return (
-      <Snippet hideCopyButton hideSymbol variant="bordered">
-        <p className="uppercase">No Cardano Wallet</p>
-      </Snippet>
-    );
-
   return (
-    <div className="flex flex-col gap-4 w-full items-center">
-      {wallets.map((wallet, w) => {
-        return (
-          <>
-            <Skeleton
-              key={`wallet.${w}`}
-              className="rounded-full"
-              isLoaded={!!lucid}
-            >
-              <Button
-                className="capitalize"
-                color="primary"
-                onClick={() => onConnectWallet(wallet)}
+    <div className="flex flex-col gap-4 justify-center items-center">
+      <div className="flex flex-wrap gap-4 w-56 items-center justify-center">
+        {Object.keys(wallets).map((key, index) => {
+          const wallet = wallets[key];
+          return (
+            <>
+              <Skeleton
+                key={`wallet.${index}`}
+                className="rounded-full"
+                isLoaded={!!lucid}
               >
-                {`${wallet.address.slice(0, 30)}...${wallet.address.slice(-5)}`}
-              </Button>
-            </Skeleton>
-          </>
-        );
-      })}
+                <Button
+                  className="capitalize"
+                  color="primary"
+                  variant={wallet.connected ? "default" : "outline"}
+                  onClick={() => onConnectWallet(wallet.account)}
+                >
+                  {key}
+                </Button>
+              </Skeleton>
+            </>
+          );
+        })}
+      </div>
       <div className="flex gap-4 ">
         <Button onClick={emulatorlog} className="w-fit">
-          Emulator Log
+          Log
         </Button>
         <Button onClick={awaitlog} className="w-fit">
           Await Block

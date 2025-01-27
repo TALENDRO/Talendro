@@ -7,20 +7,19 @@ import {
   NavbarBrand,
   NavbarItem,
   NavbarMenuItem,
-} from "@nextui-org/navbar";
-import { link as linkStyles } from "@nextui-org/theme";
-import { Link } from "@nextui-org/link";
+} from "@heroui/navbar";
+import { link as linkStyles } from "@heroui/theme";
+import { Link } from "@heroui/link";
 import NextLink from "next/link";
 import clsx from "clsx";
 
 import { siteConfig } from "@/config/site";
 import { GithubIcon, Logo, TalendroLogo } from "@/components/icons";
 import { useState } from "react";
-// import WalletClient from "./WalletConnector/WalletClient";
 import { ThemeSwitch } from "./theme-switch";
+import EmulatorWallet from "./walletConnector/tmp/emulatorClient";
 
 export const Navbar = () => {
-  // const { onConnectWallet, resetLucid, balance } = props;
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   return (
@@ -49,7 +48,7 @@ export const Navbar = () => {
               <NextLink
                 className={clsx(
                   linkStyles({ color: "foreground" }),
-                  "data-[active=true]:text-primary data-[active=true]:font-medium",
+                  "data-[active=true]:text-primary data-[active=true]:font-medium"
                 )}
                 color="foreground"
                 href={item.href}
@@ -68,22 +67,24 @@ export const Navbar = () => {
           <ThemeSwitch />
         </NavbarItem>
 
-        <NavbarItem className="hidden md:flex">
-          {/* <WalletConnectors /> */}
-          {/* <WalletClient /> */}
+        <NavbarItem className="hidden md:block">
+          {/* <WalletConnector /> */}
+          <EmulatorWallet />
         </NavbarItem>
       </NavbarContent>
 
-      <NavbarContent justify="end" className="sm:hidden">
+      <NavbarContent justify="end" className="md:hidden">
         <NavbarItem className="flex gap-2">
           <Link isExternal aria-label="Github" href={siteConfig.links.github}>
             <GithubIcon className="text-default-500" />
           </Link>
           <ThemeSwitch />
+          {/* <WalletConnector /> */}
+          <EmulatorWallet />
         </NavbarItem>
         <NavbarMenuToggle
           aria-label={isMenuOpen ? "Close menu" : "Open menu"}
-          className="sm:hidden justify-end"
+          className="md:hidden justify-end"
         />
       </NavbarContent>
       {/* mobile menu open */}
@@ -93,7 +94,7 @@ export const Navbar = () => {
             <NextLink
               className={clsx(
                 linkStyles({ color: "foreground" }),
-                "data-[active=true]:text-primary data-[active=true]:font-medium",
+                "data-[active=true]:text-primary data-[active=true]:font-medium"
               )}
               color="foreground"
               href={item.href}

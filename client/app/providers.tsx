@@ -1,12 +1,12 @@
 "use client";
 
 import * as React from "react";
-import { NextUIProvider } from "@nextui-org/system";
+import { HeroUIProvider } from "@heroui/system";
 import { useRouter } from "next/navigation";
 import { ThemeProvider as NextThemesProvider } from "next-themes";
 import { ThemeProviderProps } from "next-themes";
 
-import WalletProvider from "@/contexts/walletProvider";
+import WalletProvider from "@/context/walletProvider";
 
 export interface ProvidersProps {
   children: React.ReactNode;
@@ -18,12 +18,12 @@ export function Providers({ children, themeProps }: ProvidersProps) {
   const Children = () => <>{children}</>;
 
   return (
-    <NextUIProvider navigate={router.push}>
+    <HeroUIProvider navigate={router.push}>
       <NextThemesProvider {...themeProps}>
         <WalletProvider>
           <Children />
         </WalletProvider>
       </NextThemesProvider>
-    </NextUIProvider>
+    </HeroUIProvider>
   );
 }

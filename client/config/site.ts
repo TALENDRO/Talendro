@@ -1,62 +1,59 @@
 export type SiteConfig = typeof siteConfig;
 
 export const siteConfig = {
-  name: "Next.js + NextUI",
-  description: "Make beautiful websites regardless of your design experience.",
+  name: "Talendro",
+  description:
+    "Empowering your search for trusted talent—Talendro connects you with skilled professionals you can rely on.",
   navItems: [
     {
       label: "Home",
       href: "/",
     },
     {
-      label: "Docs",
-      href: "/docs",
-    },
-    {
-      label: "Pricing",
-      href: "/pricing",
-    },
-    {
-      label: "Blog",
-      href: "/blog",
-    },
-    {
-      label: "About",
-      href: "/about",
-    },
-  ],
-  navMenuItems: [
-    {
-      label: "Profile",
-      href: "/profile",
-    },
-    {
-      label: "Dashboard",
-      href: "/dashboard",
+      label: "Admin",
+      href: "/admin",
     },
     {
       label: "Projects",
       href: "/projects",
     },
     {
-      label: "Team",
-      href: "/team",
+      label: "Myprojects",
+      href: "/myprojects",
     },
     {
-      label: "Calendar",
-      href: "/calendar",
+      label: "Profile",
+      href: "/profile",
     },
     {
-      label: "Settings",
-      href: "/settings",
+      label: "Arbitrator",
+      href: "/arbitrator",
+    },
+  ],
+  navMenuItems: [
+    {
+      label: "Home",
+      href: "/",
     },
     {
-      label: "Help & Feedback",
-      href: "/help-feedback",
+      label: "Admin",
+      href: "/admin",
     },
     {
-      label: "Logout",
-      href: "/logout",
+      label: "Projects",
+      href: "/projects",
+    },
+    {
+      label: "Myprojects",
+      href: "/myprojects",
+    },
+    {
+      label: "Profile",
+      href: "/profile",
+    },
+    {
+      label: "Arbitrator",
+      href: "/arbitrator",
     },
   ],
   links: {

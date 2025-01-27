@@ -2,12 +2,12 @@ use aiken/collection/dict
 use aiken/collection/list
 use aiken/crypto.{VerificationKeyHash}
 use aiken/primitive/bytearray
-use cardano/address.{Address, Script, VerificationKey, from_verification_key}
+use cardano/address.{Address, Script, VerificationKey}
 use cardano/assets.{AssetName, Lovelace, PolicyId, Value}
 use cardano/transaction.{InlineDatum,
   Input, Output, OutputReference, find_input}
 use datum_file as d
-use types.{ConfigDatum, Milestone, ProjectDatum}
+use types.{ConfigDatum, Milestone, ProjectDatum, StakeDatum}
 
 pub fn must_consume_oref(inputs: List<Input>, oref: OutputReference) -> Bool {
   expect Some(_) = find_input(inputs, oref)
@@ -42,7 +42,7 @@ pub fn get_config_datum(
       inputs,
       fn(input) { list.has(input.output.value |> assets.policies, config_nft) },
     )
-  d.input_to_config_datum(ref_input)
+  d.output_to_config_datum(ref_input.output)
 }
 
 pub fn find_input_with_policy(inputs: List<Input>, nft: PolicyId) -> Bool {
@@ -64,12 +64,35 @@ pub fn find_ref_input_with_config_nft(
   ref_input
 }
 
+pub fn find_stake_input_by_address(
+  inputs: List<Input>,
+  address: VerificationKeyHash,
+) {
+  list.any(
+    inputs,
+    fn(input) {
+      when input.output.address.payment_credential is {
+        VerificationKey(vkh) -> vkh == address
+        _ -> False
+      }
+    },
+  )
+}
+
 pub fn find_output_with_address(
   outputs: List<Output>,
-  address: Address,
+  address: VerificationKeyHash,
 ) -> Output {
   expect Some(some_utxo) =
-    list.find(outputs, fn(output) { output.address == address })
+    list.find(
+      outputs,
+      fn(output) {
+        when output.address.payment_credential is {
+          VerificationKey(vkh) -> vkh == address
+          Script(vkh) -> vkh == address
+        }
+      },
+    )
   some_utxo
 }
 
@@ -93,10 +116,11 @@ pub fn must_be_signed_by(
   signatories: List<VerificationKeyHash>,
   signer: VerificationKeyHash,
 ) -> Bool {
-  list.has(signatories, signer)
+  list.has(signatories, signer)?
 }
 
 pub fn must_have_x_token(inputs: List<Input>, policy_id: PolicyId) -> Bool {
+  trace @"policyID": policy_id
   let input <- list.any(inputs)
   list.has(input.output.value |> assets.policies, policy_id)?
 }
@@ -134,26 +158,26 @@ pub fn find_output_with_datum(
           InlineDatum(datum_data) -> {
             expect output_datum: ProjectDatum = datum_data
             and {
-              output_datum.title == datum.title,
-              output_datum.pay == datum.pay,
-              output_datum.client == datum.client,
+              (output_datum.title == datum.title)?,
+              (output_datum.pay == datum.pay)?,
+              (output_datum.client == datum.client)?,
               if output_datum.developer == datum.developer {
                 and {
-                  output_datum.milestones != datum.milestones,
-                  output_datum.current_milestone != datum.current_milestone,
-                  output_datum.next_milestone == datum.next_milestone,
+                  (output_datum.milestones != datum.milestones)?,
+                  (output_datum.current_milestone != datum.current_milestone)?,
+                  (output_datum.next_milestone == datum.next_milestone)?,
                 }
               } else {
                 and {
-                  output_datum.milestones == datum.milestones,
-                  output_datum.current_milestone == datum.current_milestone,
-                  output_datum.next_milestone == datum.next_milestone,
+                  (output_datum.milestones == datum.milestones)?,
+                  (output_datum.current_milestone == datum.current_milestone)?,
+                  (output_datum.next_milestone == datum.next_milestone)?,
                 }
               },
             }
           }
 
-          _ -> True
+          _ -> False
         }
       },
     )
@@ -170,8 +194,6 @@ pub fn must_send_to_correct_script(
         (ada <= assets.lovelace_of(output.value))?,
         // when output.address.payment_credential is {
         // Script(vkh) -> 
-        trace @"vkh": vkh
-        trace @"holdingcontract": config_datum.holding_contract
         (vkh == config_datum.holding_contract)?,
       }
     // _ -> False
@@ -184,9 +206,20 @@ pub fn must_send_to_correct_script(
   }
 }
 
-pub fn find_input_with_address(inputs: List<Input>, address: Address) -> Input {
+pub fn find_input_with_address(
+  inputs: List<Input>,
+  address: VerificationKeyHash,
+) -> Input {
   expect Some(some_utxo) =
-    list.find(inputs, fn(input) { input.output.address == address })
+    list.find(
+      inputs,
+      fn(input) {
+        when input.output.address.payment_credential is {
+          VerificationKey(vkh) -> vkh == address
+          _ -> False
+        }
+      },
+    )
   some_utxo
 }
 
@@ -382,21 +415,19 @@ pub fn output_must_have_dev_token(
 
 pub fn must_pay_to_developer(output: List<Output>, datum: ProjectDatum) -> Bool {
   expect Some(dev_address) = datum.developer
-  let developer_output =
-    find_output_with_address(output, from_verification_key(dev_address))
+  let developer_output = find_output_with_address(output, dev_address)
   must_pay_to_x(developer_output, datum.pay)
 }
 
 pub fn must_pay_to_client(output: List<Output>, datum: ProjectDatum) -> Bool {
-  let client_output =
-    find_output_with_address(output, from_verification_key(datum.client))
-  must_pay_to_x(client_output, datum.pay)
+  let client_output = find_output_with_address(output, datum.client)
+  must_pay_to_x(client_output, datum.pay)?
 }
 
 pub fn must_pay_to_x(output: Output, pay: Option<Lovelace>) {
   when pay is {
     Some(ada) -> ada <= assets.lovelace_of(output.value)
-    _ -> False
+    _ -> True
   }
 }
 
@@ -408,4 +439,29 @@ pub fn output_must_have_prj_token(
   expect [Pair(assetname, 1)] =
     assets.tokens(output.value, policy_id) |> dict.to_pairs()
   bytearray.drop(assetname, 4) == datum.title
+}
+
+pub fn must_send_stake_ada(
+  outputs: List<Output>,
+  stake_vkh: VerificationKeyHash,
+  amount: Int,
+) {
+  list.any(
+    outputs,
+    fn(output) {
+      when output.address.payment_credential is {
+        VerificationKey(vkh) -> and {
+            vkh == stake_vkh,
+            assets.lovelace_of(output.value) == amount,
+            must_send_stake_datum(output),
+          }
+        _ -> False
+      }
+    },
+  )
+}
+
+fn must_send_stake_datum(output: Output) {
+  expect _: StakeDatum = d.output_to_stake_datum(output)
+  True
 }

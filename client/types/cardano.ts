@@ -26,6 +26,8 @@ export const ConfigDatumSchema = Data.Object({
   arbitrator_nft: Data.Bytes(), //PolicyId,
   arbitrator_contract: Data.Bytes(),
   talendrouser_nft: Data.Bytes(), //PolicyId,
+  stake_vkh: Data.Bytes(),
+  stake_amount: Data.Integer(),
 });
 export type ConfigDatum = Data.Static<typeof ConfigDatumSchema>;
 export const ConfigDatum = ConfigDatumSchema as unknown as ConfigDatum;
@@ -57,13 +59,59 @@ export const ArbitratorDatumSchema = Data.Object({
 export type ArbitratorDatum = Data.Static<typeof ArbitratorDatumSchema>;
 export const ArbitratorDatum =
   ArbitratorDatumSchema as unknown as ArbitratorDatum;
+
+export const StakeDatumSchema = Data.Object({
+  staked_by: Data.Bytes(),
+});
+export type StakeDatum = Data.Static<typeof StakeDatumSchema>;
+export const StakeDatum = StakeDatumSchema as unknown as StakeDatum;
 //#endregion
 
 //#region Redeemer
-export const ProjectRedeemer = {
-  Create: Data.to(new Constr(0, [])),
-  Complete: Data.to(new Constr(1, [])),
-  Cancel: Data.to(new Constr(2, [])),
-  Arbitrator: Data.to(new Constr(3, [])),
+
+export type ProjectRedeemerAction =
+  | "Create"
+  | "Complete"
+  | "Cancel"
+  | "Arbitrator";
+export const ProjectRedeemerAction = {
+  Create: {
+    Title: "Create",
+    Schema: Data.Literal("Create"),
+    Constr: new Constr(0, []),
+  },
+  Complete: {
+    Title: "Complete",
+    Schema: Data.Literal("Complete"),
+    Constr: new Constr(1, []),
+  },
+  Cancel: {
+    Title: "Cancel",
+    Schema: Data.Literal("Cancel"),
+    Constr: new Constr(2, []),
+  },
+  Arbitrator: {
+    Title: "Arbitrator",
+    Schema: Data.Literal("Arbitrator"),
+    Constr: new Constr(3, []),
+  },
 };
+export const ProjectRedeemerSchema = Data.Enum([
+  ProjectRedeemerAction.Create.Schema,
+  ProjectRedeemerAction.Complete.Schema,
+  ProjectRedeemerAction.Cancel.Schema,
+  ProjectRedeemerAction.Arbitrator.Schema,
+]);
+
+export type ProjectRedeemer = Data.Static<typeof ProjectRedeemerSchema>;
+export const ProjectRedeemer =
+  ProjectRedeemerSchema as unknown as ProjectRedeemer;
+
+export const ArbitratorRedeemerSchema = Data.Object({
+  payto: Data.Integer(),
+});
+export type ArbitratorRedeemer = Data.Static<typeof ArbitratorRedeemerSchema>;
+export const ArbitratorRedeemer =
+  ArbitratorRedeemerSchema as unknown as ArbitratorRedeemer;
+
 //#endregion

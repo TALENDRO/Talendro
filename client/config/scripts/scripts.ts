@@ -13,6 +13,7 @@ import {
   holding_contract_project_complete_spend,
   milestone_contract_milestone_contract_mint_mint,
   milestone_contract_milestone_contract_spend_spend,
+  arbitration_contract_arbitration_spend,
 } from "./plutus";
 
 export const identificationPolicyid = process.env
@@ -30,7 +31,7 @@ export function IdentificationNFT_MintValidator(params: any[]): Validator {
 }
 
 // --------------------------------------------------------------
-const configDatumHolderScript = applyDoubleCborEncoding(
+export const configDatumHolderScript = applyDoubleCborEncoding(
   config_datum_holder_config_datum_holder_spend,
 );
 export function ConfigDatumHolderValidator(): Validator {
@@ -117,6 +118,21 @@ export function HoldingContractValidator(): Validator {
   return {
     type: "PlutusV3",
     script: applyParamsToScript(holding_contract_pr_complt_spend, [
+      identificationPolicyid,
+    ]),
+  };
+}
+
+//---------------------------------------------------------
+
+const arbitration_contract_arbitration_script = applyDoubleCborEncoding(
+  arbitration_contract_arbitration_spend,
+);
+
+export function ArbitrationContractValidator(): Validator {
+  return {
+    type: "PlutusV3",
+    script: applyParamsToScript(arbitration_contract_arbitration_script, [
       identificationPolicyid,
     ]),
   };

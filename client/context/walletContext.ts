@@ -16,6 +16,7 @@ export type WalletConnection = {
   pkh?: PaymentKeyHash;
   stakeAddress?: RewardAddress;
   skh?: StakeKeyHash;
+  balance?: number;
 };
 
 export const WalletContext = createContext<

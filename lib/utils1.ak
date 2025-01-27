@@ -1,7 +1,7 @@
 ////-------------------XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX-------------------------
 
 use aiken/primitive/bytearray
-use cardano/address.{Address, Script, from_verification_key}
+use cardano/address.{from_verification_key}
 use cardano/assets.{PolicyId}
 use cardano/transaction.{Input, Output, OutputReference, Transaction}
 use datum_file as d
@@ -36,7 +36,7 @@ pub fn milestone_mint_create(
   let milestone_input: Input =
     utils.find_input_with_address(
       tx.inputs,
-      from_verification_key(config_datum.milestone_contract_address),
+      config_datum.milestone_contract_address,
     )
 
   let milestone_datum: ProjectDatum = d.input_to_project_datum(milestone_input)
@@ -48,10 +48,7 @@ pub fn milestone_mint_create(
     d.output_to_project_datum(holding_contract_utxo)
   expect Some(dev_address) = milestone_datum.developer
   let dev_output: Output =
-    utils.find_output_with_address(
-      tx.outputs,
-      from_verification_key(dev_address),
-    )
+    utils.find_output_with_address(tx.outputs, dev_address)
   and {
     utils.output_must_have_dev_or_clt_tokens(
       dev_output,
@@ -81,17 +78,11 @@ pub fn milestone_mint_compelete(
   policy_id: PolicyId,
 ) {
   let input_project_datum: ProjectDatum =
-    utils.find_input_with_address(
-      tx.inputs,
-      from_verification_key(config_datum.holding_contract),
-    )
+    utils.find_input_with_address(tx.inputs, config_datum.holding_contract)
       |> d.input_to_project_datum
 
   let holding_contract_output =
-    utils.find_output_with_address(
-      tx.outputs,
-      from_verification_key(config_datum.holding_contract),
-    )
+    utils.find_output_with_address(tx.outputs, config_datum.holding_contract)
   let output_project_datum: ProjectDatum =
     d.output_to_project_datum(holding_contract_output)
   and {
@@ -114,10 +105,7 @@ pub fn milestone_mint_cancel(
   policy_id: PolicyId,
 ) {
   let holding_contract_input: Input =
-    utils.find_input_with_address(
-      tx.inputs,
-      from_verification_key(config_datum.holding_contract),
-    )
+    utils.find_input_with_address(tx.inputs, config_datum.holding_contract)
   let holding_contract_datum: ProjectDatum =
     d.input_to_project_datum(holding_contract_input)
   and {
@@ -141,7 +129,7 @@ pub fn spend_milestone(
 ) {
   expect Some(datum) = datum
   let config_datum: ConfigDatum = utils.get_config_datum(tx.inputs, config_nft)
-  expect project_init_policyid = config_datum.projectinit_contract
+  let project_init_policyid = config_datum.projectinit_contract
 
   // expect Script(project_init_policyid) = 
   // config_datum.projectinit_contract.payment_credential
@@ -172,7 +160,7 @@ pub fn milestone_spend_cancel(
 ) {
   when datum.developer is {
     Some(_) -> {
-      expect script_hash = config_datum.milestone_contract_address
+      let script_hash = config_datum.milestone_contract_address
       // expect Script(script_hash) =
       //   config_datum.milestone_contract_address.payment_credential
       expect [script_utxo] =

@@ -1,5 +1,5 @@
 use aiken/collection/dict
-use cardano/address.{Script, from_verification_key}
+use cardano/address.{Script}
 use cardano/assets.{PolicyId}
 use cardano/transaction.{
   Output, OutputReference, Transaction, find_input, find_script_outputs,
@@ -33,11 +33,11 @@ validator project_complete(config_nft: PolicyId) {
       assets.tokens(script_input.output.value, project_init_policyid)
     // dict<assetname, qty>
     when redeemer is {
-      Complete -> {
-        expect [script_output] = find_script_outputs(outputs, script_hash)
-
+      Complete ->
         when dict.is_empty(dev_token) is {
-          True -> and {
+          True -> {
+            expect [script_output] = find_script_outputs(outputs, script_hash)
+            and {
               utils.output_must_have_dev_token(
                 script_output,
                 project_init_policyid,
@@ -48,6 +48,7 @@ validator project_complete(config_nft: PolicyId) {
                 script_output.value,
               ),
             }
+          }
           False -> and {
               // DONE = should burn dev_ & clt_
               utils.must_burn_dev_clt_token(mint, project_init_policyid),
@@ -55,16 +56,15 @@ validator project_complete(config_nft: PolicyId) {
               utils.must_pay_to_developer(outputs, datum),
             }
         }
-      }
 
       // DEVELOEPR = must send dev_ -> holding_script
       // proectdatum.deveolper & pay ==NONE
       // output should have dev_ token and assets.value(input.valiue)==assets.value(input.output.valiue) 
-      Cancel -> {
-        expect [script_output] = find_script_outputs(outputs, script_hash)
+      Cancel ->
         when dict.is_empty(dev_token) is {
           // Developer
           True -> {
+            expect [script_output] = find_script_outputs(outputs, script_hash)
             let project_script_datum = d.output_to_project_datum(script_output)
             and {
               utils.output_must_have_dev_token(
@@ -83,11 +83,10 @@ validator project_complete(config_nft: PolicyId) {
           // CLIENT =  should burn dev_ & clt_
           //    ada goes to datum.client
           False -> and {
-              utils.must_burn_dev_clt_token(mint, project_init_policyid),
-              utils.must_pay_to_client(outputs, datum),
+              utils.must_burn_dev_clt_token(mint, project_init_policyid)?,
+              utils.must_pay_to_client(outputs, datum)?,
             }
         }
-      }
 
       // DEVELOEPR
       //  DONE = must send dev_ -> aribration contract
@@ -103,7 +102,7 @@ validator project_complete(config_nft: PolicyId) {
         let arbitrator_output: Output =
           utils.find_output_with_address(
             outputs,
-            from_verification_key(config_datum.arbitrator_contract),
+            config_datum.arbitrator_contract,
           )
         let arbitration_datum = d.output_to_arbitration_datum(arbitrator_output)
         and {
@@ -111,11 +110,11 @@ validator project_complete(config_nft: PolicyId) {
             arbitrator_output,
             project_init_policyid,
             datum,
-          ),
-          arbitration_datum.project_datum == datum,
-          assets.lovelace_of(arbitrator_output.value) >= assets.lovelace_of(
+          )?,
+          (arbitration_datum.project_datum == datum)?,
+          (assets.lovelace_of(arbitrator_output.value) >= assets.lovelace_of(
             script_input.output.value,
-          ),
+          ))?,
         }
       }
       _ -> False

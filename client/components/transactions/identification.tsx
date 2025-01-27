@@ -1,6 +1,6 @@
 "use client";
 import { IdentificationNFT_MintValidator } from "@/config/scripts/scripts";
-import { useWallet } from "@/contexts/walletContext";
+import { useWallet } from "@/context/walletContext";
 import {
   Constr,
   Data,
@@ -11,7 +11,7 @@ import {
 } from "@lucid-evolution/lucid";
 import React from "react";
 import { Button } from "../ui/button";
-import { handleError } from "@/libs/utils";
+import { handleError } from "@/lib/utils";
 import { SYSTEMADDRESS } from "@/config";
 
 export default function Identification() {
@@ -19,7 +19,8 @@ export default function Identification() {
 
   const { lucid, address } = WalletConnection;
   async function mint() {
-    if (!lucid || !address) throw "Uninitialized Lucid!!!";
+    if (!lucid) throw "Uninitialized Lucid!!!";
+    if (!address) throw "Wallet not Connected!!!";
 
     try {
       const utxos = await lucid.utxosAt(address);

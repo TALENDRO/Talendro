@@ -1,12 +1,8 @@
 "use client";
-// import WalletConnector from "@/components/walletConnector/client";
-import EmulatorConnector from "@/components/walletConnector/emulatorClient";
-import Identification from "@/components/transactions/identification";
-import { useWallet } from "@/contexts/walletContext";
-import ConfigDatumHolder from "@/components/transactions/configDatumHolder";
+import { useWallet } from "@/context/walletContext";
 import ArbitratorTokenMinter from "@/components/transactions/arbitratorToken";
 import ProjectInitiate from "@/components/transactions/projectInit";
-import TalendroTokenMinter from "@/components/transactions/TalendroToken";
+import HoldingContractCancel from "@/components/transactions/holdingContract_cancel";
 
 export default function Home() {
   const [walletConnection] = useWallet();
@@ -19,18 +15,12 @@ export default function Home() {
       ) : (
         "not connected"
       )}
-      {/* <WalletConnector /> */}
-      <EmulatorConnector />
-
-      <Identification />
-
-      <ConfigDatumHolder />
 
       <ArbitratorTokenMinter />
-
-      <TalendroTokenMinter />
-
       <ProjectInitiate />
+      <div className="flex gap-4 flex-wrap max-w-96">
+        <HoldingContractCancel />
+      </div>
     </section>
   );
 }
