@@ -7,9 +7,9 @@ import {
   NavbarBrand,
   NavbarItem,
   NavbarMenuItem,
-} from "@nextui-org/navbar";
-import { link as linkStyles } from "@nextui-org/theme";
-import { Link } from "@nextui-org/link";
+} from "@heroui/navbar";
+import { link as linkStyles } from "@heroui/theme";
+import { Link } from "@heroui/link";
 import NextLink from "next/link";
 import clsx from "clsx";
 

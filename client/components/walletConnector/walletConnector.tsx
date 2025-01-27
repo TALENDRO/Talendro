@@ -1,8 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Spinner } from "@nextui-org/spinner";
-import { Snippet } from "@nextui-org/snippet";
+import { Spinner } from "@heroui/spinner";
+import { Snippet } from "@heroui/snippet";
 import { Wallet } from "@/types/cardano";
 import { handleError } from "@/lib/utils";
 import { useWallet } from "@/context/walletContext";
@@ -91,7 +91,7 @@ export default function WalletComponent() {
     );
 
   return (
-    <Popover open={isOpen} onOpenChange={setIsOpen}>
+    (<Popover open={isOpen} onOpenChange={setIsOpen}>
       <PopoverTrigger asChild>
         <Button
           variant={!wallet ? "default" : "outline"}
@@ -157,7 +157,7 @@ export default function WalletComponent() {
               ) : (
                 // {/* regular Wallets */}
 
-                wallets.map((w, i) => (
+                (wallets.map((w, i) => (
                   <Button
                     key={i}
                     variant={"ghost"}
@@ -172,7 +172,7 @@ export default function WalletComponent() {
                       <span className="text-xs capitalize">{w.name}</span>
                     </span>
                   </Button>
-                ))
+                )))
               )}
             </div>
           </span>
@@ -189,6 +189,6 @@ export default function WalletComponent() {
           </>
         )}
       </PopoverContent>
-    </Popover>
+    </Popover>)
   );
 }

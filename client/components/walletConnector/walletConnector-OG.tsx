@@ -1,8 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Spinner } from "@nextui-org/spinner";
-import { Snippet } from "@nextui-org/snippet";
+import { Spinner } from "@heroui/spinner";
+import { Snippet } from "@heroui/snippet";
 import { Wallet } from "@/types/cardano";
 import { handleError } from "@/lib/utils";
 import { useWallet } from "@/context/walletContext";

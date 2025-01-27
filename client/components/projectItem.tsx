@@ -15,6 +15,7 @@ import {
   Data,
   fromHex,
   fromText,
+  LucidEvolution,
   paymentCredentialOf,
   toText,
   UTxO,
@@ -22,7 +23,6 @@ import {
 import React, { use, useEffect, useState } from "react";
 import {
   AlreadyComplete,
-  CancelProject,
   ProjectComplete,
 } from "./transactions/ProjectComplete";
 import { arbitration } from "./transactions/arbitration";
@@ -49,13 +49,13 @@ export default function ProjectItem({ project, from }: Props) {
       setDatum(datum);
       setIsCompleteByDev(
         project.assets.hasOwnProperty(
-          PROJECTINITPID + fromText("dev_") + datum?.title,
-        ),
+          PROJECTINITPID + fromText("dev_") + datum?.title
+        )
       );
       setIsCanceleByDev(
         project.assets.hasOwnProperty(
-          PROJECTINITPID + fromText("dev_") + datum?.title,
-        ) && datum.pay === null,
+          PROJECTINITPID + fromText("dev_") + datum?.title
+        ) && datum.pay === null
       );
     }
     fetchDatum();
@@ -76,7 +76,7 @@ export default function ProjectItem({ project, from }: Props) {
 
       const ref_utxo = await refUtxo(lucid);
       const UTxO_Talendro = await lucid.utxoByUnit(
-        TALENDROPID + fromText(address.slice(-10)),
+        TALENDROPID + fromText(address.slice(-10))
       ); //talendroPolicyID+assetName assetname is user address
       const redeemer = Data.to(1n);
 
@@ -90,7 +90,7 @@ export default function ProjectItem({ project, from }: Props) {
         .pay.ToAddressWithData(
           contractAddress,
           { kind: "inline", value: Data.to(updatedDatum, ProjectDatum) },
-          { lovelace: datum.pay ? BigInt(datum.pay) : 3_000_000n },
+          { lovelace: datum.pay ? BigInt(datum.pay) : 3_000_000n }
         )
         .attach.SpendingValidator(ProjectInitiateValidator())
         .addSigner(address)
@@ -176,6 +176,23 @@ export default function ProjectItem({ project, from }: Props) {
   );
 }
 
+function CancelProject(
+  lucid: LucidEvolution,
+  project: UTxO,
+  datum: {
+    title: string;
+    pay: bigint | null;
+    developer: string | null;
+    client: string;
+    milestones: { pay: bigint; name: string; status: boolean }[];
+    current_milestone: { pay: bigint; name: string; status: boolean } | null;
+    next_milestone: { pay: bigint; name: string; status: boolean } | null;
+  },
+  calledByDev: boolean,
+  address: string
+) {
+  throw new Error("Function not implemented.");
+}
 // {isComplete ? (
 //     <button disabled>Complete</button> // If true
 //   ) : (

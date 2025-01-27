@@ -1,9 +1,9 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
-import { Spinner } from "@nextui-org/spinner";
-import { Snippet } from "@nextui-org/snippet";
+import { Spinner } from "@heroui/spinner";
+import { Snippet } from "@heroui/snippet";
 import { EmulatorAccount, Lucid } from "@lucid-evolution/lucid";
-import { Skeleton } from "@nextui-org/skeleton";
+import { Skeleton } from "@heroui/skeleton";
 import { handleError } from "@/lib/utils";
 import { useWallet } from "@/context/walletContext";
 import { UserA, UserB, UserC, Admin, emulator } from "@/config/emulator";
