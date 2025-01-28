@@ -12,5 +12,5 @@ async function mintClick() {
   await  mint(WalletConnection);
 }
 
-  return <Button onClick={mintClick}>Talendro mint</Button>;
+  return <Button onClick={mintClick}>Talendro mint</Button>
 }
