@@ -11,7 +11,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Loader2 } from "lucide-react"
 // import { useToast } from "@/components/ui/use-toast"
 
-export default function ProjectsPage() {
+export default function MyProjectsPage() {
   const [walletContext] = useWallet()
   const { lucid, address } = walletContext
   const [clientProjects, setClientProjects] = useState<Set<UTxO>>(new Set())
@@ -71,8 +71,8 @@ console.log("fecthing projects")
   }, [address])
 
   return (
-    <div className="container mx-auto p-4">
-      <Card className="mb-6">
+    <div className="container mx-auto">
+      {/* <Card className="mb-6">
         <CardHeader>
           <CardTitle>Project Management</CardTitle>
           <CardDescription>Manage your projects as a client or developer</CardDescription>
@@ -80,7 +80,7 @@ console.log("fecthing projects")
         <CardContent>
           <CreateProject />
         </CardContent>
-      </Card>
+      </Card> */}
 
       {isLoading ? (
         <div className="flex justify-center items-center h-64">
