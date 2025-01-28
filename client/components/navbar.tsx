@@ -48,7 +48,7 @@ export const Navbar = () => {
               <NextLink
                 className={clsx(
                   linkStyles({ color: "foreground" }),
-                  "data-[active=true]:text-primary data-[active=true]:font-medium"
+                  "data-[active=true]:text-primary data-[active=true]:font-medium",
                 )}
                 color="foreground"
                 href={item.href}
@@ -68,7 +68,7 @@ export const Navbar = () => {
         </NavbarItem>
 
         <NavbarItem className="hidden md:block">
-        <WalletConnector/>
+          <WalletConnector />
         </NavbarItem>
         <NavbarMenuToggle
           aria-label={isMenuOpen ? "Close menu" : "Open menu"}
@@ -79,8 +79,7 @@ export const Navbar = () => {
       <NavbarContent justify="end" className="sm:hidden">
         <NavbarItem className="flex gap-2">
           <ThemeSwitch />
-          <WalletConnector/>
-
+          <WalletConnector />
         </NavbarItem>
         <NavbarMenuToggle
           aria-label={isMenuOpen ? "Close menu" : "Open menu"}
@@ -94,7 +93,7 @@ export const Navbar = () => {
             <NextLink
               className={clsx(
                 linkStyles({ color: "foreground" }),
-                "data-[active=true]:text-primary data-[active=true]:font-medium"
+                "data-[active=true]:text-primary data-[active=true]:font-medium",
               )}
               color="foreground"
               href={item.href}

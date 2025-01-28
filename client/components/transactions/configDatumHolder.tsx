@@ -46,7 +46,7 @@ export default function ConfigDatumHolder() {
       .pay.ToAddressWithData(
         CONFIGADDR,
         { kind: "inline", value: Data.to(datum, ConfigDatum) },
-        { lovelace: 5_000_000n, ...ref_configNFT }
+        { lovelace: 5_000_000n, ...ref_configNFT },
       )
       .complete();
 

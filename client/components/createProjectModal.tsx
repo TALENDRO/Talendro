@@ -1,7 +1,7 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { Button } from "@/components/ui/button"
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
@@ -10,56 +10,72 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/dialog"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Textarea } from "@/components/ui/textarea"
-import { Switch } from "@/components/ui/switch"
-import { Plus } from "lucide-react"
-import { Data, fromText, type MintingPolicy, paymentCredentialOf } from "@lucid-evolution/lucid"
-import { useWallet } from "@/context/walletContext"
-import { ProjectDatum } from "@/types/cardano"
-import { PROJECTINITADDR, PROJECTINITPID, STAKEADDRESS, TALENDROPID } from "@/config"
-import { refStakeUtxo, refUtxo, toLovelace } from "@/lib/utils"
-import { ProjectInitiateValidator } from "@/config/scripts/scripts"
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { Switch } from "@/components/ui/switch";
+import { Plus } from "lucide-react";
+import {
+  Data,
+  fromText,
+  type MintingPolicy,
+  paymentCredentialOf,
+} from "@lucid-evolution/lucid";
+import { useWallet } from "@/context/walletContext";
+import { ProjectDatum } from "@/types/cardano";
+import {
+  PROJECTINITADDR,
+  PROJECTINITPID,
+  STAKEADDRESS,
+  TALENDROPID,
+} from "@/config";
+import { refStakeUtxo, refUtxo, toLovelace } from "@/lib/utils";
+import { ProjectInitiateValidator } from "@/config/scripts/scripts";
 
-type ProjectType = "Milestone" | "Regular"
+type ProjectType = "Milestone" | "Regular";
 
 export function CreateProject() {
-  const [projectTitle, setProjectTitle] = useState("")
-  const [projectDescription, setProjectDescription] = useState("")
-  const [projectImageUrl, setProjectImageUrl] = useState("")
-  const [pay, setPay] = useState<number | null>(0)
-  const [projectType, setProjectType] = useState<ProjectType>("Regular")
-  const [submitting, setSubmitting] = useState(false)
-  const [txHash, setTxHash] = useState<string>()
-  const [walletConnection] = useWallet()
-  const { lucid, address } = walletConnection
+  const [projectTitle, setProjectTitle] = useState("");
+  const [projectDescription, setProjectDescription] = useState("");
+  const [projectImageUrl, setProjectImageUrl] = useState("");
+  const [pay, setPay] = useState<number | null>(0);
+  const [projectType, setProjectType] = useState<ProjectType>("Regular");
+  const [submitting, setSubmitting] = useState(false);
+  const [txHash, setTxHash] = useState<string>();
+  const [walletConnection] = useWallet();
+  const { lucid, address } = walletConnection;
 
   const handleProjectTypeChange = (checked: boolean) => {
-    setProjectType(checked ? "Milestone" : "Regular")
+    setProjectType(checked ? "Milestone" : "Regular");
     if (checked) {
-      setPay(null)
+      setPay(null);
     }
-  }
+  };
 
   const handleSubmit = async () => {
-    setSubmitting(true)
+    setSubmitting(true);
 
     // Console log the new fields
-    console.log("Project Description:", projectDescription)
-    console.log("Project Image URL:", projectImageUrl)
+    console.log("Project Description:", projectDescription);
+    console.log("Project Image URL:", projectImageUrl);
 
-    const txHash = await createProject(projectTitle, pay, projectType, projectDescription, projectImageUrl)
+    const txHash = await createProject(
+      projectTitle,
+      pay,
+      projectType,
+      projectDescription,
+      projectImageUrl,
+    );
     // Reset the form
-    setTxHash(txHash)
-    setProjectTitle("")
-    setProjectDescription("")
-    setProjectImageUrl("")
-    setPay(0)
-    setProjectType("Regular")
-    setSubmitting(false)
-  }
+    setTxHash(txHash);
+    setProjectTitle("");
+    setProjectDescription("");
+    setProjectImageUrl("");
+    setPay(0);
+    setProjectType("Regular");
+    setSubmitting(false);
+  };
 
   async function createProject(
     title: string,
@@ -68,8 +84,8 @@ export function CreateProject() {
     description: string,
     imageUrl: string,
   ) {
-    if (!lucid || !address) throw "Uninitialized Lucid!!!"
-    const mintingValidator: MintingPolicy = ProjectInitiateValidator()
+    if (!lucid || !address) throw "Uninitialized Lucid!!!";
+    const mintingValidator: MintingPolicy = ProjectInitiateValidator();
 
     try {
       const datum: ProjectDatum = {
@@ -82,17 +98,19 @@ export function CreateProject() {
         next_milestone: null,
         // description: fromText(description),
         // imageUrl: fromText(imageUrl),
-      }
+      };
 
-      const clt_assetname = fromText("clt_") + datum.title
-      const dev_assetname = fromText("dev_") + datum.title
-      const clt_token = { [PROJECTINITPID + clt_assetname]: 1n }
-      const dev_token = { [PROJECTINITPID + dev_assetname]: 1n }
+      const clt_assetname = fromText("clt_") + datum.title;
+      const dev_assetname = fromText("dev_") + datum.title;
+      const clt_token = { [PROJECTINITPID + clt_assetname]: 1n };
+      const dev_token = { [PROJECTINITPID + dev_assetname]: 1n };
 
-      const ref_utxo = await refUtxo(lucid)
-      const ref_stake = await refStakeUtxo(lucid, address, STAKEADDRESS)
-      const UTxO_Talendro = await lucid.utxoByUnit(TALENDROPID + fromText(address.slice(-10)))
-      const redeemer = Data.to(0n)
+      const ref_utxo = await refUtxo(lucid);
+      const ref_stake = await refStakeUtxo(lucid, address, STAKEADDRESS);
+      const UTxO_Talendro = await lucid.utxoByUnit(
+        TALENDROPID + fromText(address.slice(-10)),
+      );
+      const redeemer = Data.to(0n);
       const tx = await lucid
         .newTx()
         .readFrom([...ref_utxo, ...ref_stake])
@@ -104,13 +122,13 @@ export function CreateProject() {
         )
         .mintAssets({ ...clt_token, ...dev_token }, redeemer)
         .attach.MintingPolicy(mintingValidator)
-        .complete()
+        .complete();
 
-      const signed = await tx.sign.withWallet().complete()
-      const txHash = await signed.submit()
-      return txHash
+      const signed = await tx.sign.withWallet().complete();
+      const txHash = await signed.submit();
+      return txHash;
     } catch (error) {
-      console.log(error)
+      console.log(error);
     }
   }
 
@@ -170,7 +188,9 @@ export function CreateProject() {
                 checked={projectType === "Milestone"}
                 onCheckedChange={handleProjectTypeChange}
               />
-              <Label htmlFor="projectTypeSwitch">{projectType === "Milestone" ? "Milestone" : "Regular"}</Label>
+              <Label htmlFor="projectTypeSwitch">
+                {projectType === "Milestone" ? "Milestone" : "Regular"}
+              </Label>
             </div>
           </div>
 
@@ -189,7 +209,11 @@ export function CreateProject() {
             </div>
           )}
 
-          {txHash && <p className="text-sm text-muted-foreground">Transaction Hash: {txHash}</p>}
+          {txHash && (
+            <p className="text-sm text-muted-foreground">
+              Transaction Hash: {txHash}
+            </p>
+          )}
         </div>
         <DialogFooter>
           <Button type="submit" onClick={handleSubmit} disabled={submitting}>
@@ -198,6 +222,5 @@ export function CreateProject() {
         </DialogFooter>
       </DialogContent>
     </Dialog>
-  )
+  );
 }
-

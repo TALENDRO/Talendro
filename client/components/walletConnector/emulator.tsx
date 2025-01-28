@@ -10,7 +10,7 @@ import { Button } from "../ui/button";
 
 interface props {
   setWallets: (
-    wallets: Record<string, { account: EmulatorAccount; connected: boolean }>
+    wallets: Record<string, { account: EmulatorAccount; connected: boolean }>,
   ) => void;
   wallets: Record<string, { account: EmulatorAccount; connected: boolean }>;
 }
@@ -33,7 +33,7 @@ export default function EmulatorConnector({ setWallets, wallets }: props) {
           };
           return acc;
         },
-        {} as Record<string, { account: EmulatorAccount; connected: boolean }>
+        {} as Record<string, { account: EmulatorAccount; connected: boolean }>,
       );
       setWallets(updatedWallets);
       setWalletConnection((walletConnection) => {

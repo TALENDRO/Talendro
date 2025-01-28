@@ -18,7 +18,11 @@ import { Admin, UserA, UserB, UserC, emulator } from "@/config/emulator";
 import { mkLucid } from "@/lib/lucid";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 
 export default function WalletConnector() {
   const [walletConnection, setWalletConnection] = useWallet();
@@ -88,12 +92,12 @@ export default function WalletConnector() {
           </Button>
         </PopoverTrigger>
         <PopoverContent className="bg-popover p-4 w-[400px] mx-2 bg-opacity-60 rounded-lg backdrop-blur-[6.8px] shadow-[3px_0px_51px_-35px_rgba(0,_0,_255,_0.6)] border">
-           <h2 className="text-accent-foreground text-xl font-semibold text-center uppercase py-4">
-              Select Wallet
-            </h2>
+          <h2 className="text-accent-foreground text-xl font-semibold text-center uppercase py-4">
+            Select Wallet
+          </h2>
           <div className="flex flex-col gap-4 justify-center items-center">
-             {/* Emulator Toggle  */}
-             <div className="flex items-center justify-between rounded-lg border p-2 mx-2 w-full">
+            {/* Emulator Toggle  */}
+            <div className="flex items-center justify-between rounded-lg border p-2 mx-2 w-full">
               <div className="space-y-0.5">
                 <Label className="text-base font-semibold">Emulator Mode</Label>
                 <p className="text-sm text-muted-foreground">
@@ -103,14 +107,14 @@ export default function WalletConnector() {
               <Switch
                 id="marketing"
                 checked={isEmulator}
-                onCheckedChange={(checked) =>{
-                  setIsOpen(false)
+                onCheckedChange={(checked) => {
+                  setIsOpen(false);
                   setTimeout(() => {
                     setWalletConnection((prev) => ({
                       ...prev,
                       isEmulator: checked,
-                    }))
-                  }, 500)
+                    }));
+                  }, 500);
                 }}
                 aria-label="Toggle marketing emails"
               />
@@ -126,23 +130,22 @@ export default function WalletConnector() {
                     onClick={() => onConnectWallet(wallet.account)}
                   >
                     <span>{key}: </span>
-<span>
-
-                    {wallet.account.address.slice(0, 10) +
-                      "..." +
-                      wallet.account.address.slice(-24)}
-                      </span>
+                    <span>
+                      {wallet.account.address.slice(0, 10) +
+                        "..." +
+                        wallet.account.address.slice(-24)}
+                    </span>
                   </Button>
                 );
               })}
             </div>
             <div className="flex gap-4">
-            <Button onClick={emulatorlog} className="w-fit sm:hidden">
-        Log
-      </Button>
-      <Button onClick={awaitlog} className="w-fit sm:hidden">
-        Await Block
-      </Button>
+              <Button onClick={emulatorlog} className="w-fit sm:hidden">
+                Log
+              </Button>
+              <Button onClick={awaitlog} className="w-fit sm:hidden">
+                Await Block
+              </Button>
             </div>
           </div>
         </PopoverContent>

@@ -22,5 +22,5 @@ export type WalletConnection = {
 
 export const WalletContext = createContext<
   [WalletConnection, Dispatch<SetStateAction<WalletConnection>>]
->([{isEmulator: false}, () => {}]);
+>([{ isEmulator: false }, () => {}]);
 export const useWallet = () => useContext(WalletContext);

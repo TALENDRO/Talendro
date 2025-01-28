@@ -98,7 +98,7 @@ export async function refUtxo(lucid: LucidEvolution) {
   const address = validatorToAddress(NETWORK, v);
   const utxos = await lucid.utxosAtWithUnit(
     address,
-    identificationPolicyid + fromText("ref_configNFT")
+    identificationPolicyid + fromText("ref_configNFT"),
   );
 
   return utxos;
@@ -107,7 +107,7 @@ export async function refUtxo(lucid: LucidEvolution) {
 export async function refStakeUtxo(
   lucid: LucidEvolution,
   address: string,
-  STAKEADDRESS: string
+  STAKEADDRESS: string,
 ) {
   const utxos = await lucid.utxosAt(STAKEADDRESS);
   const datum = { staked_by: paymentCredentialOf(address).hash };
@@ -120,7 +120,7 @@ export async function refStakeUtxo(
 }
 export async function signWithPrivateKey(
   tx: TxSignBuilder,
-  privateKey: string
+  privateKey: string,
 ) {
   const signed = await tx.sign.withPrivateKey(privateKey);
   return signed;
@@ -130,7 +130,7 @@ export async function privateKeytoAddress(privateKey: string) {
   const privatekeyAddress = await makeWalletFromPrivateKey(
     PROVIDER,
     NETWORK,
-    privateKey
+    privateKey,
   ).address();
   return privatekeyAddress;
 }

@@ -64,7 +64,6 @@ export default function WalletComponent() {
     setIsOpen(false);
   }
 
-
   return (
     <Popover open={isOpen} onOpenChange={setIsOpen}>
       <PopoverTrigger asChild>
@@ -116,14 +115,14 @@ export default function WalletComponent() {
               <Switch
                 id="marketing"
                 checked={isEmulator}
-                onCheckedChange={(checked) =>{
-                  setIsOpen(false)
+                onCheckedChange={(checked) => {
+                  setIsOpen(false);
                   setTimeout(() => {
                     setWalletConnection((prev) => ({
                       ...prev,
                       isEmulator: checked,
-                    }))
-                  }, 500)
+                    }));
+                  }, 500);
                 }}
                 aria-label="Toggle marketing emails"
               />
