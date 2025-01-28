@@ -138,7 +138,7 @@ export default function Page() {
             <CardTitle>Config Datum</CardTitle>
           </CardHeader>
           <CardContent>
-            <pre className="bg-gray-100 p-4 rounded-md overflow-auto max-h-96">
+            <pre className="bg-secondary/50 p-4 rounded-md overflow-auto max-h-96">
               {JSON.stringify(
                 CONFIGDATUM,
                 (key, value) =>
