@@ -17,7 +17,7 @@ export const STAKEPRIVATEKEY = process.env.NEXT_PUBLIC_STAKE_WALLET as string;
 export const STAKEADDRESS = await privateKeytoAddress(STAKEPRIVATEKEY);
 
 export const MILESTONEPID = getPolicyId(MilestoneMINTValidator);
-export const IDENTIFICATIONPID = process.env
+export let IDENTIFICATIONPID = process.env
   .NEXT_PUBLIC_IDENTIFICATION_POLICY_ID as string;
 export const ARBITRATORPID = getPolicyId(ArbitratorTokenValidator);
 export const PROJECTINITPID = getPolicyId(ProjectInitiateValidator);
