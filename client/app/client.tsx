@@ -1,8 +1,8 @@
-"use client";
+// "use client";
 
-import dynamic from "next/dynamic";
-const Home = dynamic(() => import("./Home"), { ssr: false });
+// import dynamic from "next/dynamic";
+// const Home = dynamic(() => import("./Home"), { ssr: false });
 
-export default function HomeClient() {
-  return <Home />;
-}
+// export default function HomeClient() {
+//   return <Home />;
+// }
