@@ -116,12 +116,15 @@ export default function WalletComponent() {
               <Switch
                 id="marketing"
                 checked={isEmulator}
-                onCheckedChange={(checked) =>
-                  setWalletConnection((prev) => ({
-                    ...prev,
-                    isEmulator: checked,
-                  }))
-                }
+                onCheckedChange={(checked) =>{
+                  setIsOpen(false)
+                  setTimeout(() => {
+                    setWalletConnection((prev) => ({
+                      ...prev,
+                      isEmulator: checked,
+                    }))
+                  }, 500)
+                }}
                 aria-label="Toggle marketing emails"
               />
             </div>
