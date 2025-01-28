@@ -112,7 +112,7 @@ export default function MyProjectsPage() {
               <CardHeader>
                 <CardTitle>Your Client Projects</CardTitle>
                 <CardDescription>
-                  Projects you've created as a client
+                  Projects you&apos;ve created as a client
                 </CardDescription>
               </CardHeader>
               <CardContent>
@@ -139,7 +139,7 @@ export default function MyProjectsPage() {
               <CardHeader>
                 <CardTitle>Your Developer Projects</CardTitle>
                 <CardDescription>
-                  Projects you've accepted as a developer
+                  Projects you&apos;ve accepted as a developer
                 </CardDescription>
               </CardHeader>
               <CardContent>
