@@ -24,6 +24,7 @@ import {
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import Image from "next/image";
+import { toast } from "sonner";
 // import { useToast } from "@/components/ui/use-toast"
 
 interface Props {
@@ -46,12 +47,9 @@ export default function ArbitratorProjectItem({ project }: Props) {
         const datum = Data.castFrom(data as Data, ArbitratorDatum);
         setDatum(datum);
       } catch (error) {
-        console.error("Error fetching datum:", error);
-        // toast({
-        //   title: "Error",
-        //   description: "Failed to fetch project data",
-        //   variant: "destructive",
-        // })
+        toast.error("Error", {
+          description: "Failed to fetch project data",
+        });
       }
     }
     fetchDatum();
@@ -60,26 +58,22 @@ export default function ArbitratorProjectItem({ project }: Props) {
   async function handleArbAction() {
     if (!datum) return;
     setSubmitting(true);
-    try {
-      await ArbitratorAction(
-        walletConnection,
-        project,
-        atFault.includes("dev"),
-      );
-      // toast({
-      //   title: "Success",
-      //   description: "Arbitration action submitted successfully",
-      // })
-    } catch (error) {
-      console.error("Error in arbitration action:", error);
-      // toast({
-      //   title: "Error",
-      //   description: "Failed to submit arbitration action",
-      //   variant: "destructive",
-      // })
-    } finally {
+    const result = await ArbitratorAction(
+      walletConnection,
+      project,
+      atFault.includes("dev")
+    );
+    if (!result.data) {
+      toast.error("Error", {
+        description: result.error,
+      });
       setSubmitting(false);
+      return;
     }
+    toast.success("Success", {
+      description: "Arbitration action submitted successfully",
+    });
+    setSubmitting(false);
   }
 
   if (!datum) {
