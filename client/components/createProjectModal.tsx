@@ -221,12 +221,6 @@ export function CreateProject() {
               />
             </div>
           )}
-
-          {txHash && (
-            <p className="text-sm text-muted-foreground">
-              Transaction Hash: {txHash}
-            </p>
-          )}
         </div>
         <DialogFooter>
           <Button type="submit" onClick={handleSubmit} disabled={submitting}>

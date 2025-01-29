@@ -29,9 +29,10 @@ import {
   type UTxO,
 } from "@lucid-evolution/lucid";
 import React, { useEffect, useState } from "react";
-import { ProjectComplete } from "./transactions/ProjectComplete";
+import { CancelProject, ProjectComplete } from "./transactions/ProjectComplete";
 import { arbitration } from "./transactions/arbitration";
 import Image from "next/image";
+import { toast } from "sonner";
 
 interface Props {
   project: UTxO;
@@ -59,13 +60,13 @@ export default function ProjectItem({ project, from }: Props) {
         setDatum(datum);
         setIsCompleteByDev(
           project.assets.hasOwnProperty(
-            PROJECTINITPID + fromText("dev_") + datum?.title,
-          ),
+            PROJECTINITPID + fromText("dev_") + datum?.title
+          )
         );
         setIsCancelByDev(
           project.assets.hasOwnProperty(
-            PROJECTINITPID + fromText("dev_") + datum?.title,
-          ) && datum.pay === null,
+            PROJECTINITPID + fromText("dev_") + datum?.title
+          ) && datum.pay === null
         );
         // Assuming metadata is stored in the datum or fetched separately
         setMetadata({
@@ -86,13 +87,14 @@ export default function ProjectItem({ project, from }: Props) {
 
   async function acceptProject() {
     if (!lucid || !address) {
-      // toast({ title: "Error", description: "Wallet not connected", variant: "destructive" })
+      toast.error("Error", { description: "Wallet not connected" });
       return;
     }
     if (!datum) {
-      // toast({ title: "Error", description: "Project data not found", variant: "destructive" })
+      toast.error("Error", { description: "Project data not found" });
       return;
     }
+
     setSubmitting(true);
     try {
       const updatedDatum: ProjectDatum = {
@@ -105,7 +107,7 @@ export default function ProjectItem({ project, from }: Props) {
 
       const ref_utxo = await refUtxo(lucid);
       const UTxO_Talendro = await lucid.utxoByUnit(
-        TALENDROPID + fromText(address.slice(-10)),
+        TALENDROPID + fromText(address.slice(-10))
       );
       const redeemer = Data.to(1n);
 
@@ -118,7 +120,7 @@ export default function ProjectItem({ project, from }: Props) {
         .pay.ToAddressWithData(
           contractAddress,
           { kind: "inline", value: Data.to(updatedDatum, ProjectDatum) },
-          { lovelace: datum.pay ? BigInt(datum.pay) : 3_000_000n },
+          { lovelace: datum.pay ? BigInt(datum.pay) : 3_000_000n }
         )
         .attach.SpendingValidator(ProjectInitiateValidator())
         .addSigner(address)
@@ -127,44 +129,52 @@ export default function ProjectItem({ project, from }: Props) {
       const signed = await tx.sign.withWallet().complete();
       const txHash = await signed.submit();
       console.log("txHash: ", txHash);
-      // toast({ title: "Success", description: "Project accepted successfully" })
-    } catch (error) {
+      toast.success("Success", {
+        description: "Project accepted successfully",
+      });
+    } catch (error: any) {
       console.error(error);
-      // toast({ title: "Error", description: "Failed to accept project", variant: "destructive" })
+      toast.error("Error", { description: "Failed to accept project" });
     }
     setSubmitting(false);
   }
 
   async function projectCompleteClick() {
     if (!lucid || !address || !datum) {
-      // toast({ title: "Error", description: "Missing required data", variant: "destructive" })
+      toast.error("Error", { description: "Missing required data" });
+
       return;
     }
     setSubmitting(true);
     try {
       const calledByDev = from.includes("dev");
       await ProjectComplete(lucid, project, datum, calledByDev, address);
-      // toast({ title: "Success", description: "Project completed successfully" })
+      toast.success("Success", {
+        description: "Project completed successfully",
+      });
     } catch (error) {
       console.error(error);
-      // toast({ title: "Error", description: "Failed to complete project", variant: "destructive" })
+      toast.error("Error", { description: "Failed to complete project" });
     }
     setSubmitting(false);
   }
 
   async function cancelProjectClick() {
     if (!lucid || !address || !datum) {
-      // toast({ title: "Error", description: "Missing required data", variant: "destructive" })
+      toast.error("Error", { description: "Missing required data" });
+
       return;
     }
     setSubmitting(true);
     try {
       const calledByDev = from.includes("dev");
       await CancelProject(lucid, project, datum, calledByDev, address);
-      // toast({ title: "Success", description: "Project cancelled successfully" })
+      toast.success("Success", {
+        description: "Project cancelled successfully",
+      });
     } catch (error) {
       console.error(error);
-      // toast({ title: "Error", description: "Failed to cancel project", variant: "destructive" })
+      toast.error("Error", { description: "Failed to cancel project" });
     }
     setSubmitting(false);
   }
@@ -174,10 +184,12 @@ export default function ProjectItem({ project, from }: Props) {
     try {
       const calledByDev = from.includes("dev");
       await arbitration(walletConnection, project, calledByDev);
-      // toast({ title: "Success", description: "Arbitration requested successfully" })
+      toast.success("Success", {
+        description: "Arbitration requested successfully",
+      });
     } catch (error) {
       console.error(error);
-      // toast({ title: "Error", description: "Failed to request arbitration", variant: "destructive" })
+      toast.error("Error", { description: "Failed to request arbitration" });
     }
     setSubmitting(false);
   }
@@ -257,15 +269,4 @@ export default function ProjectItem({ project, from }: Props) {
       </CardFooter>
     </Card>
   );
-}
-
-function CancelProject(
-  lucid: LucidEvolution,
-  project: UTxO,
-  datum: ProjectDatum,
-  calledByDev: boolean,
-  address: string,
-) {
-  // Implement the cancel project logic here
-  throw new Error("Function not implemented.");
 }
