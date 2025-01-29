@@ -2,6 +2,7 @@ import "@/styles/globals.css";
 import { Metadata, Viewport } from "next";
 import { Link } from "@heroui/link";
 import clsx from "clsx";
+import { Toaster } from "@/components/ui/toaster";
 
 import { Providers } from "./providers";
 
@@ -39,7 +40,7 @@ export default function RootLayout({
         className={clsx(
           "min-h-screen bg-background font-sans antialiased",
           fontSans.variable,
-          fontComfortaa.variable,
+          fontComfortaa.variable
         )}
       >
         <Providers themeProps={{ attribute: "class", defaultTheme: "dark" }}>
@@ -50,6 +51,7 @@ export default function RootLayout({
             </main>
           </div>
         </Providers>
+        <Toaster />
       </body>
     </html>
   );

@@ -19,8 +19,10 @@ import {
   STAKEADDRESS,
 } from "@/config";
 import { useWallet } from "@/context/walletContext";
+import { toast } from "@/hooks/use-toast";
 import { ConfigDatum } from "@/types/cardano";
-import {  paymentCredentialOf} from "@lucid-evolution/lucid";
+import { Data, paymentCredentialOf } from "@lucid-evolution/lucid";
+import { Description } from "@radix-ui/react-toast";
 import React, { useEffect, useState } from "react";
 
 export default function Page() {
@@ -31,7 +33,7 @@ export default function Page() {
   // const { toast } = useToast()
 
   const CONFIGDATUM: ConfigDatum = {
-    identification_nft: isEmulator? policyID : IDENTIFICATIONPID,
+    identification_nft: isEmulator ? policyID : IDENTIFICATIONPID,
     milestone_contract_policy: MILESTONEPID,
     milestone_contract_address: paymentCredentialOf(MILESTONEADDR).hash,
     holding_contract: paymentCredentialOf(HOLDINGADDR).hash,
@@ -43,50 +45,54 @@ export default function Page() {
     stake_amount: 100_000_000n,
   };
 
-async function handleMintClick(){
- const result = await mint(WalletConnection);
- if (!result.data){
-  console.log(result.error)
-  return
- }
- console.log(result.data.txHash)
- setPolicy(result.data.policyID)
-}
+  async function handleMintClick() {
+    const result = await mint(WalletConnection);
+    if (!result.data) {
+      console.log(result.error);
+      return;
+    }
+    console.log(result.data.txHash);
+    setPolicy(result.data.policyID);
+    toast({
+      title: "Tx hash",
+      description:
+        result.data.txHash.slice(0, 20) + "..." + result.data.txHash.slice(-10),
+    });
+  }
 
-  async function sendConfigDatumClick(){
-    if (isEmulator && !policyID) return
-    sendConfigDatum(WalletConnection, CONFIGDATUM)
+  async function sendConfigDatumClick() {
+    if (isEmulator && !policyID) return;
+    sendConfigDatum(WalletConnection, CONFIGDATUM);
   }
 
   if (!isEmulator) {
     return (
-
-    <div className="w-full h-full flex items-center justify-center font-semibold text-2xl flex-col">
-      YOU MUST BE IN EMULATOR MODE
-       {/* Emulator Toggle  */}
-       <div className="flex items-center justify-between rounded-lg border p-2 mx-2">
-              <div className="space-y-0.5">
-                <Label className="text-base font-semibold">Emulator Mode</Label>
-                <p className="text-sm text-muted-foreground">
-                  This will use Emulator Accounts.
-                </p>
-              </div>
-              <Switch
-                id="marketing"
-                checked={isEmulator}
-                onCheckedChange={(checked) => {
-                  setTimeout(() => {
-                    setWalletConnection((prev) => ({
-                      ...prev,
-                      isEmulator: checked,
-                    }));
-                  }, 500);
-                }}
-                aria-label="Toggle marketing emails"
-              />
-            </div>
-    </div>
-    )
+      <div className="w-full h-full flex items-center justify-center font-semibold text-2xl flex-col">
+        YOU MUST BE IN EMULATOR MODE
+        {/* Emulator Toggle  */}
+        <div className="flex items-center justify-between rounded-lg border p-2 mx-2">
+          <div className="space-y-0.5">
+            <Label className="text-base font-semibold">Emulator Mode</Label>
+            <p className="text-sm text-muted-foreground">
+              This will use Emulator Accounts.
+            </p>
+          </div>
+          <Switch
+            id="marketing"
+            checked={isEmulator}
+            onCheckedChange={(checked) => {
+              setTimeout(() => {
+                setWalletConnection((prev) => ({
+                  ...prev,
+                  isEmulator: checked,
+                }));
+              }, 500);
+            }}
+            aria-label="Toggle marketing emails"
+          />
+        </div>
+      </div>
+    );
   }
 
   return (
@@ -103,7 +109,7 @@ async function handleMintClick(){
                 CONFIGDATUM,
                 (key, value) =>
                   typeof value === "bigint" ? value.toString() : value,
-                2,
+                2
               )}
             </pre>
           </CardContent>
@@ -113,7 +119,11 @@ async function handleMintClick(){
             <CardTitle>Actions</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
-            <Button onClick={handleMintClick} disabled={submitting} className="w-full">
+            <Button
+              onClick={handleMintClick}
+              disabled={submitting}
+              className="w-full"
+            >
               {submitting ? "Processing..." : "Mint Identification Token"}
             </Button>
             <Button
@@ -124,14 +134,14 @@ async function handleMintClick(){
               {submitting ? "Processing..." : "Attach Config Datum"}
             </Button>
             <div className="">
-            <Label>Do you Have a Policy ID already?</Label>
-            <Input
-              type="text"
-              value={policyID}
-              onChange={(e) => setPolicy(e.target.value)}
-              placeholder="Policy ID"
+              <Label>Do you Have a Policy ID already?</Label>
+              <Input
+                type="text"
+                value={policyID}
+                onChange={(e) => setPolicy(e.target.value)}
+                placeholder="Policy ID"
               />
-              </div>
+            </div>
           </CardContent>
         </Card>
       </div>
