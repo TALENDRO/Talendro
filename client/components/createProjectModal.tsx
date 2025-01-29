@@ -32,6 +32,7 @@ import {
 } from "@/config";
 import { refStakeUtxo, refUtxo, toLovelace } from "@/lib/utils";
 import { ProjectInitiateValidator } from "@/config/scripts/scripts";
+import { toast } from "@/hooks/use-toast";
 
 type ProjectType = "Milestone" | "Regular";
 
@@ -65,8 +66,13 @@ export function CreateProject() {
       pay,
       projectType,
       projectDescription,
-      projectImageUrl,
+      projectImageUrl
     );
+
+    toast({
+      title: "Tx hash",
+      description: "Project Created Successfully",
+    });
     // Reset the form
     setTxHash(txHash);
     setProjectTitle("");
@@ -82,7 +88,7 @@ export function CreateProject() {
     pay: number | null,
     type: ProjectType,
     description: string,
-    imageUrl: string,
+    imageUrl: string
   ) {
     if (!lucid || !address) throw "Uninitialized Lucid!!!";
     const mintingValidator: MintingPolicy = ProjectInitiateValidator();
@@ -108,7 +114,7 @@ export function CreateProject() {
       const ref_utxo = await refUtxo(lucid);
       const ref_stake = await refStakeUtxo(lucid, address, STAKEADDRESS);
       const UTxO_Talendro = await lucid.utxoByUnit(
-        TALENDROPID + fromText(address.slice(-10)),
+        TALENDROPID + fromText(address.slice(-10))
       );
       const redeemer = Data.to(0n);
       const tx = await lucid
@@ -118,7 +124,7 @@ export function CreateProject() {
         .pay.ToAddressWithData(
           PROJECTINITADDR,
           { kind: "inline", value: Data.to(datum, ProjectDatum) },
-          { lovelace: pay ? toLovelace(pay) : 3_000_000n, ...dev_token },
+          { lovelace: pay ? toLovelace(pay) : 3_000_000n, ...dev_token }
         )
         .mintAssets({ ...clt_token, ...dev_token }, redeemer)
         .attach.MintingPolicy(mintingValidator)
