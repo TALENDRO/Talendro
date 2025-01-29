@@ -38,7 +38,7 @@ export default function ProjectsPage() {
       const utxos = await lucid.utxosAt(PROJECTINITADDR);
       const filteredUtxos = utxos.filter((utxo) => {
         return Object.keys(utxo.assets).some((key) =>
-          key.includes(PROJECTINITPID)
+          key.includes(PROJECTINITPID),
         );
       });
       setProjects(filteredUtxos);
@@ -57,8 +57,8 @@ export default function ProjectsPage() {
   useEffect(() => {
     const filtered = projects.filter((project) =>
       Object.keys(project.assets).some((key) =>
-        key.toLowerCase().includes(searchTerm.toLowerCase())
-      )
+        key.toLowerCase().includes(searchTerm.toLowerCase()),
+      ),
     );
     setDisplayedProjects(filtered.slice(0, page * PROJECTS_PER_PAGE));
   }, [projects, searchTerm, page]);

@@ -53,7 +53,7 @@ export async function mint(WalletConnection: WalletConnection) {
 
 export async function sendConfigDatum(
   WalletConnection: WalletConnection,
-  CONFIGDATUM: ConfigDatum
+  CONFIGDATUM: ConfigDatum,
 ) {
   const { lucid, address } = WalletConnection;
   try {
@@ -67,7 +67,7 @@ export async function sendConfigDatum(
       .pay.ToAddressWithData(
         CONFIGADDR,
         { kind: "inline", value: Data.to(CONFIGDATUM, ConfigDatum) },
-        { lovelace: 5_000_000n, ...ref_configNFT }
+        { lovelace: 5_000_000n, ...ref_configNFT },
       )
       .complete();
 

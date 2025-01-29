@@ -61,7 +61,7 @@ export default function ArbitratorProjectItem({ project }: Props) {
     const result = await ArbitratorAction(
       walletConnection,
       project,
-      atFault.includes("dev")
+      atFault.includes("dev"),
     );
     if (!result.data) {
       toast.error("Error", {

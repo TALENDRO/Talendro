@@ -60,13 +60,13 @@ export default function ProjectItem({ project, from }: Props) {
         setDatum(datum);
         setIsCompleteByDev(
           project.assets.hasOwnProperty(
-            PROJECTINITPID + fromText("dev_") + datum?.title
-          )
+            PROJECTINITPID + fromText("dev_") + datum?.title,
+          ),
         );
         setIsCancelByDev(
           project.assets.hasOwnProperty(
-            PROJECTINITPID + fromText("dev_") + datum?.title
-          ) && datum.pay === null
+            PROJECTINITPID + fromText("dev_") + datum?.title,
+          ) && datum.pay === null,
         );
         // Assuming metadata is stored in the datum or fetched separately
         setMetadata({
@@ -107,7 +107,7 @@ export default function ProjectItem({ project, from }: Props) {
 
       const ref_utxo = await refUtxo(lucid);
       const UTxO_Talendro = await lucid.utxoByUnit(
-        TALENDROPID + fromText(address.slice(-10))
+        TALENDROPID + fromText(address.slice(-10)),
       );
       const redeemer = Data.to(1n);
 
@@ -120,7 +120,7 @@ export default function ProjectItem({ project, from }: Props) {
         .pay.ToAddressWithData(
           contractAddress,
           { kind: "inline", value: Data.to(updatedDatum, ProjectDatum) },
-          { lovelace: datum.pay ? BigInt(datum.pay) : 3_000_000n }
+          { lovelace: datum.pay ? BigInt(datum.pay) : 3_000_000n },
         )
         .attach.SpendingValidator(ProjectInitiateValidator())
         .addSigner(address)

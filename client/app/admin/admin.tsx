@@ -119,7 +119,7 @@ export default function Page() {
                 CONFIGDATUM,
                 (key, value) =>
                   typeof value === "bigint" ? value.toString() : value,
-                2
+                2,
               )}
             </pre>
           </CardContent>

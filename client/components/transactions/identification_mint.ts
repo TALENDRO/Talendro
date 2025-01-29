@@ -28,7 +28,7 @@ export async function mint(walletConnection: WalletConnection) {
     };
     const utxoWithIdentificationToken = await lucid.utxosAtWithUnit(
       SYSTEMADDRESS,
-      IDENTIFICATIONPID + fromText("usr_configNFT")
+      IDENTIFICATIONPID + fromText("usr_configNFT"),
     );
 
     const mintingValidator: Validator = TalendroTokenValidator();
@@ -48,10 +48,10 @@ export async function mint(walletConnection: WalletConnection) {
           kind: "inline",
           value: Data.to(
             { staked_by: paymentCredentialOf(address).hash },
-            StakeDatum
+            StakeDatum,
           ),
         },
-        { lovelace: 100_000_000n }
+        { lovelace: 100_000_000n },
       )
       .mintAssets(mintedAssets, redeemer)
       .attach.MintingPolicy(mintingValidator)
