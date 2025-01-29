@@ -32,7 +32,7 @@ import {
 } from "@/config";
 import { refStakeUtxo, refUtxo, toLovelace } from "@/lib/utils";
 import { ProjectInitiateValidator } from "@/config/scripts/scripts";
-import { toast } from "@/hooks/use-toast";
+// import { useToast } from "@/hooks/use-toast";
 
 type ProjectType = "Milestone" | "Regular";
 
@@ -46,6 +46,7 @@ export function CreateProject() {
   const [txHash, setTxHash] = useState<string>();
   const [walletConnection] = useWallet();
   const { lucid, address } = walletConnection;
+  // const { toast } = useToast();
 
   const handleProjectTypeChange = (checked: boolean) => {
     setProjectType(checked ? "Milestone" : "Regular");
@@ -69,10 +70,10 @@ export function CreateProject() {
       projectImageUrl
     );
 
-    toast({
-      title: "Tx hash",
-      description: "Project Created Successfully",
-    });
+    // toast({
+    //   title: "Tx hash",
+    //   description: "Project Created Successfully",
+    // });
     // Reset the form
     setTxHash(txHash);
     setProjectTitle("");

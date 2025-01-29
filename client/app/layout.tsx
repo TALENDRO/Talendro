@@ -50,8 +50,8 @@ export default function RootLayout({
               {children}
             </main>
           </div>
+          {/* <Toaster /> */}
         </Providers>
-        <Toaster />
       </body>
     </html>
   );

@@ -6,7 +6,6 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
-// import { useToast } from "@/components/ui/toast"
 import {
   IDENTIFICATIONPID,
   MILESTONEPID,
@@ -19,18 +18,17 @@ import {
   STAKEADDRESS,
 } from "@/config";
 import { useWallet } from "@/context/walletContext";
-import { toast } from "@/hooks/use-toast";
+// import { useToast } from "@/hooks/use-toast";
 import { ConfigDatum } from "@/types/cardano";
-import { Data, paymentCredentialOf } from "@lucid-evolution/lucid";
-import { Description } from "@radix-ui/react-toast";
-import React, { useEffect, useState } from "react";
+import { paymentCredentialOf } from "@lucid-evolution/lucid";
+import React, { useState } from "react";
 
 export default function Page() {
   const [WalletConnection, setWalletConnection] = useWallet();
   const { isEmulator } = WalletConnection;
   const [submitting, setSubmitting] = useState(false);
   const [policyID, setPolicy] = useState("");
-  // const { toast } = useToast()
+  // const { toast } = useToast();
 
   const CONFIGDATUM: ConfigDatum = {
     identification_nft: isEmulator ? policyID : IDENTIFICATIONPID,
@@ -53,11 +51,11 @@ export default function Page() {
     }
     console.log(result.data.txHash);
     setPolicy(result.data.policyID);
-    toast({
-      title: "Tx hash",
-      description:
-        result.data.txHash.slice(0, 20) + "..." + result.data.txHash.slice(-10),
-    });
+    // toast({
+    //   title: "Tx hash",
+    //   description:
+    //     result.data.txHash.slice(0, 20) + "..." + result.data.txHash.slice(-10),
+    // });
   }
 
   async function sendConfigDatumClick() {
