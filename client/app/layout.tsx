@@ -2,7 +2,7 @@ import "@/styles/globals.css";
 import { Metadata, Viewport } from "next";
 import { Link } from "@heroui/link";
 import clsx from "clsx";
-import { Toaster } from "@/components/ui/toaster";
+import { Toaster } from "@/components/ui/sonner";
 
 import { Providers } from "./providers";
 
@@ -50,7 +50,7 @@ export default function RootLayout({
               {children}
             </main>
           </div>
-          {/* <Toaster /> */}
+          <Toaster richColors />
         </Providers>
       </body>
     </html>

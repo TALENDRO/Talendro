@@ -33,6 +33,7 @@ import {
 import { refStakeUtxo, refUtxo, toLovelace } from "@/lib/utils";
 import { ProjectInitiateValidator } from "@/config/scripts/scripts";
 // import { useToast } from "@/hooks/use-toast";
+import { toast } from "sonner";
 
 type ProjectType = "Milestone" | "Regular";
 
@@ -70,10 +71,9 @@ export function CreateProject() {
       projectImageUrl
     );
 
-    // toast({
-    //   title: "Tx hash",
-    //   description: "Project Created Successfully",
-    // });
+    toast("Tx Hash", {
+      description: "Project Created Successfully",
+    });
     // Reset the form
     setTxHash(txHash);
     setProjectTitle("");
