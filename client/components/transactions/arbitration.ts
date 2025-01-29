@@ -18,7 +18,7 @@ import {
   ProjectDatum,
   ProjectRedeemer,
 } from "@/types/cardano";
-import { Data, fromText, UTxO } from "@lucid-evolution/lucid";
+import { Data, fromText, TxHash, UTxO } from "@lucid-evolution/lucid";
 
 export async function arbitration(
   walletConnection: WalletConnection,
@@ -73,7 +73,8 @@ export async function ArbitratorAction(
   devAtFault: boolean,
 ) {
   const { lucid, address } = walletConnection;
-  if (!lucid || !address) throw "Uninitialized Lucid!!!";
+  if (!lucid || !address) throw new Error("Uninitialized Lucid!!!");
+
   try {
     const data = await lucid.datumOf(utxo);
     const currentDatum = Data.castFrom(data, ArbitratorDatum);
@@ -115,7 +116,9 @@ export async function ArbitratorAction(
     const signed = await stakeSigned.sign.withWallet().complete();
     const txHash = await signed.submit();
     console.log("txHash: ", txHash);
-  } catch (error) {
-    console.log(error);
+
+    return { data: txHash, error: null };
+  } catch (error: any) {
+    return { data: null, error: error.message };
   }
 }

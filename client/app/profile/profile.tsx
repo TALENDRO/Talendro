@@ -11,14 +11,25 @@ import {
 } from "@/components/ui/card";
 import { CreateProject } from "@/components/createProjectModal";
 import MyProjectsPage from "./myProjects";
+import { toast } from "sonner";
+import { error } from "console";
+import { useState } from "react";
 
 export default function TalendroTokenMinter() {
   const [WalletConnection] = useWallet();
+  const [submitting, setSubmitting] = useState(false);
 
   const { lucid, address } = WalletConnection;
   async function mintClick() {
+    setSubmitting(true);
     if (!lucid || !address) throw "Uninitialized Lucid!!!";
-    await mint(WalletConnection);
+
+    const result = await mint(WalletConnection);
+    if (!result.data) {
+      toast.error("ERROR", { description: result.error });
+    }
+    toast.success("SUCCESS", { description: "TALENDRO Token MINT" });
+    setSubmitting(false);
   }
 
   return (
@@ -32,7 +43,9 @@ export default function TalendroTokenMinter() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <Button onClick={mintClick}>Talendro mint</Button>
+          <Button onClick={mintClick} disabled={submitting}>
+            Talendro mint
+          </Button>
         </CardContent>
       </Card>
 

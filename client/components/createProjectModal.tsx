@@ -32,7 +32,7 @@ import {
 } from "@/config";
 import { refStakeUtxo, refUtxo, toLovelace } from "@/lib/utils";
 import { ProjectInitiateValidator } from "@/config/scripts/scripts";
-import { toast } from "@/hooks/use-toast";
+import { toast } from "sonner";
 
 type ProjectType = "Milestone" | "Regular";
 
@@ -46,6 +46,7 @@ export function CreateProject() {
   const [txHash, setTxHash] = useState<string>();
   const [walletConnection] = useWallet();
   const { lucid, address } = walletConnection;
+  // const { toast } = useToast();
 
   const handleProjectTypeChange = (checked: boolean) => {
     setProjectType(checked ? "Milestone" : "Regular");
@@ -61,20 +62,26 @@ export function CreateProject() {
     console.log("Project Description:", projectDescription);
     console.log("Project Image URL:", projectImageUrl);
 
-    const txHash = await createProject(
+    const result = await createProject(
       projectTitle,
       pay,
       projectType,
       projectDescription,
-      projectImageUrl
+      projectImageUrl,
     );
+    if (!result.data) {
+      toast.error("ERROR", {
+        description: result.error,
+      });
+      setSubmitting(false);
 
-    toast({
-      title: "Tx hash",
+      return;
+    }
+    toast.success("Tx Hash", {
       description: "Project Created Successfully",
     });
     // Reset the form
-    setTxHash(txHash);
+    setTxHash(result.data);
     setProjectTitle("");
     setProjectDescription("");
     setProjectImageUrl("");
@@ -88,7 +95,7 @@ export function CreateProject() {
     pay: number | null,
     type: ProjectType,
     description: string,
-    imageUrl: string
+    imageUrl: string,
   ) {
     if (!lucid || !address) throw "Uninitialized Lucid!!!";
     const mintingValidator: MintingPolicy = ProjectInitiateValidator();
@@ -114,7 +121,7 @@ export function CreateProject() {
       const ref_utxo = await refUtxo(lucid);
       const ref_stake = await refStakeUtxo(lucid, address, STAKEADDRESS);
       const UTxO_Talendro = await lucid.utxoByUnit(
-        TALENDROPID + fromText(address.slice(-10))
+        TALENDROPID + fromText(address.slice(-10)),
       );
       const redeemer = Data.to(0n);
       const tx = await lucid
@@ -124,7 +131,7 @@ export function CreateProject() {
         .pay.ToAddressWithData(
           PROJECTINITADDR,
           { kind: "inline", value: Data.to(datum, ProjectDatum) },
-          { lovelace: pay ? toLovelace(pay) : 3_000_000n, ...dev_token }
+          { lovelace: pay ? toLovelace(pay) : 3_000_000n, ...dev_token },
         )
         .mintAssets({ ...clt_token, ...dev_token }, redeemer)
         .attach.MintingPolicy(mintingValidator)
@@ -132,9 +139,9 @@ export function CreateProject() {
 
       const signed = await tx.sign.withWallet().complete();
       const txHash = await signed.submit();
-      return txHash;
-    } catch (error) {
-      console.log(error);
+      return { data: txHash, error: null };
+    } catch (error: any) {
+      return { data: null, error: error.message };
     }
   }
 
@@ -213,12 +220,6 @@ export function CreateProject() {
                 className="col-span-3"
               />
             </div>
-          )}
-
-          {txHash && (
-            <p className="text-sm text-muted-foreground">
-              Transaction Hash: {txHash}
-            </p>
           )}
         </div>
         <DialogFooter>

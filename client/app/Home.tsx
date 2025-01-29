@@ -1,4 +1,4 @@
-'use client'
+"use client";
 import { Button } from "@/components/ui/button";
 import { Link } from "@heroui/link";
 import Image from "next/image";
@@ -9,11 +9,18 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { ArrowRight, Code2, Gavel, Shield, Star, TrendingUp, Wallet } from "lucide-react";
+import {
+  ArrowRight,
+  Code2,
+  Gavel,
+  Shield,
+  Star,
+  TrendingUp,
+  Wallet,
+} from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 
 export default function Homepage() {
-
   const categories = [
     { name: "Smart Contract Development", count: 124, icon: Code2 },
     { name: "Blockchain Integration", count: 89, icon: TrendingUp },
@@ -45,8 +52,7 @@ export default function Homepage() {
   ];
   return (
     <div className="flex flex-col min-h-screen">
-
-  <section className="relative from-primary/10 via-primary/5 to-background pt-20 pb-32">
+      <section className="relative from-primary/10 via-primary/5 to-background pt-20 pb-32">
         <div className="container px-4 mx-auto">
           <div className="flex flex-col lg:flex-row items-center gap-12">
             <div className="flex-1 text-center lg:text-left">
@@ -79,7 +85,6 @@ export default function Homepage() {
           </div>
         </div>
       </section>
-
 
       <section className="py-20">
         <div className="container px-4 mx-auto">
@@ -121,7 +126,6 @@ export default function Homepage() {
         </div>
       </section>
 
-
       <section className="py-20">
         <div className="container px-4 mx-auto">
           <h2 className="text-3xl font-bold text-center mb-12">
@@ -133,9 +137,7 @@ export default function Homepage() {
                 key={category.name}
                 className="group hover:shadow-lg transition-shadow"
               >
-                <Link
-                  href={`#`}
-                >
+                <Link href={`#`}>
                   <CardHeader>
                     <div className="flex items-center justify-between mb-2">
                       <category.icon className="h-8 w-8 text-primary" />
@@ -153,7 +155,6 @@ export default function Homepage() {
           </div>
         </div>
       </section>
-
 
       <section className="py-20">
         <div className="container px-4 mx-auto">

@@ -15,9 +15,9 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import ProjectItem from "@/components/projectItem";
-// import { useToast } from "@/components/ui/use-toast"
 import { Loader2, Search } from "lucide-react";
 import { useInView } from "react-intersection-observer";
+import { toast } from "sonner";
 
 const PROJECTS_PER_PAGE = 9;
 
@@ -29,7 +29,6 @@ export default function ProjectsPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
   const [page, setPage] = useState(1);
-  // const { toast } = useToast()
   const { ref, inView } = useInView();
 
   const fetchProjects = useCallback(async () => {
@@ -43,13 +42,9 @@ export default function ProjectsPage() {
         );
       });
       setProjects(filteredUtxos);
-    } catch (error) {
+    } catch (error: any) {
+      toast.error("ERROR", { description: error.message });
       console.error("Error fetching projects:", error);
-      // toast({
-      //   title: "Error",
-      //   description: "Failed to fetch projects. Please try again.",
-      //   variant: "destructive",
-      // })
     } finally {
       setIsLoading(false);
     }
