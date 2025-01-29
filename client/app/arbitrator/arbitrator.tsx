@@ -23,9 +23,11 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-// import { useToast } from "@/components/ui/use-toast"
 import { Loader2, RefreshCw } from "lucide-react";
 import ArbitratorProjectItem from "@/components/arbitratorProjectItem";
+import { AnyNaptrRecord } from "dns";
+import { Description } from "@radix-ui/react-toast";
+import { toast } from "sonner";
 
 export default function ArbitratorTokenMinter() {
   const [WalletConnection] = useWallet();
@@ -33,31 +35,21 @@ export default function ArbitratorTokenMinter() {
   const [projects, setProjects] = useState<UTxO[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isMinting, setIsMinting] = useState(false);
-  // const { toast } = useToast()
 
   const fetchProjects = async () => {
     setIsLoading(true);
     if (!lucid || !address) {
-      // toast({
-      //   title: "Error",
-      //   description: "Wallet not connected. Please connect your wallet and try again.",
-      //   variant: "destructive",
-      // })
+      toast.error("ERROR", { description: "Wallet not Connected" });
       return;
     }
     try {
       const utxos = await lucid.utxosAt(ARBITRATIONADDR);
       const filteredUtxos = utxos.filter((utxo) =>
-        Object.keys(utxo.assets).some((key) => key.includes(PROJECTINITPID)),
+        Object.keys(utxo.assets).some((key) => key.includes(PROJECTINITPID))
       );
       setProjects(filteredUtxos);
-    } catch (error) {
-      console.error("Error fetching projects:", error);
-      // toast({
-      //   title: "Error",
-      //   description: "Failed to fetch projects. Please try again.",
-      //   variant: "destructive",
-      // })
+    } catch (error: any) {
+      toast.error("ERROR", { description: error.message });
     } finally {
       setTimeout(() => {
         setIsLoading(false);
@@ -67,16 +59,28 @@ export default function ArbitratorTokenMinter() {
 
   useEffect(() => {
     fetchProjects();
-  }, [lucid]); // Added fetchProjects to dependencies
+  }, [lucid]);
+
+  async function handleClickMint() {
+    setIsMinting(true);
+    const result = await mint();
+    if (!result.data) {
+      toast.error("ERROR", {
+        description: result.error,
+      });
+      setIsMinting(false);
+
+      return;
+    }
+    toast.success("SUCCESSFULL", {
+      description: "Arbitrator Minted successfully",
+    });
+    setIsMinting(false);
+  }
 
   async function mint() {
     if (!lucid || !address) {
-      // toast({
-      //   title: "Error",
-      //   description: "Wallet not connected. Please connect your wallet and try again.",
-      //   variant: "destructive",
-      // })
-      return;
+      throw new Error("Wallet not Connected");
     }
 
     setIsMinting(true);
@@ -86,7 +90,7 @@ export default function ArbitratorTokenMinter() {
       };
       const utxoWithIdentificationToken = await lucid.utxosAtWithUnit(
         SYSTEMADDRESS,
-        identificationPolicyid + fromText("usr_configNFT"),
+        identificationPolicyid + fromText("usr_configNFT")
       );
 
       const mintingValidator: Validator = ArbitratorTokenValidator();
@@ -111,17 +115,10 @@ export default function ArbitratorTokenMinter() {
       const txHash = await signed.submit();
       console.log("Arbitrator PiD", policyID);
       console.log("txHash: ", txHash);
-      // toast({
-      //   title: "Success",
-      //   description: "Arbitrator token minted successfully!",
-      // })
-    } catch (error) {
-      console.error("Minting error:", error);
-      // toast({
-      //   title: "Error",
-      //   description: "Failed to mint Arbitrator token. Please try again.",
-      //   variant: "destructive",
-      // })
+
+      return { data: txHash, error: null };
+    } catch (error: any) {
+      return { data: null, error: error.message };
     } finally {
       setIsMinting(false);
     }
@@ -137,7 +134,7 @@ export default function ArbitratorTokenMinter() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <Button onClick={mint} disabled={isMinting}>
+          <Button onClick={handleClickMint} disabled={isMinting}>
             {isMinting ? (
               <>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
