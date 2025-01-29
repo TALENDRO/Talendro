@@ -44,6 +44,7 @@ export default function Page() {
   };
 
   async function handleMintClick() {
+    setSubmitting(true);
     const result = await mint(WalletConnection);
     if (!result.data) {
       toast.error("ERROR", { description: result.error });
@@ -56,9 +57,12 @@ export default function Page() {
       description:
         result.data.txHash.slice(0, 20) + "..." + result.data.txHash.slice(-10),
     });
+    setSubmitting(false);
   }
 
   async function sendConfigDatumClick() {
+    setSubmitting(true);
+
     if (isEmulator && !policyID) return;
     const result = await sendConfigDatum(WalletConnection, CONFIGDATUM);
     if (!result.data) {
@@ -68,6 +72,7 @@ export default function Page() {
     toast.success("Success", {
       description: "Successfully Attach Config Datum",
     });
+    setSubmitting(false);
   }
 
   if (!isEmulator) {

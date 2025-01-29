@@ -11,6 +11,8 @@ import {
 } from "@/components/ui/card";
 import { CreateProject } from "@/components/createProjectModal";
 import MyProjectsPage from "./myProjects";
+import { toast } from "sonner";
+import { error } from "console";
 
 export default function TalendroTokenMinter() {
   const [WalletConnection] = useWallet();
@@ -18,7 +20,12 @@ export default function TalendroTokenMinter() {
   const { lucid, address } = WalletConnection;
   async function mintClick() {
     if (!lucid || !address) throw "Uninitialized Lucid!!!";
-    await mint(WalletConnection);
+
+    const result = await mint(WalletConnection);
+    if (!result.data) {
+      toast.error("ERROR", { description: result.error });
+    }
+    toast.success("SUCCESS", { description: "TALENDRO Token MINT" });
   }
 
   return (

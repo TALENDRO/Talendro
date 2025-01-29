@@ -32,7 +32,6 @@ import {
 } from "@/config";
 import { refStakeUtxo, refUtxo, toLovelace } from "@/lib/utils";
 import { ProjectInitiateValidator } from "@/config/scripts/scripts";
-// import { useToast } from "@/hooks/use-toast";
 import { toast } from "sonner";
 
 type ProjectType = "Milestone" | "Regular";
@@ -63,19 +62,26 @@ export function CreateProject() {
     console.log("Project Description:", projectDescription);
     console.log("Project Image URL:", projectImageUrl);
 
-    const txHash = await createProject(
+    const result = await createProject(
       projectTitle,
       pay,
       projectType,
       projectDescription,
       projectImageUrl
     );
+    if (!result.data) {
+      toast.error("ERROR", {
+        description: result.error,
+      });
+      setSubmitting(false);
 
-    toast("Tx Hash", {
+      return;
+    }
+    toast.success("Tx Hash", {
       description: "Project Created Successfully",
     });
     // Reset the form
-    setTxHash(txHash);
+    setTxHash(result.data);
     setProjectTitle("");
     setProjectDescription("");
     setProjectImageUrl("");
@@ -133,9 +139,9 @@ export function CreateProject() {
 
       const signed = await tx.sign.withWallet().complete();
       const txHash = await signed.submit();
-      return txHash;
-    } catch (error) {
-      console.log(error);
+      return { data: txHash, error: null };
+    } catch (error: any) {
+      return { data: null, error: error.message };
     }
   }
 
