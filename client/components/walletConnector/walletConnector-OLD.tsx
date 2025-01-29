@@ -80,7 +80,11 @@ export default function WalletComponent() {
             </>
           ) : balance ? (
             <>
-              <Image className="w-4" src={wallet?.icon || ""} alt="wallet icon" />
+              <Image
+                className="w-4"
+                src={wallet?.icon || ""}
+                alt="wallet icon"
+              />
               <span className="max-sm:text-xs text-center tracking-wide">
                 ₳ {balance.toFixed(2)}
               </span>
