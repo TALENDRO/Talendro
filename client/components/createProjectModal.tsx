@@ -137,8 +137,13 @@ export function CreateProject() {
         .attach.MintingPolicy(mintingValidator)
         .attachMetadata(721,  {
           [PROJECTINITPID]: {
-            [title]: {
-              name: title,
+            ["dev_"+title]: {
+              name: "dev_"+title,
+              image: imageUrl,
+              description: description,
+            },
+            ["clt_"+title]: {
+              name: "clt_"+title,
               image: imageUrl,
               description: description,
             },

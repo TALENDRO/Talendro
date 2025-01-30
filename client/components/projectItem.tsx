@@ -33,6 +33,7 @@ import { CancelProject, ProjectComplete } from "./transactions/ProjectComplete";
 import { arbitration } from "./transactions/arbitration";
 import Image from "next/image";
 import { toast } from "sonner";
+import { blockfrost } from "@/lib/blockfrost";
 
 interface Props {
   project: UTxO;
@@ -69,10 +70,8 @@ export default function ProjectItem({ project, from }: Props) {
           ) && datum.pay === null,
         );
         // Assuming metadata is stored in the datum or fetched separately
-        setMetadata({
-          description: "Project description goes here",
-          image: "/placeholder.svg?height=200&width=200",
-        });
+        const metadata = await blockfrost.getMetadata(PROJECTINITPID + fromText("dev_") + datum?.title)
+        setMetadata(metadata);
       } catch (error) {
         console.error("Error fetching datum:", error);
         // toast({
@@ -207,14 +206,14 @@ export default function ProjectItem({ project, from }: Props) {
       <CardContent>
         <div className="space-y-4">
           <Image
-            src={metadata.image || "/placeholder.svg"}
+            src={metadata?.image || "/placeholder.svg"}
             alt={toText(datum.title)}
             width={200}
             height={200}
             className="rounded-md mx-auto"
           />
           <p className="text-sm text-muted-foreground">
-            {metadata.description}
+            {metadata?.description || "No description provided"}
           </p>
           <p className="font-semibold">
             Budget: {toAda(datum.pay as bigint)} ADA
