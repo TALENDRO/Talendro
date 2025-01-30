@@ -135,6 +135,15 @@ export function CreateProject() {
         )
         .mintAssets({ ...clt_token, ...dev_token }, redeemer)
         .attach.MintingPolicy(mintingValidator)
+        .attachMetadata(721,  {
+          [PROJECTINITPID]: {
+            [title]: {
+              name: title,
+              image: imageUrl,
+              description: description,
+            },
+          },
+        })
         .complete();
 
       const signed = await tx.sign.withWallet().complete();
