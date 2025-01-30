@@ -1,59 +1,90 @@
-"use client"
+"use client";
 
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 // import { useToast } from "@/components/ui/use-toast"
-import { HOLDINGADDR, MILESTONEADDR, PROJECTINITPID, TALENDROPID } from "@/config"
-import { ProjectInitiateValidator } from "@/config/scripts/scripts"
-import { useWallet } from "@/context/walletContext"
-import { refUtxo, toAda } from "@/lib/utils"
-import { ProjectDatum } from "@/types/cardano"
-import { Data, fromText, paymentCredentialOf, toText, type UTxO } from "@lucid-evolution/lucid"
-import { useEffect, useState } from "react"
-import { CancelProject, ProjectComplete } from "./transactions/ProjectComplete"
-import { arbitration } from "./transactions/arbitration"
-import Image from "next/image"
-import { toast } from "sonner"
-import { blockfrost } from "@/lib/blockfrost"
-import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog"
-import { Input } from "@/components/ui/input"
+import {
+  HOLDINGADDR,
+  MILESTONEADDR,
+  PROJECTINITPID,
+  TALENDROPID,
+} from "@/config";
+import { ProjectInitiateValidator } from "@/config/scripts/scripts";
+import { useWallet } from "@/context/walletContext";
+import { refUtxo, toAda } from "@/lib/utils";
+import { ProjectDatum } from "@/types/cardano";
+import {
+  Data,
+  fromText,
+  paymentCredentialOf,
+  toText,
+  type UTxO,
+} from "@lucid-evolution/lucid";
+import { useEffect, useState } from "react";
+import { CancelProject, ProjectComplete } from "./transactions/ProjectComplete";
+import { arbitration } from "./transactions/arbitration";
+import Image from "next/image";
+import { toast } from "sonner";
+import { blockfrost } from "@/lib/blockfrost";
+import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
 
 interface Props {
-  project: UTxO
-  from: string
+  project: UTxO;
+  from: string;
 }
 
 export default function ProjectItem({ project, from }: Props) {
-  const [walletConnection] = useWallet()
-  const { lucid, address } = walletConnection
+  const [walletConnection] = useWallet();
+  const { lucid, address } = walletConnection;
   // const { toast } = useToast()
 
-  const [submitting, setSubmitting] = useState(false)
-  const [datum, setDatum] = useState<ProjectDatum>()
-  const [isCompleteByDev, setIsCompleteByDev] = useState(false)
-  const [isCancelByDev, setIsCancelByDev] = useState(false)
-  const [metadata, setMetadata] = useState({ description: "", image: "" })
-  const [isArbitrationDialogOpen, setIsArbitrationDialogOpen] = useState(false)
-  const [POWLink, setPOWLink] = useState("")
+  const [submitting, setSubmitting] = useState(false);
+  const [datum, setDatum] = useState<ProjectDatum>();
+  const [isCompleteByDev, setIsCompleteByDev] = useState(false);
+  const [isCancelByDev, setIsCancelByDev] = useState(false);
+  const [metadata, setMetadata] = useState({ description: "", image: "" });
+  const [isArbitrationDialogOpen, setIsArbitrationDialogOpen] = useState(false);
+  const [POWLink, setPOWLink] = useState("");
 
   useEffect(() => {
-    if (!lucid) return
+    if (!lucid) return;
 
     async function fetchDatum() {
       try {
-        const data = await lucid?.datumOf(project)
-        const datum = Data.castFrom(data as Data, ProjectDatum)
-        setDatum(datum)
-        setIsCompleteByDev(project.assets.hasOwnProperty(PROJECTINITPID + fromText("dev_") + datum?.title))
+        const data = await lucid?.datumOf(project);
+        const datum = Data.castFrom(data as Data, ProjectDatum);
+        setDatum(datum);
+        setIsCompleteByDev(
+          project.assets.hasOwnProperty(
+            PROJECTINITPID + fromText("dev_") + datum?.title,
+          ),
+        );
         setIsCancelByDev(
-          project.assets.hasOwnProperty(PROJECTINITPID + fromText("dev_") + datum?.title) && datum.pay === null,
-        )
+          project.assets.hasOwnProperty(
+            PROJECTINITPID + fromText("dev_") + datum?.title,
+          ) && datum.pay === null,
+        );
         // Assuming metadata is stored in the datum or fetched separately
-        const metadata = await blockfrost.getMetadata(PROJECTINITPID + fromText("dev_") + datum?.title)
-        setMetadata(metadata)
+        const metadata = await blockfrost.getMetadata(
+          PROJECTINITPID + fromText("dev_") + datum?.title,
+        );
+        setMetadata(metadata);
       } catch (error) {
-        console.error("Error fetching datum:", error)
+        console.error("Error fetching datum:", error);
         // toast({
         //   title: "Error",
         //   description: "Failed to fetch project data",
@@ -61,34 +92,36 @@ export default function ProjectItem({ project, from }: Props) {
         // })
       }
     }
-    fetchDatum()
-  }, [lucid, project])
+    fetchDatum();
+  }, [lucid, project]);
 
   async function acceptProject() {
     if (!lucid || !address) {
-      toast.error("Error", { description: "Wallet not connected" })
-      return
+      toast.error("Error", { description: "Wallet not connected" });
+      return;
     }
     if (!datum) {
-      toast.error("Error", { description: "Project data not found" })
-      return
+      toast.error("Error", { description: "Project data not found" });
+      return;
     }
 
-    setSubmitting(true)
+    setSubmitting(true);
     try {
       const updatedDatum: ProjectDatum = {
         ...datum,
         developer: paymentCredentialOf(address).hash,
-      }
+      };
 
-      const dev_assetname = fromText("dev_") + datum.title
-      const dev_token = { [PROJECTINITPID + dev_assetname]: 1n }
+      const dev_assetname = fromText("dev_") + datum.title;
+      const dev_token = { [PROJECTINITPID + dev_assetname]: 1n };
 
-      const ref_utxo = await refUtxo(lucid)
-      const UTxO_Talendro = await lucid.utxoByUnit(TALENDROPID + fromText(address.slice(-10)))
-      const redeemer = Data.to(1n)
+      const ref_utxo = await refUtxo(lucid);
+      const UTxO_Talendro = await lucid.utxoByUnit(
+        TALENDROPID + fromText(address.slice(-10)),
+      );
+      const redeemer = Data.to(1n);
 
-      const contractAddress = datum.pay ? HOLDINGADDR : MILESTONEADDR
+      const contractAddress = datum.pay ? HOLDINGADDR : MILESTONEADDR;
       const tx = await lucid
         .newTx()
         .readFrom(ref_utxo)
@@ -101,97 +134,104 @@ export default function ProjectItem({ project, from }: Props) {
         )
         .attach.SpendingValidator(ProjectInitiateValidator())
         .addSigner(address)
-        .complete()
+        .complete();
 
-      const signed = await tx.sign.withWallet().complete()
-      const txHash = await signed.submit()
-      console.log("txHash: ", txHash)
+      const signed = await tx.sign.withWallet().complete();
+      const txHash = await signed.submit();
+      console.log("txHash: ", txHash);
       toast.success("Success", {
         description: "Project accepted successfully",
-      })
+      });
     } catch (error: any) {
-      console.error(error)
-      toast.error("Error", { description: "Failed to accept project" })
+      console.error(error);
+      toast.error("Error", { description: "Failed to accept project" });
     }
-    setSubmitting(false)
+    setSubmitting(false);
   }
 
   async function projectCompleteClick() {
     if (!lucid || !address || !datum) {
-      toast.error("Error", { description: "Missing required data" })
+      toast.error("Error", { description: "Missing required data" });
 
-      return
+      return;
     }
-    setSubmitting(true)
+    setSubmitting(true);
     try {
-      const calledByDev = from.includes("dev")
-      await ProjectComplete(lucid, project, datum, calledByDev, address)
+      const calledByDev = from.includes("dev");
+      await ProjectComplete(lucid, project, datum, calledByDev, address);
       toast.success("Success", {
         description: "Project completed successfully",
-      })
+      });
     } catch (error) {
-      console.error(error)
-      toast.error("Error", { description: "Failed to complete project" })
+      console.error(error);
+      toast.error("Error", { description: "Failed to complete project" });
     }
-    setSubmitting(false)
+    setSubmitting(false);
   }
 
   async function cancelProjectClick() {
     if (!lucid || !address || !datum) {
-      toast.error("Error", { description: "Missing required data" })
+      toast.error("Error", { description: "Missing required data" });
 
-      return
+      return;
     }
-    setSubmitting(true)
+    setSubmitting(true);
     try {
-      const calledByDev = from.includes("dev")
-      await CancelProject(lucid, project, datum, calledByDev, address)
+      const calledByDev = from.includes("dev");
+      await CancelProject(lucid, project, datum, calledByDev, address);
       toast.success("Success", {
         description: "Project cancelled successfully",
-      })
+      });
     } catch (error) {
-      console.error(error)
-      toast.error("Error", { description: "Failed to cancel project" })
+      console.error(error);
+      toast.error("Error", { description: "Failed to cancel project" });
     }
-    setSubmitting(false)
+    setSubmitting(false);
   }
 
   async function handleArbitrationClick() {
-    setIsArbitrationDialogOpen(true)
+    setIsArbitrationDialogOpen(true);
   }
 
   async function confirmArbitration() {
-    setSubmitting(true)
+    setSubmitting(true);
     try {
-      const calledByDev = from.includes("dev")
-      const result = await arbitration(walletConnection, project, calledByDev, POWLink)
-      if (!result.data){
+      const calledByDev = from.includes("dev");
+      const result = await arbitration(
+        walletConnection,
+        project,
+        calledByDev,
+        POWLink,
+      );
+      if (!result.data) {
         toast.error("ERROR", {
           description: result.error,
-        })
-      setIsArbitrationDialogOpen(false)
-        return
+        });
+        setIsArbitrationDialogOpen(false);
+        return;
       }
       toast.success("Success", {
         description: "Arbitration requested successfully",
-      })
-      setIsArbitrationDialogOpen(false)
+      });
+      setIsArbitrationDialogOpen(false);
     } catch (error) {
-      console.error(error)
-      toast.error("Error", { description: "Failed to request arbitration" })
+      console.error(error);
+      toast.error("Error", { description: "Failed to request arbitration" });
     }
-    setSubmitting(false)
-    setPOWLink("")
+    setSubmitting(false);
+    setPOWLink("");
   }
 
-  if (!datum) return null
+  if (!datum) return null;
 
-  const imageUrl = metadata?.image.replace("ipfs://", "https://ipfs.io/ipfs/")
+  const imageUrl = metadata?.image.replace("ipfs://", "https://ipfs.io/ipfs/");
   return (
     <Card className="w-full max-w-md mx-auto">
       <CardHeader>
         <CardTitle>{toText(datum.title)}</CardTitle>
-        <Badge variant={datum.pay ? "default" : "secondary"}>{datum.pay ? "Regular" : "Milestone Based"}</Badge>
+        <Badge variant={datum.pay ? "default" : "secondary"}>
+          {datum.pay ? "Regular" : "Milestone Based"}
+        </Badge>
       </CardHeader>
       <CardContent>
         <div className="space-y-4">
@@ -202,8 +242,12 @@ export default function ProjectItem({ project, from }: Props) {
             height={500}
             className="rounded-md mx-auto w-full"
           />
-          <p className="text-sm text-muted-foreground">{metadata?.description || "No description provided"}</p>
-          <p className="font-semibold">Budget: {toAda(datum.pay as bigint)} ADA</p>
+          <p className="text-sm text-muted-foreground">
+            {metadata?.description || "No description provided"}
+          </p>
+          <p className="font-semibold">
+            Budget: {toAda(datum.pay as bigint)} ADA
+          </p>
         </div>
       </CardContent>
       <CardFooter className="flex flex-wrap gap-2 justify-center">
@@ -217,7 +261,9 @@ export default function ProjectItem({ project, from }: Props) {
             <Button
               onClick={projectCompleteClick}
               disabled={
-                submitting || (isCompleteByDev && from.includes("dev")) || (!isCompleteByDev && from.includes("client"))
+                submitting ||
+                (isCompleteByDev && from.includes("dev")) ||
+                (!isCompleteByDev && from.includes("client"))
               }
             >
               {submitting
@@ -231,7 +277,9 @@ export default function ProjectItem({ project, from }: Props) {
             <Button
               onClick={cancelProjectClick}
               disabled={
-                submitting || (isCancelByDev && from.includes("dev")) || (!isCancelByDev && from.includes("client"))
+                submitting ||
+                (isCancelByDev && from.includes("dev")) ||
+                (!isCancelByDev && from.includes("client"))
               }
             >
               {submitting
@@ -248,7 +296,10 @@ export default function ProjectItem({ project, from }: Props) {
           </div>
         )}
       </CardFooter>
-      <Dialog open={isArbitrationDialogOpen} onOpenChange={setIsArbitrationDialogOpen}>
+      <Dialog
+        open={isArbitrationDialogOpen}
+        onOpenChange={setIsArbitrationDialogOpen}
+      >
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Request Arbitration</DialogTitle>
@@ -259,14 +310,18 @@ export default function ProjectItem({ project, from }: Props) {
             onChange={(e) => setPOWLink(e.target.value)}
           />
           <DialogFooter>
-            <Button onClick={() => setIsArbitrationDialogOpen(false)}>Cancel</Button>
-            <Button onClick={confirmArbitration} disabled={!POWLink || submitting}>
+            <Button onClick={() => setIsArbitrationDialogOpen(false)}>
+              Cancel
+            </Button>
+            <Button
+              onClick={confirmArbitration}
+              disabled={!POWLink || submitting}
+            >
               {submitting ? "Requesting..." : "Confirm"}
             </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
     </Card>
-  )
+  );
 }
-

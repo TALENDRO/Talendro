@@ -125,7 +125,6 @@ export function OrbitingCirclesDemo() {
             radius: 230,
             speed: 10,
             i: 1,
-
           },
         ]}
       >

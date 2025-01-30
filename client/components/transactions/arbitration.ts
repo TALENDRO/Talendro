@@ -37,7 +37,7 @@ export async function arbitration(
       project_datum: datum,
       pow: fromText(arbitrationLink),
     };
-    console.log(arbDatum, arbitrationLink)
+    console.log(arbDatum, arbitrationLink);
     const tokenName = isDev ? "dev_" : "clt_";
     const project_assetname = fromText(tokenName) + datum.title;
     const projecttoken = { [PROJECTINITPID + project_assetname]: 1n };
@@ -63,10 +63,10 @@ export async function arbitration(
     const signed = await tx.sign.withWallet().complete();
     const txHash = await signed.submit();
     console.log("txHash: ", txHash);
-    return {data: txHash, error: null}
+    return { data: txHash, error: null };
   } catch (error: any) {
     console.log(error);
-    return {data: null, error: error.message}
+    return { data: null, error: error.message };
   }
 }
 

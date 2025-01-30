@@ -41,7 +41,7 @@ export default function ArbitratorProjectItem({ project }: Props) {
   const [atFault, setAtFault] = useState<string>("");
   const [submitting, setSubmitting] = useState(false);
   const [datum, setDatum] = useState<ArbitratorDatum | null>(null);
-  const [metadata, setMetadata] = useState({ description: "", image: "" })
+  const [metadata, setMetadata] = useState({ description: "", image: "" });
   // const { toast } = useToast()
 
   useEffect(() => {
@@ -51,8 +51,10 @@ export default function ArbitratorProjectItem({ project }: Props) {
         const data = await lucid.datumOf(project);
         const datum = Data.castFrom(data as Data, ArbitratorDatum);
         setDatum(datum);
-        const metadata = await blockfrost.getMetadata(PROJECTINITPID + fromText("dev_") + datum.project_datum.title)
-        setMetadata(metadata)
+        const metadata = await blockfrost.getMetadata(
+          PROJECTINITPID + fromText("dev_") + datum.project_datum.title,
+        );
+        setMetadata(metadata);
       } catch (error) {
         toast.error("Error", {
           description: "Failed to fetch project data",
@@ -87,7 +89,7 @@ export default function ArbitratorProjectItem({ project }: Props) {
     return <div className="text-center p-4">Loading...</div>;
   }
 
-  const imageUrl = metadata?.image.replace("ipfs://", "https://ipfs.io/ipfs/")
+  const imageUrl = metadata?.image.replace("ipfs://", "https://ipfs.io/ipfs/");
 
   return (
     <Card className="w-full max-w-md mx-auto">
@@ -115,7 +117,14 @@ export default function ArbitratorProjectItem({ project }: Props) {
           </div>
           <div className="flex justify-between items-center">
             <span className="font-semibold">POW:</span>
-            <Link href={toText(datum.pow)} target="_blank" rel="noopener noreferrer" className="flex items-center justify-center text-wrap text-sm gap-0.5">{toText(datum.pow)} <ExternalLink size={14} color="#00ff00"/></Link>
+            <Link
+              href={toText(datum.pow)}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center justify-center text-wrap text-sm gap-0.5"
+            >
+              {toText(datum.pow)} <ExternalLink size={14} color="#00ff00" />
+            </Link>
           </div>
         </div>
         <Select onValueChange={setAtFault}>

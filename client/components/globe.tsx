@@ -86,15 +86,15 @@ function Orbit({ icons, radius, speed, i }: OrbitProps) {
       {icons.map((icon, index) => {
         const angle =
           (rotation + (index * 360) / icons.length) * (Math.PI / 180);
-          const x = Math.cos(angle) * radius;
-          const y = Math.sin(angle) * radius;
+        const x = Math.cos(angle) * radius;
+        const y = Math.sin(angle) * radius;
 
         return (
           <div
             key={index}
             className="absolute left-1/2 top-1/2 h-10 w-10 -translate-x-1/2 -translate-y-1/2 transform"
             style={{
-              transform: `${i%2 == 0 ? `translate(${x}px, ${y}px)` : `translate(${y}px, ${x}px)`}`,
+              transform: `${i % 2 == 0 ? `translate(${x}px, ${y}px)` : `translate(${y}px, ${x}px)`}`,
             }}
           >
             {icon}
@@ -112,7 +112,7 @@ export function OrbitingCircles({ orbits, children }: OrbitingCirclesProps) {
         {children}
       </div>
       {orbits.map((orbit, i) => (
-        <Orbit key={i} {...orbit} i={i}/>
+        <Orbit key={i} {...orbit} i={i} />
       ))}
     </div>
   );

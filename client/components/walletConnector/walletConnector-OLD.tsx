@@ -149,10 +149,13 @@ export default function WalletComponent() {
                   >
                     <span className="flex flex-col items-center justify-center gap-1 bg-transparent shadow-none rounded-sm p-1 w-full hover:border hover:border-muted-foreground">
                       <span className="flex h-14 w-14 items-center justify-center rounded-lg bg-accent bg-opacity-50 group-hover:bg-opacity-100">
-                        <Image src={w.icon} className="w-7" 
-                         width={30}
-                         height={30}
-                        alt="wallet icon" />
+                        <Image
+                          src={w.icon}
+                          className="w-7"
+                          width={30}
+                          height={30}
+                          alt="wallet icon"
+                        />
                       </span>
 
                       <span className="text-xs capitalize">{w.name}</span>
