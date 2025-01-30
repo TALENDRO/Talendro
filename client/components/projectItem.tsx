@@ -195,6 +195,7 @@ export default function ProjectItem({ project, from }: Props) {
 
   if (!datum) return null;
 
+  const imageUrl = metadata?.image.replace('ipfs://', 'https://ipfs.io/ipfs/')
   return (
     <Card className="w-full max-w-md mx-auto">
       <CardHeader>
@@ -206,11 +207,11 @@ export default function ProjectItem({ project, from }: Props) {
       <CardContent>
         <div className="space-y-4">
           <Image
-            src={metadata?.image || "/placeholder.svg"}
+            src={imageUrl || '/placeholder.svg'}
             alt={toText(datum.title)}
-            width={200}
-            height={200}
-            className="rounded-md mx-auto"
+      width={500}
+      height={500}
+            className="rounded-md mx-auto w-full"
           />
           <p className="text-sm text-muted-foreground">
             {metadata?.description || "No description provided"}
@@ -227,7 +228,7 @@ export default function ProjectItem({ project, from }: Props) {
           </Button>
         )}
         {(from === "myProjects_dev" || from === "myProjects_client") && (
-          <>
+          <div className="flex gap-2 justify-center items-center flex-wrap">
             <Button
               onClick={projectCompleteClick}
               disabled={
@@ -263,7 +264,7 @@ export default function ProjectItem({ project, from }: Props) {
             <Button onClick={handleArbitrationClick} disabled={submitting}>
               {submitting ? "Requesting..." : "Request Arbitration"}
             </Button>
-          </>
+          </div>
         )}
       </CardFooter>
     </Card>
