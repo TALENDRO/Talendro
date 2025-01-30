@@ -60,6 +60,7 @@ import { useState, useEffect } from "react";
 
 interface OrbitProps {
   icons: React.ReactNode[];
+  i: number;
   radius: number;
   speed: number;
 }
@@ -69,7 +70,7 @@ interface OrbitingCirclesProps {
   children: React.ReactNode;
 }
 
-function Orbit({ icons, radius, speed }: OrbitProps) {
+function Orbit({ icons, radius, speed, i }: OrbitProps) {
   const [rotation, setRotation] = useState(0);
 
   useEffect(() => {
@@ -85,15 +86,15 @@ function Orbit({ icons, radius, speed }: OrbitProps) {
       {icons.map((icon, index) => {
         const angle =
           (rotation + (index * 360) / icons.length) * (Math.PI / 180);
-        const x = Math.cos(angle) * radius;
-        const y = Math.sin(angle) * radius;
+          const x = Math.cos(angle) * radius;
+          const y = Math.sin(angle) * radius;
 
         return (
           <div
             key={index}
             className="absolute left-1/2 top-1/2 h-10 w-10 -translate-x-1/2 -translate-y-1/2 transform"
             style={{
-              transform: `translate(${x}px, ${y}px)`,
+              transform: `${i%2 == 0 ? `translate(${x}px, ${y}px)` : `translate(${y}px, ${x}px)`}`,
             }}
           >
             {icon}
@@ -110,8 +111,8 @@ export function OrbitingCircles({ orbits, children }: OrbitingCirclesProps) {
       <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 transform">
         {children}
       </div>
-      {orbits.map((orbit, index) => (
-        <Orbit key={index} {...orbit} />
+      {orbits.map((orbit, i) => (
+        <Orbit key={i} {...orbit} i={i}/>
       ))}
     </div>
   );

@@ -112,8 +112,9 @@ export function OrbitingCirclesDemo() {
               <Icons.react key="react" />,
               <Icons.typescript key="typescript" />,
             ],
-            radius: 120,
-            speed: 5,
+            radius: 150,
+            speed: 20,
+            i: 0,
           },
           {
             icons: [
@@ -121,8 +122,10 @@ export function OrbitingCirclesDemo() {
               <Icons.nextjs key="nextjs" />,
               <Icons.vercel key="vercel" />,
             ],
-            radius: 180,
-            speed: 3,
+            radius: 230,
+            speed: 10,
+            i: 1,
+
           },
         ]}
       >
