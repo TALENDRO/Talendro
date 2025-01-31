@@ -56,6 +56,14 @@ export async function mint(walletConnection: WalletConnection) {
       .mintAssets(mintedAssets, redeemer)
       .attach.MintingPolicy(mintingValidator)
       .addSigner(SYSTEMADDRESS)
+      .attachMetadata(721, {
+        [TALENDROPID]: {
+          [TalendroUserName]: {
+            name: TalendroUserName,
+            image: "ipfs://QmRGtfuQmHJEv7zatycKXx6WwKWXKyEdMk7N4iuRyVgkEN",
+          },
+        },
+      })
       .complete();
 
     const systemSigned = await SystemWallet(tx);

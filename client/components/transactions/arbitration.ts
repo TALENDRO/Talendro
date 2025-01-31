@@ -19,11 +19,13 @@ import {
   ProjectRedeemer,
 } from "@/types/cardano";
 import { Data, fromText, TxHash, UTxO } from "@lucid-evolution/lucid";
+import { error } from "console";
 
 export async function arbitration(
   walletConnection: WalletConnection,
   utxo: UTxO,
   isDev: boolean,
+  arbitrationLink: string,
 ) {
   const { lucid, address } = walletConnection;
   if (!lucid || !address) throw "Uninitialized Lucid!!!";
@@ -31,11 +33,11 @@ export async function arbitration(
   try {
     const data = await lucid.datumOf(utxo);
     const datum = Data.castFrom(data, ProjectDatum);
-    console.log(datum);
     const arbDatum: ArbitratorDatum = {
       project_datum: datum,
-      pow: fromText("proof of work"), //should be @PARAM
+      pow: fromText(arbitrationLink),
     };
+    console.log(arbDatum, arbitrationLink);
     const tokenName = isDev ? "dev_" : "clt_";
     const project_assetname = fromText(tokenName) + datum.title;
     const projecttoken = { [PROJECTINITPID + project_assetname]: 1n };
@@ -45,7 +47,6 @@ export async function arbitration(
       TALENDROPID + fromText(address.slice(-10)),
     ); //talendroPolicyID+assetName assetname is user address
     const redeemer = Data.to("Arbitrator", ProjectRedeemer);
-    console.log(TALENDROPID, PROJECTINITPID);
     const tx = await lucid
       .newTx()
       .readFrom(ref_utxo)
@@ -62,8 +63,10 @@ export async function arbitration(
     const signed = await tx.sign.withWallet().complete();
     const txHash = await signed.submit();
     console.log("txHash: ", txHash);
-  } catch (error) {
+    return { data: txHash, error: null };
+  } catch (error: any) {
     console.log(error);
+    return { data: null, error: error.message };
   }
 }
 

@@ -23,16 +23,24 @@ import { ProjectDatum } from "@/types/cardano";
 import {
   Data,
   fromText,
-  type LucidEvolution,
   paymentCredentialOf,
   toText,
   type UTxO,
 } from "@lucid-evolution/lucid";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { CancelProject, ProjectComplete } from "./transactions/ProjectComplete";
 import { arbitration } from "./transactions/arbitration";
 import Image from "next/image";
 import { toast } from "sonner";
+import { blockfrost } from "@/lib/blockfrost";
+import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
 
 interface Props {
   project: UTxO;
@@ -49,6 +57,8 @@ export default function ProjectItem({ project, from }: Props) {
   const [isCompleteByDev, setIsCompleteByDev] = useState(false);
   const [isCancelByDev, setIsCancelByDev] = useState(false);
   const [metadata, setMetadata] = useState({ description: "", image: "" });
+  const [isArbitrationDialogOpen, setIsArbitrationDialogOpen] = useState(false);
+  const [POWLink, setPOWLink] = useState("");
 
   useEffect(() => {
     if (!lucid) return;
@@ -69,10 +79,10 @@ export default function ProjectItem({ project, from }: Props) {
           ) && datum.pay === null,
         );
         // Assuming metadata is stored in the datum or fetched separately
-        setMetadata({
-          description: "Project description goes here",
-          image: "/placeholder.svg?height=200&width=200",
-        });
+        const metadata = await blockfrost.getMetadata(
+          PROJECTINITPID + fromText("dev_") + datum?.title,
+        );
+        setMetadata(metadata);
       } catch (error) {
         console.error("Error fetching datum:", error);
         // toast({
@@ -180,22 +190,41 @@ export default function ProjectItem({ project, from }: Props) {
   }
 
   async function handleArbitrationClick() {
+    setIsArbitrationDialogOpen(true);
+  }
+
+  async function confirmArbitration() {
     setSubmitting(true);
     try {
       const calledByDev = from.includes("dev");
-      await arbitration(walletConnection, project, calledByDev);
+      const result = await arbitration(
+        walletConnection,
+        project,
+        calledByDev,
+        POWLink,
+      );
+      if (!result.data) {
+        toast.error("ERROR", {
+          description: result.error,
+        });
+        setIsArbitrationDialogOpen(false);
+        return;
+      }
       toast.success("Success", {
         description: "Arbitration requested successfully",
       });
+      setIsArbitrationDialogOpen(false);
     } catch (error) {
       console.error(error);
       toast.error("Error", { description: "Failed to request arbitration" });
     }
     setSubmitting(false);
+    setPOWLink("");
   }
 
   if (!datum) return null;
 
+  const imageUrl = metadata?.image.replace("ipfs://", "https://ipfs.io/ipfs/");
   return (
     <Card className="w-full max-w-md mx-auto">
       <CardHeader>
@@ -207,14 +236,14 @@ export default function ProjectItem({ project, from }: Props) {
       <CardContent>
         <div className="space-y-4">
           <Image
-            src={metadata.image || "/placeholder.svg"}
+            src={imageUrl || "/placeholder.svg"}
             alt={toText(datum.title)}
-            width={200}
-            height={200}
-            className="rounded-md mx-auto"
+            width={500}
+            height={500}
+            className="rounded-md mx-auto w-full"
           />
           <p className="text-sm text-muted-foreground">
-            {metadata.description}
+            {metadata?.description || "No description provided"}
           </p>
           <p className="font-semibold">
             Budget: {toAda(datum.pay as bigint)} ADA
@@ -228,7 +257,7 @@ export default function ProjectItem({ project, from }: Props) {
           </Button>
         )}
         {(from === "myProjects_dev" || from === "myProjects_client") && (
-          <>
+          <div className="flex gap-2 justify-center items-center flex-wrap">
             <Button
               onClick={projectCompleteClick}
               disabled={
@@ -264,9 +293,35 @@ export default function ProjectItem({ project, from }: Props) {
             <Button onClick={handleArbitrationClick} disabled={submitting}>
               {submitting ? "Requesting..." : "Request Arbitration"}
             </Button>
-          </>
+          </div>
         )}
       </CardFooter>
+      <Dialog
+        open={isArbitrationDialogOpen}
+        onOpenChange={setIsArbitrationDialogOpen}
+      >
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Request Arbitration</DialogTitle>
+          </DialogHeader>
+          <Input
+            placeholder="Enter Proof of work or related document as link"
+            value={POWLink}
+            onChange={(e) => setPOWLink(e.target.value)}
+          />
+          <DialogFooter>
+            <Button onClick={() => setIsArbitrationDialogOpen(false)}>
+              Cancel
+            </Button>
+            <Button
+              onClick={confirmArbitration}
+              disabled={!POWLink || submitting}
+            >
+              {submitting ? "Requesting..." : "Confirm"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </Card>
   );
 }

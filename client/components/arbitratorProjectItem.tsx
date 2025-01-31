@@ -13,7 +13,7 @@ import {
 import { useWallet } from "@/context/walletContext";
 import { toAda } from "@/lib/utils";
 import { ArbitratorDatum } from "@/types/cardano";
-import { Data, toText, type UTxO } from "@lucid-evolution/lucid";
+import { Data, fromText, toText, type UTxO } from "@lucid-evolution/lucid";
 import { ArbitratorAction } from "./transactions/arbitration";
 import {
   Card,
@@ -25,6 +25,10 @@ import {
 import { Badge } from "@/components/ui/badge";
 import Image from "next/image";
 import { toast } from "sonner";
+import { blockfrost } from "@/lib/blockfrost";
+import { PROJECTINITPID } from "@/config";
+import Link from "next/link";
+import { ExternalLink } from "lucide-react";
 // import { useToast } from "@/components/ui/use-toast"
 
 interface Props {
@@ -37,6 +41,7 @@ export default function ArbitratorProjectItem({ project }: Props) {
   const [atFault, setAtFault] = useState<string>("");
   const [submitting, setSubmitting] = useState(false);
   const [datum, setDatum] = useState<ArbitratorDatum | null>(null);
+  const [metadata, setMetadata] = useState({ description: "", image: "" });
   // const { toast } = useToast()
 
   useEffect(() => {
@@ -46,6 +51,10 @@ export default function ArbitratorProjectItem({ project }: Props) {
         const data = await lucid.datumOf(project);
         const datum = Data.castFrom(data as Data, ArbitratorDatum);
         setDatum(datum);
+        const metadata = await blockfrost.getMetadata(
+          PROJECTINITPID + fromText("dev_") + datum.project_datum.title,
+        );
+        setMetadata(metadata);
       } catch (error) {
         toast.error("Error", {
           description: "Failed to fetch project data",
@@ -80,6 +89,8 @@ export default function ArbitratorProjectItem({ project }: Props) {
     return <div className="text-center p-4">Loading...</div>;
   }
 
+  const imageUrl = metadata?.image.replace("ipfs://", "https://ipfs.io/ipfs/");
+
   return (
     <Card className="w-full max-w-md mx-auto">
       <CardHeader>
@@ -91,14 +102,14 @@ export default function ArbitratorProjectItem({ project }: Props) {
       <CardContent>
         <div className="space-y-4">
           <Image
-            src={"/placeholder.svg"}
+            src={imageUrl || "/placeholder.svg"}
             alt={toText(datum.project_datum.title)}
-            width={200}
-            height={200}
+            width={500}
+            height={500}
             className="rounded-md mx-auto"
           />
           <p className="text-sm text-muted-foreground">
-            {"toText(datum.project_datum.description)"}
+            {metadata?.description || "No description provided"}
           </p>
           <div className="flex justify-between items-center">
             <span className="font-semibold">Budget:</span>
@@ -106,7 +117,14 @@ export default function ArbitratorProjectItem({ project }: Props) {
           </div>
           <div className="flex justify-between items-center">
             <span className="font-semibold">POW:</span>
-            <span>{toText(datum.pow)}</span>
+            <Link
+              href={toText(datum.pow)}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center justify-center text-wrap text-sm gap-0.5"
+            >
+              {toText(datum.pow)} <ExternalLink size={14} color="#00ff00" />
+            </Link>
           </div>
         </div>
         <Select onValueChange={setAtFault}>
