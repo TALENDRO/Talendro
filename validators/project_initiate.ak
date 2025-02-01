@@ -13,7 +13,10 @@ use utils
 // 0 -> developer calls
 // 1 -> admin calls
 
-validator project_initiate(config_nft: PolicyId) {
+/// this validator is to create a project 
+/// to create a project client will mint a project token and send it to the self_script
+/// to accept this project the developer will withdraw the token and send the utxo with ADA to HOLDING_CONTRACT
+validator project_initiator(config_nft: PolicyId) {
   spend(
     datum: Option<ProjectDatum>,
     redeemer: Int,
@@ -32,13 +35,13 @@ validator project_initiate(config_nft: PolicyId) {
     expect Some(input_utxo) = find_input(inputs, oref)
     expect Script(policy_id) = input_utxo.output.address.payment_credential
     when redeemer is {
+      // Accept the Project
       1 -> {
         // find ref_input and Datum type
         let config_datum = utils.get_config_datum(reference_inputs, config_nft)
         // -----
         let dev_output = utils.find_output_with_policy(outputs, policy_id)
         expect VerificationKey(vk_hash) = dev_output.address.payment_credential
-        // must have talendro token
         // same datum expect projectDatum.developer
         let contract_output = utils.find_output_with_datum(outputs, datum)
         let output_datum: ProjectDatum =
@@ -56,6 +59,7 @@ validator project_initiate(config_nft: PolicyId) {
           utils.must_be_signed_by(extra_signatories, vk_hash)?,
         }
       }
+      // Cancelling the Project
       2 -> and {
           utils.must_pay_to_client(outputs, datum)?,
           utils.must_burn_dev_clt_token(mint, policy_id)?,
@@ -64,6 +68,7 @@ validator project_initiate(config_nft: PolicyId) {
     }
   }
 
+  /// mint 2 project token with names as clt_projectName dev_projectName and confirms for the correct datum
   mint(redeemer: Int, policy_id: PolicyId, tx: Transaction) {
     let Transaction { inputs, outputs, reference_inputs, mint, .. } = tx
     // find ref_input and Datum type

@@ -7,7 +7,7 @@ use cardano/assets.{AssetName, Lovelace, PolicyId, Value}
 use cardano/transaction.{InlineDatum,
   Input, Output, OutputReference, find_input}
 use datum_file as d
-use types.{ConfigDatum, Milestone, ProjectDatum, StakeDatum}
+use types.{ArbitrationDatum, ConfigDatum, Milestone, ProjectDatum, StakeDatum}
 
 pub fn must_consume_oref(inputs: List<Input>, oref: OutputReference) -> Bool {
   expect Some(_) = find_input(inputs, oref)
@@ -441,10 +441,11 @@ pub fn output_must_have_prj_token(
   bytearray.drop(assetname, 4) == datum.title
 }
 
-pub fn must_send_stake_ada(
+pub fn must_send_stake_ada_and_talendro_nft(
   outputs: List<Output>,
   stake_vkh: VerificationKeyHash,
   amount: Int,
+  policy_id: PolicyId,
 ) {
   list.any(
     outputs,
@@ -454,6 +455,11 @@ pub fn must_send_stake_ada(
             vkh == stake_vkh,
             assets.lovelace_of(output.value) == amount,
             must_send_stake_datum(output),
+            must_have_token_in_output(
+              output,
+              bytearray.slice(vkh, 18, 27),
+              policy_id,
+            ),
           }
         _ -> False
       }
@@ -464,4 +470,20 @@ pub fn must_send_stake_ada(
 fn must_send_stake_datum(output: Output) {
   expect _: StakeDatum = d.output_to_stake_datum(output)
   True
+}
+
+pub fn is_consuming_staked_ada(
+  staked_input: Input,
+  datum: ArbitrationDatum,
+  redeemer_payto: Int,
+) {
+  expect Some(dev) = datum.project_datum.developer
+  let clt = datum.project_datum.client
+  expect InlineDatum(staked_datum) = staked_input.output.datum
+  expect StakeDatum { staked_by } = staked_datum
+  if redeemer_payto == 0 {
+    staked_by == dev
+  } else {
+    staked_by == clt
+  }
 }
