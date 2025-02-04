@@ -32,7 +32,7 @@ export default function TalendroTokenMinter() {
     // const utxos = await lucid.utxosAt(address);
     const utxoWithIdentificationToken = await lucid.utxosAtWithUnit(
       SYSTEMADDRESS,
-      identificationPolicyid + fromText("usr_configNFT"),
+      identificationPolicyid + fromText("usr_configNFT")
     );
     //     utxos.filter((utxo) => {
     //     const assets = utxo.assets;
@@ -41,7 +41,10 @@ export default function TalendroTokenMinter() {
     //         assets[key] === ref_configNFT[key]
     //     );
     // });
-
+    const datum = {
+      staked_by: paymentCredentialOf(address).hash,
+      staked_amount: 100_000_000n,
+    };
     const mintingValidator: Validator = TalendroTokenValidator();
     const policyID = getPolicyId(TalendroTokenValidator);
     const TalendroUserName = address.slice(-10);
@@ -57,12 +60,9 @@ export default function TalendroTokenMinter() {
         STAKEADDRESS,
         {
           kind: "inline",
-          value: Data.to(
-            { staked_by: paymentCredentialOf(address).hash },
-            StakeDatum,
-          ),
+          value: Data.to(datum, StakeDatum),
         },
-        { lovelace: 100_000_000n },
+        { lovelace: 100_000_000n }
       )
       .mintAssets(mintedAssets, redeemer)
       .attach.MintingPolicy(mintingValidator)
