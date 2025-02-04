@@ -2,6 +2,7 @@ use aiken/collection/list
 use cardano/assets.{PolicyId}
 use cardano/transaction.{OutputReference, Transaction}
 
+/// holds the config datum with config NFT
 validator config_datum_holder(config_nft: PolicyId) {
   spend(_datum, _redeemer, oref: OutputReference, tx: Transaction) {
     let Transaction { inputs, .. } = tx

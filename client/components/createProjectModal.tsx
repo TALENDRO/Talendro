@@ -77,7 +77,7 @@ export function CreateProject() {
 
       return;
     }
-    toast.success("Tx Hash", {
+    toast.success("SUCCESSFULL", {
       description: "Project Created Successfully",
     });
     // Reset the form
@@ -135,6 +135,20 @@ export function CreateProject() {
         )
         .mintAssets({ ...clt_token, ...dev_token }, redeemer)
         .attach.MintingPolicy(mintingValidator)
+        .attachMetadata(721, {
+          [PROJECTINITPID]: {
+            ["dev_" + title]: {
+              name: "dev_" + title,
+              image: imageUrl,
+              description: description,
+            },
+            ["clt_" + title]: {
+              name: "clt_" + title,
+              image: imageUrl,
+              description: description,
+            },
+          },
+        })
         .complete();
 
       const signed = await tx.sign.withWallet().complete();

@@ -1,4 +1,9 @@
-import { getAddress, getPolicyId, privateKeytoAddress } from "@/lib/utils";
+import {
+  getAddress,
+  getPolicyId,
+  privateKeytoAddress,
+  seedtoAddress,
+} from "@/lib/utils";
 import {
   ArbitrationContractValidator,
   ArbitratorTokenValidator,
@@ -13,8 +18,8 @@ import {
 export const PRIVATEKEY = process.env.NEXT_PUBLIC_SYSTEM_WALLET as string;
 export const SYSTEMADDRESS = await privateKeytoAddress(PRIVATEKEY);
 
-export const STAKEPRIVATEKEY = process.env.NEXT_PUBLIC_STAKE_WALLET as string;
-export const STAKEADDRESS = await privateKeytoAddress(STAKEPRIVATEKEY);
+export const STAKESEED = process.env.NEXT_PUBLIC_STAKE_WALLET as string;
+export const STAKEADDRESS = await seedtoAddress(STAKESEED);
 
 export const MILESTONEPID = getPolicyId(MilestoneMINTValidator);
 export const IDENTIFICATIONPID = process.env

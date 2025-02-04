@@ -9,8 +9,8 @@ import {
   config_datum_holder_config_datum_holder_spend,
   arbitrator_nft_arbitrator_nft_mint,
   talendro_usr_talendro_nft_mint,
-  project_initiate_project_initiate_spend,
-  holding_contract_project_complete_spend,
+  project_initiate_project_initiator_spend,
+  holding_contract_holding_contract_spend,
   milestone_contract_milestone_contract_mint_mint,
   milestone_contract_milestone_contract_spend_spend,
   arbitration_contract_arbitration_spend,
@@ -20,7 +20,7 @@ export const identificationPolicyid = process.env
   .NEXT_PUBLIC_IDENTIFICATION_POLICY_ID as string;
 //------------------------------------------------------------------
 const identificationNFT_Mint = applyDoubleCborEncoding(
-  identification_nft_identification_nft_mint,
+  identification_nft_identification_nft_mint
 );
 
 export function IdentificationNFT_MintValidator(params: any[]): Validator {
@@ -32,7 +32,7 @@ export function IdentificationNFT_MintValidator(params: any[]): Validator {
 
 // --------------------------------------------------------------
 export const configDatumHolderScript = applyDoubleCborEncoding(
-  config_datum_holder_config_datum_holder_spend,
+  config_datum_holder_config_datum_holder_spend
 );
 export function ConfigDatumHolderValidator(): Validator {
   return {
@@ -45,7 +45,7 @@ export function ConfigDatumHolderValidator(): Validator {
 
 //-------------------------------------------------------------
 const arbitratorTokenMint = applyDoubleCborEncoding(
-  arbitrator_nft_arbitrator_nft_mint,
+  arbitrator_nft_arbitrator_nft_mint
 );
 export function ArbitratorTokenValidator(): Validator {
   return {
@@ -56,7 +56,7 @@ export function ArbitratorTokenValidator(): Validator {
 
 //-------------------------------------------------------------
 const talendrousrScript = applyDoubleCborEncoding(
-  talendro_usr_talendro_nft_mint,
+  talendro_usr_talendro_nft_mint
 );
 export function TalendroTokenValidator(): Validator {
   return {
@@ -67,7 +67,7 @@ export function TalendroTokenValidator(): Validator {
 
 //----------------------------------------------------------------
 const ProjectInitiateValidatorScript = applyDoubleCborEncoding(
-  project_initiate_project_initiate_spend,
+  project_initiate_project_initiator_spend
 );
 
 export function ProjectInitiateValidator(): Validator {
@@ -81,7 +81,7 @@ export function ProjectInitiateValidator(): Validator {
 
 //-----------------------------------------------------------
 const MilestonecontractMINT = applyDoubleCborEncoding(
-  milestone_contract_milestone_contract_mint_mint,
+  milestone_contract_milestone_contract_mint_mint
 );
 
 export function MilestoneMINTValidator(): Validator {
@@ -96,7 +96,7 @@ export function MilestoneMINTValidator(): Validator {
 //------------------------------------------------------
 
 const MilestonecontractSpend = applyDoubleCborEncoding(
-  milestone_contract_milestone_contract_spend_spend,
+  milestone_contract_milestone_contract_spend_spend
 );
 
 export function MilestoneSpendValidator(): Validator {
@@ -111,7 +111,7 @@ export function MilestoneSpendValidator(): Validator {
 //---------------------------------------------------------
 
 const holding_contract_pr_complt_spend = applyDoubleCborEncoding(
-  holding_contract_project_complete_spend,
+  holding_contract_holding_contract_spend
 );
 
 export function HoldingContractValidator(): Validator {
@@ -126,7 +126,7 @@ export function HoldingContractValidator(): Validator {
 //---------------------------------------------------------
 
 const arbitration_contract_arbitration_script = applyDoubleCborEncoding(
-  arbitration_contract_arbitration_spend,
+  arbitration_contract_arbitration_spend
 );
 
 export function ArbitrationContractValidator(): Validator {

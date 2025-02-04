@@ -11,7 +11,10 @@ use types.{
 }
 use utils
 
-validator project_complete(config_nft: PolicyId) {
+/// holds the ADA till the project is completed or canceled (ESCROW ACCOUNT) 
+/// manages the Cancel and Complete functionality
+/// handles the arbitrator action
+validator holding_contract(config_nft: PolicyId) {
   spend(
     datum: Option<ProjectDatum>,
     redeemer: ProjectRedeemer,
@@ -21,18 +24,17 @@ validator project_complete(config_nft: PolicyId) {
     expect Some(datum) = datum
     let Transaction { inputs, reference_inputs, outputs, mint, .. } = tx
 
-    // input have dev_ -> than if YES run client part, if NOT than run developer
     expect Some(script_input) = find_input(inputs, oref)
     let config_datum = utils.get_config_datum(reference_inputs, config_nft)
     let project_init_policyid = config_datum.projectinit_contract
-    // expect Script(project_init_policyid) =
-    //   config_datum.projectinit_contract.payment_credential
     expect Script(script_hash) = script_input.output.address.payment_credential
 
     let dev_token =
       assets.tokens(script_input.output.value, project_init_policyid)
-    // dict<assetname, qty>
     when redeemer is {
+      // if the dev token is not available 
+      // then complete will run the False part which is taking developer's complete action
+      // otherwise it will run True part which is clients complete action and releases the payment to Developer
       Complete ->
         when dict.is_empty(dev_token) is {
           True -> {
@@ -57,9 +59,9 @@ validator project_complete(config_nft: PolicyId) {
             }
         }
 
-      // DEVELOEPR = must send dev_ -> holding_script
-      // proectdatum.deveolper & pay ==NONE
-      // output should have dev_ token and assets.value(input.valiue)==assets.value(input.output.valiue) 
+      // if the dev token is not available 
+      // then complete will run the False part which is taking developer's cancel action
+      // otherwise it will run True part which is clients cancel action and releases the payment to client
       Cancel ->
         when dict.is_empty(dev_token) is {
           // Developer
@@ -88,17 +90,9 @@ validator project_complete(config_nft: PolicyId) {
             }
         }
 
-      // DEVELOEPR
-      //  DONE = must send dev_ -> aribration contract
-      //  DONE = must send arbitration datum -> aribration contract
-      //  DONE = aribration.projectdatum == script_input.projectdatum
-      //  DONE = script_input ADA == aribration_output ADA
-      // CLIENT
-      // DONE = must send clt_ token ->  aribration
-      // DONE = aribration.projectdatum == script_input.projectdatum
-      // DONE = script_input ADA == aribration_output ADA
+      // calls the Arbitrator Action
+      // send the utxo to ARBITRATION_CONTRACT
       Arbitrator -> {
-        //let arbitrator_address = config_datum.arbitrator_contract
         let arbitrator_output: Output =
           utils.find_output_with_address(
             outputs,

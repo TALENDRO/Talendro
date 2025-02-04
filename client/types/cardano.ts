@@ -26,7 +26,7 @@ export const ConfigDatumSchema = Data.Object({
   arbitrator_nft: Data.Bytes(), //PolicyId,
   arbitrator_contract: Data.Bytes(),
   talendrouser_nft: Data.Bytes(), //PolicyId,
-  stake_vkh: Data.Bytes(),
+  stake_address: AddressSchema,
   stake_amount: Data.Integer(),
 });
 export type ConfigDatum = Data.Static<typeof ConfigDatumSchema>;
@@ -62,6 +62,7 @@ export const ArbitratorDatum =
 
 export const StakeDatumSchema = Data.Object({
   staked_by: Data.Bytes(),
+  staked_amount: Data.Integer(),
 });
 export type StakeDatum = Data.Static<typeof StakeDatumSchema>;
 export const StakeDatum = StakeDatumSchema as unknown as StakeDatum;
