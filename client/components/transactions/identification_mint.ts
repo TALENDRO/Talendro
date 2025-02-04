@@ -15,8 +15,6 @@ import {
   paymentCredentialOf,
   Validator,
 } from "@lucid-evolution/lucid";
-import { error } from "console";
-import { toast } from "sonner";
 
 export async function mint(walletConnection: WalletConnection) {
   const { lucid, address } = walletConnection;
@@ -28,15 +26,19 @@ export async function mint(walletConnection: WalletConnection) {
     };
     const utxoWithIdentificationToken = await lucid.utxosAtWithUnit(
       SYSTEMADDRESS,
-      IDENTIFICATIONPID + fromText("usr_configNFT"),
+      IDENTIFICATIONPID + fromText("usr_configNFT")
     );
-
+    const datum: StakeDatum = {
+      staked_by: paymentCredentialOf(address).hash,
+      staked_amount: 100_000_000n,
+    };
     const mintingValidator: Validator = TalendroTokenValidator();
     const policyID = TALENDROPID;
-    const TalendroUserName = address.slice(-10);
-    const mintedAssets = { [policyID + fromText(TalendroUserName)]: 1n };
-    const redeemer = Data.to(fromText("redeemer"));
+    const TalendroUserName = paymentCredentialOf(address).hash.slice(-20);
+    const mintedAssets = { [policyID + TalendroUserName]: 1n };
+    const redeemer = Data.to(datum, StakeDatum);
     const ref_utxo = await refUtxo(lucid);
+
     const tx = await lucid
       .newTx()
       .readFrom(ref_utxo)
@@ -46,16 +48,12 @@ export async function mint(walletConnection: WalletConnection) {
         STAKEADDRESS,
         {
           kind: "inline",
-          value: Data.to(
-            { staked_by: paymentCredentialOf(address).hash },
-            StakeDatum,
-          ),
+          value: Data.to(datum, StakeDatum),
         },
-        { lovelace: 100_000_000n },
+        { lovelace: datum.staked_amount, ...mintedAssets }
       )
       .mintAssets(mintedAssets, redeemer)
       .attach.MintingPolicy(mintingValidator)
-      .addSigner(SYSTEMADDRESS)
       .attachMetadata(721, {
         [TALENDROPID]: {
           [TalendroUserName]: {
@@ -64,6 +62,8 @@ export async function mint(walletConnection: WalletConnection) {
           },
         },
       })
+      .addSigner(SYSTEMADDRESS)
+      .addSigner(address)
       .complete();
 
     const systemSigned = await SystemWallet(tx);
