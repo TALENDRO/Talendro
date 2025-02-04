@@ -21,7 +21,7 @@ import { useWallet } from "@/context/walletContext";
 import { toast } from "sonner";
 
 import { ConfigDatum } from "@/types/cardano";
-import { paymentCredentialOf } from "@lucid-evolution/lucid";
+import { paymentCredentialOf, stakeCredentialOf } from "@lucid-evolution/lucid";
 import React, { useState } from "react";
 
 export default function Page() {
@@ -39,7 +39,10 @@ export default function Page() {
     arbitrator_nft: ARBITRATORPID,
     arbitrator_contract: paymentCredentialOf(ARBITRATIONADDR).hash,
     talendrouser_nft: TALENDROPID,
-    stake_vkh: paymentCredentialOf(STAKEADDRESS).hash,
+    stake_address: [
+      paymentCredentialOf(STAKEADDRESS).hash,
+      stakeCredentialOf(STAKEADDRESS).hash,
+    ],
     stake_amount: 100_000_000n,
   };
 
@@ -119,7 +122,7 @@ export default function Page() {
                 CONFIGDATUM,
                 (key, value) =>
                   typeof value === "bigint" ? value.toString() : value,
-                2,
+                2
               )}
             </pre>
           </CardContent>
