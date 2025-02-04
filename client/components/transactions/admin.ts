@@ -28,7 +28,7 @@ export async function mint(WalletConnection: WalletConnection) {
     const ref_configNFT = { [policyID + fromText("ref_configNFT")]: 1n };
     const usr_configNFT = { [policyID + fromText("usr_configNFT")]: 1n };
     const mintedAssets = { ...ref_configNFT, ...usr_configNFT };
-
+    console.log(policyID);
     const redeemer = Data.void();
 
     const tx = await lucid
@@ -53,7 +53,7 @@ export async function mint(WalletConnection: WalletConnection) {
 
 export async function sendConfigDatum(
   WalletConnection: WalletConnection,
-  CONFIGDATUM: ConfigDatum,
+  CONFIGDATUM: ConfigDatum
 ) {
   const { lucid, address } = WalletConnection;
   try {
@@ -67,7 +67,7 @@ export async function sendConfigDatum(
       .pay.ToAddressWithData(
         CONFIGADDR,
         { kind: "inline", value: Data.to(CONFIGDATUM, ConfigDatum) },
-        { lovelace: 5_000_000n, ...ref_configNFT },
+        { lovelace: 5_000_000n, ...ref_configNFT }
       )
       .complete();
 

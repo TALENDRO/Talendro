@@ -1,4 +1,5 @@
 use aiken/crypto.{VerificationKeyHash}
+use cardano/address.{StakeCredential}
 use cardano/assets.{Lovelace, PolicyId}
 
 pub type ProjectDatum {
@@ -26,7 +27,7 @@ pub type ConfigDatum {
   arbitrator_nft: PolicyId,
   arbitrator_contract: VerificationKeyHash,
   talendrouser_nft: PolicyId,
-  stake_vkh: VerificationKeyHash,
+  stake_vkh: (VerificationKeyHash, VerificationKeyHash),
   stake_amount: Int,
 }
 
@@ -38,6 +39,7 @@ pub type ArbitrationDatum {
 
 pub type StakeDatum {
   staked_by: VerificationKeyHash,
+  staked_amount: Int,
 }
 
 // staked_on: 
