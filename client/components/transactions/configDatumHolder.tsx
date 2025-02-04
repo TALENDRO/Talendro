@@ -2,7 +2,12 @@ import { NETWORK } from "@/config/lucid";
 import { identificationPolicyid } from "@/config/scripts/scripts";
 import { useWallet } from "@/context/walletContext";
 import { ConfigDatum } from "@/types/cardano";
-import { Data, fromText, paymentCredentialOf } from "@lucid-evolution/lucid";
+import {
+  Data,
+  fromText,
+  paymentCredentialOf,
+  stakeCredentialOf,
+} from "@lucid-evolution/lucid";
 import React from "react";
 import { Button } from "../ui/button";
 import {
@@ -37,7 +42,10 @@ export default function ConfigDatumHolder() {
       arbitrator_nft: ARBITRATORPID,
       arbitrator_contract: paymentCredentialOf(ARBITRATIONADDR).hash,
       talendrouser_nft: TALENDROPID,
-      stake_vkh: paymentCredentialOf(STAKEADDRESS).hash,
+      stake_address: [
+        paymentCredentialOf(STAKEADDRESS).hash,
+        stakeCredentialOf(address).hash,
+      ],
       stake_amount: 100_000_000n,
     };
 
@@ -46,7 +54,7 @@ export default function ConfigDatumHolder() {
       .pay.ToAddressWithData(
         CONFIGADDR,
         { kind: "inline", value: Data.to(datum, ConfigDatum) },
-        { lovelace: 5_000_000n, ...ref_configNFT },
+        { lovelace: 5_000_000n, ...ref_configNFT }
       )
       .complete();
 

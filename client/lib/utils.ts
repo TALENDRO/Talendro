@@ -34,8 +34,10 @@ import {
   keyHashToCredential,
   credentialToAddress,
   makeWalletFromSeed,
+  getAddressDetails,
 } from "@lucid-evolution/lucid";
 import { NETWORK, PROVIDER } from "@/config/lucid";
+import { TALENDROPID } from "@/config";
 
 export async function req(path: string, req?: RequestInit) {
   const rsp = await fetch(path, { ...req, cache: "no-cache" });
@@ -110,20 +112,26 @@ export async function refStakeUtxo(
   address: string,
   STAKEADDRESS: string
 ) {
-  const utxos = await lucid.utxosAt(STAKEADDRESS);
-  const datum = { staked_by: paymentCredentialOf(address).hash };
-  const stake_utxo = utxos.filter((utxo) => {
-    if (!utxo.datum) return false;
-    const isEqual = utxo.datum === Data.to(datum, StakeDatum);
-    return isEqual;
-  });
-  return stake_utxo;
+  const utxos = await lucid.utxosAtWithUnit(
+    STAKEADDRESS,
+    TALENDROPID + paymentCredentialOf(address).hash.slice(-20)
+  );
+  // const datum = { staked_by: paymentCredentialOf(address).hash };
+  // const stake_utxo = utxos.filter((utxo) => {
+  //   if (!utxo.datum) return false;
+  //   const isEqual = utxo.datum === Data.to(datum, StakeDatum);
+  //   return isEqual;
+  // });
+  // return stake_utxo;
+  return utxos;
 }
-export async function signWithPrivateKey(
-  tx: TxSignBuilder,
-  privateKey: string
-) {
-  const signed = await tx.sign.withPrivateKey(privateKey);
+export function signWithPrivateKey(tx: TxSignBuilder, privateKey: string) {
+  const signed = tx.sign.withPrivateKey(privateKey);
+  return signed;
+}
+
+export function signWithSeed(tx: TxSignBuilder, seed: string) {
+  const signed = tx.sign.withWallet();
   return signed;
 }
 
