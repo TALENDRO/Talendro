@@ -2,11 +2,11 @@
 use cardano/assets.{PolicyId}
 use cardano/transaction.{Transaction}
 use mint_utils
-use types.{ConfigDatum}
+use types.{ConfigDatum, StakeDatum}
 use utils
 
 validator talendro_nft(identification_nft: PolicyId) {
-  mint(_redeemer, policy_id: PolicyId, tx: Transaction) {
+  mint(redeemer staked_datum: StakeDatum, policy_id: PolicyId, tx: Transaction) {
     let Transaction { mint, inputs, reference_inputs, outputs, .. } = tx
     expect [Pair(_, token_qty)] = mint_utils.tokens_details(mint, policy_id)
     let ConfigDatum { arbitrator_nft, .. } =
@@ -22,7 +22,9 @@ validator talendro_nft(identification_nft: PolicyId) {
             config_datum.stake_vkh,
             config_datum.stake_amount,
             policy_id,
+            staked_datum,
           ),
+          utils.must_be_signed_by(tx.extra_signatories, staked_datum.staked_by),
           mint_utils.must_have_identification_nft(inputs, identification_nft),
         }
       }

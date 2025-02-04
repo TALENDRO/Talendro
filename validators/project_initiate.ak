@@ -100,7 +100,7 @@ validator project_initiator(config_nft: PolicyId) {
         and {
           utils.find_stake_input_by_address(
             reference_inputs,
-            config_datum.stake_vkh,
+            config_datum.stake_vkh.1st,
           ),
           utils.must_have_x_token(inputs, config_datum.talendrouser_nft)?,
           // token name must be same

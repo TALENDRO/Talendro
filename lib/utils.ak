@@ -2,7 +2,7 @@ use aiken/collection/dict
 use aiken/collection/list
 use aiken/crypto.{VerificationKeyHash}
 use aiken/primitive/bytearray
-use cardano/address.{Address, Script, VerificationKey}
+use cardano/address.{Address, Inline, Script, VerificationKey}
 use cardano/assets.{AssetName, Lovelace, PolicyId, Value}
 use cardano/transaction.{InlineDatum,
   Input, Output, OutputReference, find_input}
@@ -136,6 +136,8 @@ pub fn must_have_token_in_output(
   token: AssetName,
   policy_id: PolicyId,
 ) -> Bool {
+  trace @"token name": token
+  trace @"mingintg tokens": assets.tokens(output.value, policy_id)
   (assets.quantity_of(output.value, policy_id, token) == 1)?
 }
 
@@ -443,23 +445,29 @@ pub fn output_must_have_prj_token(
 
 pub fn must_send_stake_ada_and_talendro_nft(
   outputs: List<Output>,
-  stake_vkh: VerificationKeyHash,
+  stake_tuple: (VerificationKeyHash, VerificationKeyHash),
   amount: Int,
   policy_id: PolicyId,
+  staked_datum: StakeDatum,
 ) {
+  let staked_datum_data: Data = staked_datum
+  let stake_address: Address = address_from_tuple(stake_tuple)
   list.any(
     outputs,
     fn(output) {
-      when output.address.payment_credential is {
-        VerificationKey(vkh) -> and {
-            vkh == stake_vkh,
-            assets.lovelace_of(output.value) == amount,
-            must_send_stake_datum(output),
+      when output.datum is {
+        InlineDatum(in_datum) ->
+          // trace @"vkh": vkh
+          // trace @"stkae vkh": stake_vkh
+          and {
+            (stake_address == output.address)?,
+            (staked_datum_data == in_datum)?,
+            (assets.lovelace_of(output.value) == amount)?,
             must_have_token_in_output(
               output,
-              bytearray.slice(vkh, 18, 27),
+              bytearray.slice(staked_datum.staked_by, 18, 27),
               policy_id,
-            ),
+            )?,
           }
         _ -> False
       }
@@ -467,10 +475,10 @@ pub fn must_send_stake_ada_and_talendro_nft(
   )
 }
 
-fn must_send_stake_datum(output: Output) {
-  expect _: StakeDatum = d.output_to_stake_datum(output)
-  True
-}
+// fn must_send_stake_datum(output: Output) {
+//   expect _: StakeDatum = d.output_to_stake_datum(output)
+//   True
+// }
 
 pub fn is_consuming_staked_ada(
   staked_input: Input,
@@ -480,10 +488,24 @@ pub fn is_consuming_staked_ada(
   expect Some(dev) = datum.project_datum.developer
   let clt = datum.project_datum.client
   expect InlineDatum(staked_datum) = staked_input.output.datum
-  expect StakeDatum { staked_by } = staked_datum
+  expect StakeDatum { staked_by, .. } = staked_datum
   if redeemer_payto == 0 {
     staked_by == dev
   } else {
     staked_by == clt
+  }
+}
+
+pub fn address_from_tuple(
+  key_hash_tuple: (VerificationKeyHash, VerificationKeyHash),
+) {
+  let (pkh, skh) = key_hash_tuple
+  Address {
+    payment_credential: pkh |> VerificationKey,
+    stake_credential: if skh == "" {
+      None
+    } else {
+      skh |> VerificationKey |> Inline |> Some
+    },
   }
 }
