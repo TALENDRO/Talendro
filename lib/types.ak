@@ -1,5 +1,4 @@
 use aiken/crypto.{VerificationKeyHash}
-use cardano/address.{StakeCredential}
 use cardano/assets.{Lovelace, PolicyId}
 
 pub type ProjectDatum {
