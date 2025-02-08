@@ -68,6 +68,9 @@ export default function Homepage() {
                 <Button size="lg" asChild>
                   <Link href="/projects">Find Projects</Link>
                 </Button>
+                <Button size="lg" asChild>
+                  <Link href="/signup">SignUP</Link>
+                </Button>
                 <Button size="lg" variant="outline" asChild>
                   <Link href="/create-project">Post a Project</Link>
                 </Button>
