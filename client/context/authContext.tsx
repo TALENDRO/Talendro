@@ -1,32 +1,34 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { createContext, useEffect, useState } from "react";
 import { useContext } from "react";
-import { auth } from "@/firebase";
+import { auth, db } from "@/firebase";
 import {
   createUserWithEmailAndPassword,
   onAuthStateChanged,
   signInWithEmailAndPassword,
   signOut,
+  User,
 } from "firebase/auth";
-import { doc, getDoc } from "firebase/firestore";
-const AuthContext = React.createContext();
+import { doc, DocumentData, getDoc } from "firebase/firestore";
+const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function useAuth() {
   return useContext(AuthContext);
 }
 
-export function AuthProvider({ children }) {
-  const [currentUser, setCurrentUser] = useState(null);
+export function AuthProvider(props: { children: React.ReactNode }) {
+  const { children } = props;
+  const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [userDatObj, setuserDataObj] = useState({});
   const [loading, setloading] = useState(true);
 
   //AUTH handlers
-  function signup(email, password) {
+  function signup(email: string, password: string) {
     return createUserWithEmailAndPassword(auth, email, password);
   }
 
-  function login(email, password) {
+  function login(email: string, password: string) {
     return signInWithEmailAndPassword(auth, email, password);
   }
 
@@ -54,7 +56,7 @@ export function AuthProvider({ children }) {
           console.log(firebaseData);
         }
         setuserDataObj(firebaseData);
-      } catch (err) {
+      } catch (err: any) {
         console.log(err.message);
       } finally {
         setloading(false);
@@ -62,7 +64,7 @@ export function AuthProvider({ children }) {
     });
     return unsubscribe;
   }, []);
-  const value = {
+  const value: AuthContextType = {
     currentUser,
     userDatObj,
     signup,
@@ -71,4 +73,18 @@ export function AuthProvider({ children }) {
     loading,
   };
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+}
+
+export interface AuthContextType {
+  currentUser: User | null;
+  userDatObj: DocumentData | null;
+  signup: (
+    email: string,
+    password: string,
+    userName: string,
+    gender: string
+  ) => Promise<any>;
+  login: (email: string, password: string) => Promise<any>;
+  logout: () => Promise<any>;
+  loading: boolean;
 }
