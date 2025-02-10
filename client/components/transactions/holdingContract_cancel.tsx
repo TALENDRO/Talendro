@@ -1,4 +1,3 @@
-import { NETWORK } from "@/config/lucid";
 import {
   HoldingContractValidator,
   ProjectInitiateValidator,
@@ -38,7 +37,7 @@ export default function HoldingContractCancel() {
 
       const ref_utxo = await refUtxo(lucid);
       const UTxO_Talendro = await lucid.utxoByUnit(
-        talendroPid + fromText(address.slice(-10)),
+        talendroPid + fromText(address.slice(-10))
       );
       const script_UTxO = (await lucid.utxosAt(holdingContractAddress))[0];
       const redeemer = Data.to("Cancel", ProjectRedeemer);
@@ -50,7 +49,7 @@ export default function HoldingContractCancel() {
         .pay.ToAddressWithData(
           holdingContractAddress,
           { kind: "inline", value: Data.to(datum, ProjectDatum) },
-          { lovelace: 5_000_000n as bigint, ...dev_token },
+          { lovelace: 5_000_000n as bigint, ...dev_token }
         )
         .attach.SpendingValidator(HoldingContractValidator())
         .complete();
