@@ -19,9 +19,6 @@ export async function mint(WalletConnection: WalletConnection) {
   if (!lucid) throw new Error("Uninitalized Lucid");
   if (!address) throw new Error("Wallet not connected");
   try {
-    const CONFIGADDR = getAddress(ConfigDatumHolderValidator);
-    const IDENTIFICATIONPID = process.env
-      .NEXT_PUBLIC_IDENTIFICATION_POLICY_ID as string;
     const SYSTEMADDRESS = await privateKeytoAddress(PRIVATEKEY);
 
     const utxos = await lucid.utxosAt(address);
@@ -66,6 +63,9 @@ export async function sendConfigDatum(
 ) {
   const { lucid, address } = WalletConnection;
   try {
+    const CONFIGADDR = getAddress(ConfigDatumHolderValidator);
+    const IDENTIFICATIONPID = process.env
+      .NEXT_PUBLIC_IDENTIFICATION_POLICY_ID as string;
     if (!lucid) throw new Error("Uninitalized Lucid");
     if (!address) throw new Error("Wallet not connected");
     const ref_configNFT = {
