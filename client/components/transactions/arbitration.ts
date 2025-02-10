@@ -1,17 +1,21 @@
-import {
-  ARBITRATIONADDR,
-  ARBITRATORPID,
-  PROJECTINITPID,
-  STAKEADDRESS,
-  TALENDROPID,
-} from "@/config";
+import { STAKESEED } from "@/config";
 import {
   ArbitrationContractValidator,
+  ArbitratorTokenValidator,
   HoldingContractValidator,
+  ProjectInitiateValidator,
+  TalendroTokenValidator,
 } from "@/config/scripts/scripts";
 import { StakeWallet } from "@/config/systemWallet";
 import { WalletConnection } from "@/context/walletContext";
-import { keyHashtoAddress, refStakeUtxo, refUtxo } from "@/lib/utils";
+import {
+  getAddress,
+  getPolicyId,
+  keyHashtoAddress,
+  refStakeUtxo,
+  refUtxo,
+  seedtoAddress,
+} from "@/lib/utils";
 import {
   ArbitratorDatum,
   ArbitratorRedeemer,
@@ -19,7 +23,6 @@ import {
   ProjectRedeemer,
 } from "@/types/cardano";
 import { Data, fromText, TxHash, UTxO } from "@lucid-evolution/lucid";
-import { error } from "console";
 
 export async function arbitration(
   walletConnection: WalletConnection,
@@ -31,6 +34,11 @@ export async function arbitration(
   if (!lucid || !address) throw "Uninitialized Lucid!!!";
 
   try {
+    const ARBITRATIONADDR = getAddress(ArbitrationContractValidator);
+    const ARBITRATORPID = getPolicyId(ArbitratorTokenValidator);
+    const PROJECTINITPID = getPolicyId(ProjectInitiateValidator);
+    const STAKEADDRESS = await seedtoAddress(STAKESEED);
+    const TALENDROPID = getPolicyId(TalendroTokenValidator);
     const data = await lucid.datumOf(utxo);
     const datum = Data.castFrom(data, ProjectDatum);
     const arbDatum: ArbitratorDatum = {
