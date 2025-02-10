@@ -15,6 +15,8 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import Link from "next/link";
+import Register from "./register";
 
 function Login({ className, ...props }: React.ComponentPropsWithoutRef<"div">) {
   const [email, setEmail] = useState("");
@@ -35,7 +37,6 @@ function Login({ className, ...props }: React.ComponentPropsWithoutRef<"div">) {
       });
     }
   };
-
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
       <Card>
@@ -86,9 +87,12 @@ function Login({ className, ...props }: React.ComponentPropsWithoutRef<"div">) {
             </div>
             <div className="mt-4 text-center text-sm">
               Don&apos;t have an account?{" "}
-              <a href="/register" className="underline underline-offset-4">
+              <Link href="/register" className="underline underline-offset-4">
                 Sign up
-              </a>
+              </Link>
+              {/* <Button onClick={onregister} className="w-full">
+                Sign Up
+              </Button> */}
             </div>
           </form>
         </CardContent>
