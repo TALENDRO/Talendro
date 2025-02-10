@@ -1,41 +1,27 @@
 import { NETWORK } from "@/config/lucid";
 import {
-  ArbitratorTokenValidator,
-  ConfigDatumHolderValidator,
   HoldingContractValidator,
-  identificationPolicyid,
-  MilestoneMINTValidator,
-  MilestoneSpendValidator,
   ProjectInitiateValidator,
   TalendroTokenValidator,
 } from "@/config/scripts/scripts";
 import { useWallet } from "@/context/walletContext";
-import { ConfigDatum, ConfigDatumSchema, ProjectDatum } from "@/types/cardano";
+import { ProjectDatum } from "@/types/cardano";
 import {
   Data,
   fromText,
   MintingPolicy,
-  mintingPolicyToId,
   paymentCredentialOf,
-  Script,
-  SpendingValidator,
-  Validator,
-  validatorToAddress,
-  validatorToScriptHash,
 } from "@lucid-evolution/lucid";
 import React from "react";
 import { Button } from "../ui/button";
 import {
   getAddress,
   getPolicyId,
-  handleError,
   refStakeUtxo,
   refUtxo,
+  seedtoAddress,
 } from "@/lib/utils";
-import { SystemWallet } from "@/config/systemWallet";
 import { Admin } from "@/config/emulator";
-import { before } from "node:test";
-import { STAKEADDRESS } from "@/config";
 
 export default function ProjectInitiate() {
   const [WalletConnection] = useWallet();
@@ -49,6 +35,8 @@ export default function ProjectInitiate() {
     const talendroPid = getPolicyId(TalendroTokenValidator);
 
     try {
+      const STAKESEED = process.env.NEXT_PUBLIC_STAKE_WALLET as string;
+      const STAKEADDRESS = await seedtoAddress(STAKESEED);
       const datum: ProjectDatum = {
         title: fromText("firstProject"),
         pay: 5_000_000n,
@@ -67,7 +55,7 @@ export default function ProjectInitiate() {
       const ref_utxo = await refUtxo(lucid);
       const ref_stake = await refStakeUtxo(lucid, address, STAKEADDRESS);
       const UTxO_Talendro = await lucid.utxoByUnit(
-        talendroPid + fromText(address.slice(-10)),
+        talendroPid + fromText(address.slice(-10))
       ); //talendroPolicyID+assetName assetname is user address
 
       const redeemer = Data.to(0n);
@@ -78,7 +66,7 @@ export default function ProjectInitiate() {
         .pay.ToAddressWithData(
           contractAddress,
           { kind: "inline", value: Data.to(datum, ProjectDatum) },
-          { lovelace: 5_000_000n, ...dev_token },
+          { lovelace: 5_000_000n, ...dev_token }
         )
         .mintAssets({ ...clt_token, ...dev_token }, redeemer)
         .attach.MintingPolicy(mintingValidator)
@@ -116,7 +104,7 @@ export default function ProjectInitiate() {
 
       const ref_utxo = await refUtxo(lucid);
       const UTxO_Talendro = await lucid.utxoByUnit(
-        talendroPid + fromText(address.slice(-10)),
+        talendroPid + fromText(address.slice(-10))
       ); //talendroPolicyID+assetName assetname is user address
       const script_UTxO = (await lucid.utxosAt(contractAddress))[0]; //should be passed as a parament
       const redeemer = Data.to(1n);
@@ -130,7 +118,7 @@ export default function ProjectInitiate() {
         .pay.ToAddressWithData(
           holdingContractAddress,
           { kind: "inline", value: Data.to(datum, ProjectDatum) },
-          { lovelace: 5_000_000n },
+          { lovelace: 5_000_000n }
         )
         .attach.SpendingValidator(ProjectInitiateValidator())
         .addSigner(address)
