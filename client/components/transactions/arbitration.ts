@@ -35,9 +35,8 @@ export async function arbitration(
 
   try {
     const ARBITRATIONADDR = getAddress(ArbitrationContractValidator);
-    const ARBITRATORPID = getPolicyId(ArbitratorTokenValidator);
+
     const PROJECTINITPID = getPolicyId(ProjectInitiateValidator);
-    const STAKEADDRESS = await seedtoAddress(STAKESEED);
     const TALENDROPID = getPolicyId(TalendroTokenValidator);
     const data = await lucid.datumOf(utxo);
     const datum = Data.castFrom(data, ProjectDatum);
@@ -87,6 +86,8 @@ export async function ArbitratorAction(
   if (!lucid || !address) throw new Error("Uninitialized Lucid!!!");
 
   try {
+    const ARBITRATORPID = getPolicyId(ArbitratorTokenValidator);
+    const STAKEADDRESS = await seedtoAddress(STAKESEED);
     const data = await lucid.datumOf(utxo);
     const currentDatum = Data.castFrom(data, ArbitratorDatum);
     const cltAddress = keyHashtoAddress(currentDatum.project_datum.client);
