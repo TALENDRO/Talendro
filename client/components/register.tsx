@@ -16,6 +16,7 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { useAuth } from "@/context/authContext";
 
 function Register({
   className,
@@ -26,27 +27,11 @@ function Register({
   const [fname, setFname] = useState("");
   const [lname, setLname] = useState("");
 
+  const { signup } = useAuth();
+
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
-    try {
-      await createUserWithEmailAndPassword(auth, email, password);
-      const user = auth.currentUser;
-      if (user) {
-        await setDoc(doc(db, "Users", user.uid), {
-          email: user.email,
-          firstName: fname,
-          lastName: lname,
-          photo: "",
-        });
-      }
-      toast.success("User Registered Successfully!!", {
-        position: "top-center",
-      });
-    } catch (error: any) {
-      toast.error(error.message, {
-        position: "bottom-center",
-      });
-    }
+    signup(email, password);
   };
 
   return (

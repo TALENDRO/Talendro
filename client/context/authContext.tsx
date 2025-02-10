@@ -14,7 +14,11 @@ import { doc, DocumentData, getDoc } from "firebase/firestore";
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function useAuth() {
-  return useContext(AuthContext);
+  const context = useContext(AuthContext);
+  if (context === undefined) {
+    throw new Error("useAuth must be used within an AuthProvider");
+  }
+  return context;
 }
 
 export function AuthProvider(props: { children: React.ReactNode }) {
@@ -78,12 +82,7 @@ export function AuthProvider(props: { children: React.ReactNode }) {
 export interface AuthContextType {
   currentUser: User | null;
   userDatObj: DocumentData | null;
-  signup: (
-    email: string,
-    password: string,
-    userName: string,
-    gender: string
-  ) => Promise<any>;
+  signup: (email: string, password: string) => Promise<any>;
   login: (email: string, password: string) => Promise<any>;
   logout: () => Promise<any>;
   loading: boolean;

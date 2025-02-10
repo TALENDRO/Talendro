@@ -1,4 +1,5 @@
-import Client from "../client";
+import Client from "./client";
+
 export default function Page() {
   return (
     <>
