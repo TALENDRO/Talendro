@@ -11,8 +11,8 @@ import {
 } from "@lucid-evolution/lucid";
 import React from "react";
 import { Button } from "../ui/button";
-import { handleError } from "@/lib/utils";
-import { SYSTEMADDRESS } from "@/config";
+import { handleError, privateKeytoAddress } from "@/lib/utils";
+import { PRIVATEKEY } from "@/config";
 
 export default function Identification() {
   const [WalletConnection] = useWallet();
@@ -23,6 +23,8 @@ export default function Identification() {
     if (!address) throw "Wallet not Connected!!!";
 
     try {
+      const SYSTEMADDRESS = await privateKeytoAddress(PRIVATEKEY);
+
       const utxos = await lucid.utxosAt(address);
 
       const orefHash = String(utxos[0].txHash);
