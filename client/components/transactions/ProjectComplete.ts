@@ -1,10 +1,15 @@
-import { HOLDINGADDR, PROJECTINITPID, TALENDROPID } from "@/config";
 import {
   HoldingContractValidator,
   ProjectInitiateValidator,
+  TalendroTokenValidator,
 } from "@/config/scripts/scripts";
 import { useWallet } from "@/context/walletContext";
-import { getAddress, keyHashtoAddress, refUtxo } from "@/lib/utils";
+import {
+  getAddress,
+  getPolicyId,
+  keyHashtoAddress,
+  refUtxo,
+} from "@/lib/utils";
 import { ProjectDatum, ProjectRedeemer } from "@/types/cardano";
 import { Data, fromText, LucidEvolution, UTxO } from "@lucid-evolution/lucid";
 
@@ -13,11 +18,14 @@ export async function ProjectComplete(
   utxo: UTxO,
   datum: ProjectDatum,
   calledByDev: boolean,
-  address: string,
+  address: string
 ) {
   const mintingValidator = ProjectInitiateValidator();
 
   try {
+    const HOLDINGADDR = getAddress(HoldingContractValidator);
+    const PROJECTINITPID = getPolicyId(ProjectInitiateValidator);
+    const TALENDROPID = getPolicyId(TalendroTokenValidator);
     const qty = calledByDev ? 1n : -1n;
 
     const dev_assetname = fromText("dev_") + datum.title;
@@ -28,7 +36,7 @@ export async function ProjectComplete(
 
     const ref_utxo = await refUtxo(lucid);
     const UTxO_Talendro = await lucid.utxoByUnit(
-      TALENDROPID + fromText(address.slice(-10)),
+      TALENDROPID + fromText(address.slice(-10))
     ); //talendroPolicyID+assetName assetname is user address
 
     const redeemer = Data.to("Complete", ProjectRedeemer);
@@ -46,7 +54,7 @@ export async function ProjectComplete(
         .ToAddressWithData(
           HOLDINGADDR,
           { kind: "inline", value: Data.to(datum, ProjectDatum) },
-          { lovelace: datum.pay as bigint, ...dev_token },
+          { lovelace: datum.pay as bigint, ...dev_token }
         )
         .complete();
       signed = await dev.sign.withWallet().complete();
@@ -72,8 +80,9 @@ export async function ProjectComplete(
 
 export async function AlreadyComplete(
   lucid: LucidEvolution,
-  datum: ProjectDatum,
+  datum: ProjectDatum
 ) {
+  const PROJECTINITPID = getPolicyId(ProjectInitiateValidator);
   const [walletConnection] = useWallet();
   const { address } = walletConnection;
 
@@ -84,7 +93,7 @@ export async function AlreadyComplete(
 
   const have_dev_token = await lucid.utxosAtWithUnit(
     address as string,
-    dev_assetname,
+    dev_assetname
   );
   if (have_dev_token.length > 0) {
     return true;
@@ -98,10 +107,13 @@ export async function CancelProject(
   utxo: UTxO,
   datum: ProjectDatum,
   calledByDev: boolean,
-  address: string,
+  address: string
 ) {
   const mintingValidator = ProjectInitiateValidator();
   try {
+    const HOLDINGADDR = getAddress(HoldingContractValidator);
+    const PROJECTINITPID = getPolicyId(ProjectInitiateValidator);
+    const TALENDROPID = getPolicyId(TalendroTokenValidator);
     const qty = calledByDev ? 1n : -1n;
 
     const dev_assetname = fromText("dev_") + datum.title;
@@ -112,7 +124,7 @@ export async function CancelProject(
 
     const ref_utxo = await refUtxo(lucid);
     const UTxO_Talendro = await lucid.utxoByUnit(
-      TALENDROPID + fromText(address.slice(-10)),
+      TALENDROPID + fromText(address.slice(-10))
     ); //talendroPolicyID+assetName assetname is user address
     const toPay = datum.pay;
     datum.pay = null;
@@ -132,7 +144,7 @@ export async function CancelProject(
         .ToAddressWithData(
           HOLDINGADDR,
           { kind: "inline", value: Data.to(datum, ProjectDatum) },
-          { lovelace: toPay as bigint, ...dev_token },
+          { lovelace: toPay as bigint, ...dev_token }
         )
         .complete();
       signed = await dev.sign.withWallet().complete();
