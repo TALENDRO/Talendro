@@ -11,7 +11,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useWallet } from "@/context/walletContext";
-import { toAda } from "@/lib/utils";
+import { getPolicyId, toAda } from "@/lib/utils";
 import { ArbitratorDatum } from "@/types/cardano";
 import { Data, fromText, toText, type UTxO } from "@lucid-evolution/lucid";
 import { ArbitratorAction } from "./transactions/arbitration";
@@ -26,9 +26,9 @@ import { Badge } from "@/components/ui/badge";
 import Image from "next/image";
 import { toast } from "sonner";
 import { blockfrost } from "@/lib/blockfrost";
-import { PROJECTINITPID } from "@/config";
 import Link from "next/link";
 import { ExternalLink } from "lucide-react";
+import { ProjectInitiateValidator } from "@/config/scripts/scripts";
 // import { useToast } from "@/components/ui/use-toast"
 
 interface Props {
@@ -48,11 +48,13 @@ export default function ArbitratorProjectItem({ project }: Props) {
     async function fetchDatum() {
       if (!lucid) return;
       try {
+        const PROJECTINITPID = getPolicyId(ProjectInitiateValidator);
+
         const data = await lucid.datumOf(project);
         const datum = Data.castFrom(data as Data, ArbitratorDatum);
         setDatum(datum);
         const metadata = await blockfrost.getMetadata(
-          PROJECTINITPID + fromText("dev_") + datum.project_datum.title,
+          PROJECTINITPID + fromText("dev_") + datum.project_datum.title
         );
         setMetadata(metadata);
       } catch (error) {
@@ -70,7 +72,7 @@ export default function ArbitratorProjectItem({ project }: Props) {
     const result = await ArbitratorAction(
       walletConnection,
       project,
-      atFault.includes("dev"),
+      atFault.includes("dev")
     );
     if (!result.data) {
       toast.error("Error", {

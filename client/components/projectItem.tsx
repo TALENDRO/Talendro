@@ -10,15 +10,15 @@ import {
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 // import { useToast } from "@/components/ui/use-toast"
+
 import {
-  HOLDINGADDR,
-  MILESTONEADDR,
-  PROJECTINITPID,
-  TALENDROPID,
-} from "@/config";
-import { ProjectInitiateValidator } from "@/config/scripts/scripts";
+  HoldingContractValidator,
+  MilestoneSpendValidator,
+  ProjectInitiateValidator,
+  TalendroTokenValidator,
+} from "@/config/scripts/scripts";
 import { useWallet } from "@/context/walletContext";
-import { refUtxo, toAda } from "@/lib/utils";
+import { getAddress, getPolicyId, refUtxo, toAda } from "@/lib/utils";
 import { ProjectDatum } from "@/types/cardano";
 import {
   Data,
@@ -65,22 +65,24 @@ export default function ProjectItem({ project, from }: Props) {
 
     async function fetchDatum() {
       try {
+        const PROJECTINITPID = getPolicyId(ProjectInitiateValidator);
+
         const data = await lucid?.datumOf(project);
         const datum = Data.castFrom(data as Data, ProjectDatum);
         setDatum(datum);
         setIsCompleteByDev(
           project.assets.hasOwnProperty(
-            PROJECTINITPID + fromText("dev_") + datum?.title,
-          ),
+            PROJECTINITPID + fromText("dev_") + datum?.title
+          )
         );
         setIsCancelByDev(
           project.assets.hasOwnProperty(
-            PROJECTINITPID + fromText("dev_") + datum?.title,
-          ) && datum.pay === null,
+            PROJECTINITPID + fromText("dev_") + datum?.title
+          ) && datum.pay === null
         );
         // Assuming metadata is stored in the datum or fetched separately
         const metadata = await blockfrost.getMetadata(
-          PROJECTINITPID + fromText("dev_") + datum?.title,
+          PROJECTINITPID + fromText("dev_") + datum?.title
         );
         setMetadata(metadata);
       } catch (error) {
@@ -107,6 +109,10 @@ export default function ProjectItem({ project, from }: Props) {
 
     setSubmitting(true);
     try {
+      const MILESTONEADDR = getAddress(MilestoneSpendValidator);
+      const HOLDINGADDR = getAddress(HoldingContractValidator);
+      const PROJECTINITPID = getPolicyId(ProjectInitiateValidator);
+      const TALENDROPID = getPolicyId(TalendroTokenValidator);
       const updatedDatum: ProjectDatum = {
         ...datum,
         developer: paymentCredentialOf(address).hash,
@@ -117,7 +123,7 @@ export default function ProjectItem({ project, from }: Props) {
 
       const ref_utxo = await refUtxo(lucid);
       const UTxO_Talendro = await lucid.utxoByUnit(
-        TALENDROPID + fromText(address.slice(-10)),
+        TALENDROPID + fromText(address.slice(-10))
       );
       const redeemer = Data.to(1n);
 
@@ -130,7 +136,7 @@ export default function ProjectItem({ project, from }: Props) {
         .pay.ToAddressWithData(
           contractAddress,
           { kind: "inline", value: Data.to(updatedDatum, ProjectDatum) },
-          { lovelace: datum.pay ? BigInt(datum.pay) : 3_000_000n },
+          { lovelace: datum.pay ? BigInt(datum.pay) : 3_000_000n }
         )
         .attach.SpendingValidator(ProjectInitiateValidator())
         .addSigner(address)
@@ -201,7 +207,7 @@ export default function ProjectItem({ project, from }: Props) {
         walletConnection,
         project,
         calledByDev,
-        POWLink,
+        POWLink
       );
       if (!result.data) {
         toast.error("ERROR", {
