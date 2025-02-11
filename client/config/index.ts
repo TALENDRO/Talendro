@@ -19,7 +19,7 @@ export const PRIVATEKEY = process.env.NEXT_PUBLIC_SYSTEM_WALLET as string;
 // export const SYSTEMADDRESS = await privateKeytoAddress(PRIVATEKEY);
 
 export const STAKESEED = process.env.NEXT_PUBLIC_STAKE_WALLET as string;
-// export const STAKEADDRESS = await seedtoAddress(STAKESEED);
+export const STAKEADDRESS = await seedtoAddress(STAKESEED);
 
 // export const MILESTONEPID = getPolicyId(MilestoneMINTValidator);
 export const IDENTIFICATIONPID = process.env

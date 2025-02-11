@@ -24,27 +24,21 @@ import {
   TalendroTokenValidator,
 } from "@/config/scripts/scripts";
 import { getAddress, getPolicyId, seedtoAddress } from "@/lib/utils";
+import { STAKEADDRESS } from "@/config";
 
 // let stake_address = awaitStakAddr(STAKESEED);
 
 export default function Page() {
-  async function awaitStakAddr(STAKESEED: string) {
-    let address = await seedtoAddress(STAKESEED);
-    setstakeAddress(address);
-  }
-
   const [stakeAddress, setstakeAddress] = useState("");
   const [WalletConnection, setWalletConnection] = useWallet();
   const { isEmulator } = WalletConnection;
   const [submitting, setSubmitting] = useState(false);
   const [policyID, setPolicy] = useState("");
   const STAKESEED = process.env.NEXT_PUBLIC_STAKE_WALLET as string;
-  const STAKEADDRESS = seedtoAddress(STAKESEED);
   const MILESTONEPID = getPolicyId(MilestoneMINTValidator);
   const IDENTIFICATIONPID = process.env
     .NEXT_PUBLIC_IDENTIFICATION_POLICY_ID as string;
   const ARBITRATORPID = getPolicyId(ArbitratorTokenValidator);
-  const PROJECTINITPID = getPolicyId(ProjectInitiateValidator);
   const TALENDROPID = getPolicyId(TalendroTokenValidator);
 
   const CONFIGADDR = getAddress(ConfigDatumHolderValidator);
@@ -52,6 +46,10 @@ export default function Page() {
   const HOLDINGADDR = getAddress(HoldingContractValidator);
   const PROJECTINITADDR = getAddress(ProjectInitiateValidator);
   const ARBITRATIONADDR = getAddress(ArbitrationContractValidator);
+  async function awaitStakAddr(STAKESEED: string) {
+    let address = await seedtoAddress(STAKESEED);
+    setstakeAddress(address);
+  }
 
   useEffect(() => {
     awaitStakAddr(STAKESEED);
@@ -67,8 +65,8 @@ export default function Page() {
     arbitrator_contract: paymentCredentialOf(ARBITRATIONADDR).hash,
     talendrouser_nft: TALENDROPID,
     stake_address: [
-      paymentCredentialOf(stakeAddress).hash,
-      stakeCredentialOf(stakeAddress).hash,
+      paymentCredentialOf(STAKEADDRESS).hash,
+      stakeCredentialOf(STAKEADDRESS).hash,
     ],
     stake_amount: 100_000_000n,
   };

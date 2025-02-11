@@ -33,6 +33,7 @@ function Register({
   //   e.preventDefault();
   //   signup(email, password);
   // };
+
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
@@ -49,8 +50,34 @@ function Register({
     }
   };
 
+  // const handleRegister = async (e: React.FormEvent) => {
+  //   e.preventDefault();
+  //   try {
+  //     let newuser = await signup(email, password);
+  //     const docref = doc(db, "Users", newuser.user.uid);
+  //     await setDoc(
+  //       docref,
+  //       {
+  //         firstName: fname,
+  //         lastName: lname,
+  //         email: email,
+  //       },
+  //       { merge: true }
+  //     );
+  //     console.log("User registered successfully");
+  //     toast.success("User registered successfully", {
+  //       position: "top-center",
+  //     });
+  //   } catch (error: any) {
+  //     console.log(error.message);
+  //     toast.error(error.message, {
+  //       position: "bottom-center",
+  //     });
+  //   }
+  // };
+
   return (
-    <div className={cn("flex flex-col gap-6 ", className)} {...props}>
+    <div className={cn("flex flex-col gap-6", className)} {...props}>
       <Card>
         <CardHeader>
           <CardTitle className="text-2xl">Sign Up</CardTitle>
@@ -58,7 +85,7 @@ function Register({
         </CardHeader>
         <CardContent>
           <form onSubmit={handleRegister}>
-            <div className="flex flex-col gap-4 ">
+            <div className="flex flex-col gap-4">
               <div className="grid gap-2">
                 <Label htmlFor="firstName">First Name</Label>
                 <Input
