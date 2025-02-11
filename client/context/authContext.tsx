@@ -24,7 +24,7 @@ export function useAuth() {
 export function AuthProvider(props: { children: React.ReactNode }) {
   const { children } = props;
   const [currentUser, setCurrentUser] = useState<User | null>(null);
-  const [userDatObj, setuserDataObj] = useState({});
+  const [userDatObj, setuserDataObj] = useState<DocumentData | null>(null);
   const [loading, setloading] = useState(true);
 
   //AUTH handlers
@@ -37,7 +37,7 @@ export function AuthProvider(props: { children: React.ReactNode }) {
   }
 
   function logout() {
-    setuserDataObj({});
+    setuserDataObj(null);
     setCurrentUser(null);
     return signOut(auth);
   }

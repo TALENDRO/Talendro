@@ -19,6 +19,8 @@ import {
   Wallet,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { useAuth } from "@/context/authContext";
+import { useEffect, useState } from "react";
 
 export default function Homepage() {
   const categories = [
@@ -26,7 +28,8 @@ export default function Homepage() {
     { name: "Blockchain Integration", count: 89, icon: TrendingUp },
     { name: "Web3 Frontend", count: 156, icon: Wallet },
   ];
-
+  const { currentUser, userDatObj } = useAuth();
+  const [data, setdata] = useState({});
   const testimonials = [
     {
       name: "Alex Thompson",
@@ -50,6 +53,12 @@ export default function Homepage() {
       rating: 4,
     },
   ];
+  useEffect(() => {
+    if (!currentUser || !userDatObj) {
+      return;
+    }
+    setdata(userDatObj);
+  }, [currentUser, userDatObj]);
   return (
     <div className="flex flex-col min-h-screen">
       <section className="relative from-primary/10 via-primary/5 to-background pt-20 pb-32">
