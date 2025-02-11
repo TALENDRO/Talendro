@@ -29,9 +29,24 @@ function Register({
 
   const { signup } = useAuth();
 
+  // const handleRegister = async (e: React.FormEvent) => {
+  //   e.preventDefault();
+  //   signup(email, password);
+  // };
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
-    signup(email, password);
+    try {
+      await signup(email, password);
+      console.log("User registered successfully");
+      toast.success("User registered successfully", {
+        position: "top-center",
+      });
+    } catch (error: any) {
+      console.log(error.message);
+      toast.error(error.message, {
+        position: "bottom-center",
+      });
+    }
   };
 
   return (
