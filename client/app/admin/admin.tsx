@@ -23,8 +23,14 @@ import {
   ProjectInitiateValidator,
   TalendroTokenValidator,
 } from "@/config/scripts/scripts";
-import { getAddress, getPolicyId, seedtoAddress } from "@/lib/utils";
-import { STAKEADDRESS } from "@/config";
+import {
+  getAddress,
+  getPolicyId,
+  privateKeytoAddress,
+  seedtoAddress,
+} from "@/lib/utils";
+import { STAKEPRIVATEKEY } from "@/config";
+// import { STAKEADDRESS } from "@/config";
 
 // let stake_address = awaitStakAddr(STAKESEED);
 
@@ -47,14 +53,13 @@ export default function Page() {
   const PROJECTINITADDR = getAddress(ProjectInitiateValidator);
   const ARBITRATIONADDR = getAddress(ArbitrationContractValidator);
   async function awaitStakAddr(STAKESEED: string) {
-    let address = await seedtoAddress(STAKESEED);
-    setstakeAddress(address);
+    const STAKEADDRESS = await privateKeytoAddress(STAKEPRIVATEKEY);
+    setstakeAddress(STAKEADDRESS);
   }
 
   useEffect(() => {
     awaitStakAddr(STAKESEED);
   }, []);
-
   const CONFIGDATUM: ConfigDatum = {
     identification_nft: isEmulator ? policyID : IDENTIFICATIONPID,
     milestone_contract_policy: MILESTONEPID,
@@ -64,10 +69,9 @@ export default function Page() {
     arbitrator_nft: ARBITRATORPID,
     arbitrator_contract: paymentCredentialOf(ARBITRATIONADDR).hash,
     talendrouser_nft: TALENDROPID,
-    stake_address: [
-      paymentCredentialOf(STAKEADDRESS).hash,
-      stakeCredentialOf(STAKEADDRESS).hash,
-    ],
+    stake_address: stakeAddress
+      ? [paymentCredentialOf(stakeAddress).hash, ""]
+      : ["", ""],
     stake_amount: 100_000_000n,
   };
 

@@ -1,3 +1,4 @@
+import { STAKEPRIVATEKEY } from "@/config";
 import { TalendroTokenValidator } from "@/config/scripts/scripts";
 import { SystemWallet } from "@/config/systemWallet";
 import { WalletConnection } from "@/context/walletContext";
@@ -20,13 +21,13 @@ export async function mint(walletConnection: WalletConnection) {
   try {
     if (!lucid) throw "Uninitialized Lucid!!!";
     if (!address) throw "Wallet not Connected!!!";
-    const STAKESEED = process.env.NEXT_PUBLIC_STAKE_WALLET as string;
+    // const STAKESEED = process.env.NEXT_PUBLIC_STAKE_WALLET as string;
     const PRIVATEKEY = process.env.NEXT_PUBLIC_SYSTEM_WALLET as string;
     const IDENTIFICATIONPID = process.env
       .NEXT_PUBLIC_IDENTIFICATION_POLICY_ID as string;
     const TALENDROPID = getPolicyId(TalendroTokenValidator);
     const SYSTEMADDRESS = await privateKeytoAddress(PRIVATEKEY);
-    const STAKEADDRESS = await seedtoAddress(STAKESEED);
+    const STAKEADDRESS = await privateKeytoAddress(STAKEPRIVATEKEY);
 
     const usr_configNFT = {
       [IDENTIFICATIONPID + fromText("usr_configNFT")]: 1n,

@@ -17,11 +17,13 @@ import { Button } from "../ui/button";
 import {
   getAddress,
   getPolicyId,
+  privateKeytoAddress,
   refStakeUtxo,
   refUtxo,
   seedtoAddress,
 } from "@/lib/utils";
 import { Admin } from "@/config/emulator";
+import { STAKEPRIVATEKEY } from "@/config";
 
 export default function ProjectInitiate() {
   const [WalletConnection] = useWallet();
@@ -35,8 +37,8 @@ export default function ProjectInitiate() {
     const talendroPid = getPolicyId(TalendroTokenValidator);
 
     try {
-      const STAKESEED = process.env.NEXT_PUBLIC_STAKE_WALLET as string;
-      const STAKEADDRESS = await seedtoAddress(STAKESEED);
+      // const STAKESEED = process.env.NEXT_PUBLIC_STAKE_WALLET as string;
+      const STAKEADDRESS = await privateKeytoAddress(STAKEPRIVATEKEY);
       const datum: ProjectDatum = {
         title: fromText("firstProject"),
         pay: 5_000_000n,
