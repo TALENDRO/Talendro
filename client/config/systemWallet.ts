@@ -4,7 +4,7 @@ import {
   Wallet,
   WalletApi,
 } from "@lucid-evolution/lucid";
-import { PRIVATEKEY, STAKESEED } from ".";
+import { PRIVATEKEY, STAKEPRIVATEKEY } from ".";
 import { signWithPrivateKey, signWithSeed } from "@/lib/utils";
 import { WalletConnection } from "@/context/walletContext";
 import { NETWORK, PROVIDER } from "./lucid";
@@ -14,15 +14,7 @@ export async function SystemWallet(tx: TxSignBuilder) {
   return txSystemSigned;
 }
 
-export async function StakeWallet(
-  walletConnection: WalletConnection,
-  tx: TxSignBuilder
-) {
-  const { lucid, wallet } = walletConnection;
-  await lucid?.selectWallet.fromSeed(STAKESEED, {
-    addressType: "Base",
-  });
-  const txSystemSigned = await signWithSeed(tx, STAKESEED);
-  await lucid?.selectWallet.fromAPI((await wallet?.enable()) as WalletApi);
+export async function StakeWallet(tx: TxSignBuilder) {
+  const txSystemSigned = await signWithPrivateKey(tx, STAKEPRIVATEKEY);
   return txSystemSigned;
 }
