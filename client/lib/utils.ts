@@ -17,6 +17,7 @@ export function toLovelace(value: number) {
 import {
   ConfigDatumHolderValidator,
   identificationPolicyid,
+  TalendroTokenValidator,
 } from "@/config/scripts/scripts";
 import { StakeDatum } from "@/types/cardano";
 import {
@@ -37,7 +38,6 @@ import {
   getAddressDetails,
 } from "@lucid-evolution/lucid";
 import { NETWORK, PROVIDER } from "@/config/lucid";
-import { TALENDROPID } from "@/config";
 
 export async function req(path: string, req?: RequestInit) {
   const rsp = await fetch(path, { ...req, cache: "no-cache" });
@@ -112,6 +112,7 @@ export async function refStakeUtxo(
   address: string,
   STAKEADDRESS: string
 ) {
+  const TALENDROPID = getPolicyId(TalendroTokenValidator);
   const utxos = await lucid.utxosAtWithUnit(
     STAKEADDRESS,
     TALENDROPID + paymentCredentialOf(address).hash.slice(-20)

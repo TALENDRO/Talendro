@@ -49,7 +49,10 @@ validator project_initiator(config_nft: PolicyId) {
 
         // (output_datum.developer == nft )
         and {
-          utils.must_have_x_token(inputs, config_datum.talendrouser_nft)?,
+          utils.must_have_x_token(
+            reference_inputs,
+            config_datum.talendrouser_nft,
+          )?,
           (output_datum.developer == Some(vk_hash))?,
           utils.must_send_to_correct_script(
             contract_output,
@@ -102,7 +105,10 @@ validator project_initiator(config_nft: PolicyId) {
             reference_inputs,
             config_datum.stake_vkh.1st,
           ),
-          utils.must_have_x_token(inputs, config_datum.talendrouser_nft)?,
+          utils.must_have_x_token(
+            reference_inputs,
+            config_datum.talendrouser_nft,
+          )?,
           // token name must be same
           (bytearray.drop(dev_token_name, 4) == bytearray.drop(
             clt_token_name,

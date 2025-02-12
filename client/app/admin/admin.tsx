@@ -6,30 +6,60 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
-import {
-  IDENTIFICATIONPID,
-  MILESTONEPID,
-  MILESTONEADDR,
-  HOLDINGADDR,
-  PROJECTINITADDR,
-  ARBITRATORPID,
-  ARBITRATIONADDR,
-  TALENDROPID,
-  STAKEADDRESS,
-} from "@/config";
+// import { IDENTIFICATIONPID, MILESTONEPID, STAKEADDRESS } from "@/config";
 import { useWallet } from "@/context/walletContext";
 import { toast } from "sonner";
 
 import { ConfigDatum } from "@/types/cardano";
 import { paymentCredentialOf, stakeCredentialOf } from "@lucid-evolution/lucid";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import {
+  ArbitrationContractValidator,
+  ArbitratorTokenValidator,
+  ConfigDatumHolderValidator,
+  HoldingContractValidator,
+  MilestoneMINTValidator,
+  MilestoneSpendValidator,
+  ProjectInitiateValidator,
+  TalendroTokenValidator,
+} from "@/config/scripts/scripts";
+import {
+  getAddress,
+  getPolicyId,
+  privateKeytoAddress,
+  seedtoAddress,
+} from "@/lib/utils";
+import { STAKEPRIVATEKEY } from "@/config";
+// import { STAKEADDRESS } from "@/config";
+
+// let stake_address = awaitStakAddr(STAKESEED);
 
 export default function Page() {
+  const [stakeAddress, setstakeAddress] = useState("");
   const [WalletConnection, setWalletConnection] = useWallet();
   const { isEmulator } = WalletConnection;
   const [submitting, setSubmitting] = useState(false);
   const [policyID, setPolicy] = useState("");
+  const STAKESEED = process.env.NEXT_PUBLIC_STAKE_WALLET as string;
+  const MILESTONEPID = getPolicyId(MilestoneMINTValidator);
+  const IDENTIFICATIONPID = process.env
+    .NEXT_PUBLIC_IDENTIFICATION_POLICY_ID as string;
+  const ARBITRATORPID = getPolicyId(ArbitratorTokenValidator);
+  const TALENDROPID = getPolicyId(TalendroTokenValidator);
 
+  const CONFIGADDR = getAddress(ConfigDatumHolderValidator);
+  const MILESTONEADDR = getAddress(MilestoneSpendValidator);
+  const HOLDINGADDR = getAddress(HoldingContractValidator);
+  const PROJECTINITADDR = getAddress(ProjectInitiateValidator);
+  const ARBITRATIONADDR = getAddress(ArbitrationContractValidator);
+  async function awaitStakAddr(STAKESEED: string) {
+    const STAKEADDRESS = await privateKeytoAddress(STAKEPRIVATEKEY);
+    setstakeAddress(STAKEADDRESS);
+  }
+
+  useEffect(() => {
+    awaitStakAddr(STAKESEED);
+  }, []);
   const CONFIGDATUM: ConfigDatum = {
     identification_nft: isEmulator ? policyID : IDENTIFICATIONPID,
     milestone_contract_policy: MILESTONEPID,
@@ -39,10 +69,9 @@ export default function Page() {
     arbitrator_nft: ARBITRATORPID,
     arbitrator_contract: paymentCredentialOf(ARBITRATIONADDR).hash,
     talendrouser_nft: TALENDROPID,
-    stake_address: [
-      paymentCredentialOf(STAKEADDRESS).hash,
-      stakeCredentialOf(STAKEADDRESS).hash,
-    ],
+    stake_address: stakeAddress
+      ? [paymentCredentialOf(stakeAddress).hash, ""]
+      : ["", ""],
     stake_amount: 100_000_000n,
   };
 

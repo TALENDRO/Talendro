@@ -1,6 +1,5 @@
 "use client";
 import { CreateProject } from "@/components/createProjectModal";
-import { HOLDINGADDR, MILESTONEADDR, PROJECTINITADDR } from "@/config";
 import { useWallet } from "@/context/walletContext";
 import {
   type Address,
@@ -20,6 +19,12 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Loader2 } from "lucide-react";
+import { getAddress } from "@/lib/utils";
+import {
+  HoldingContractValidator,
+  MilestoneSpendValidator,
+  ProjectInitiateValidator,
+} from "@/config/scripts/scripts";
 // import { useToast } from "@/components/ui/use-toast"
 
 export default function MyProjectsPage() {
@@ -68,6 +73,9 @@ export default function MyProjectsPage() {
   useEffect(() => {
     if (!lucid || !address) return;
     async function loadProjects() {
+      const MILESTONEADDR = getAddress(MilestoneSpendValidator);
+      const HOLDINGADDR = getAddress(HoldingContractValidator);
+      const PROJECTINITADDR = getAddress(ProjectInitiateValidator);
       setIsLoading(true);
       await Promise.all([
         fetchProjects(PROJECTINITADDR),

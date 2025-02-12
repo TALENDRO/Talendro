@@ -1,6 +1,5 @@
 "use client";
 import { CreateProject } from "@/components/createProjectModal";
-import { PROJECTINITADDR, PROJECTINITPID } from "@/config";
 import { useWallet } from "@/context/walletContext";
 import type { UTxO } from "@lucid-evolution/lucid";
 import type React from "react";
@@ -18,6 +17,8 @@ import ProjectItem from "@/components/projectItem";
 import { Loader2, Search } from "lucide-react";
 import { useInView } from "react-intersection-observer";
 import { toast } from "sonner";
+import { getAddress, getPolicyId } from "@/lib/utils";
+import { ProjectInitiateValidator } from "@/config/scripts/scripts";
 
 const PROJECTS_PER_PAGE = 9;
 
@@ -35,10 +36,12 @@ export default function ProjectsPage() {
     if (!lucid) return;
     setIsLoading(true);
     try {
+      const PROJECTINITPID = getPolicyId(ProjectInitiateValidator);
+      const PROJECTINITADDR = getAddress(ProjectInitiateValidator);
       const utxos = await lucid.utxosAt(PROJECTINITADDR);
       const filteredUtxos = utxos.filter((utxo) => {
         return Object.keys(utxo.assets).some((key) =>
-          key.includes(PROJECTINITPID),
+          key.includes(PROJECTINITPID)
         );
       });
       setProjects(filteredUtxos);
@@ -57,8 +60,8 @@ export default function ProjectsPage() {
   useEffect(() => {
     const filtered = projects.filter((project) =>
       Object.keys(project.assets).some((key) =>
-        key.toLowerCase().includes(searchTerm.toLowerCase()),
-      ),
+        key.toLowerCase().includes(searchTerm.toLowerCase())
+      )
     );
     setDisplayedProjects(filtered.slice(0, page * PROJECTS_PER_PAGE));
   }, [projects, searchTerm, page]);

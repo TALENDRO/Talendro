@@ -5,7 +5,6 @@ import {
 } from "@/config/scripts/scripts";
 import { useWallet } from "@/context/walletContext";
 import {
-  Constr,
   Data,
   fromText,
   mintingPolicyToId,
@@ -13,8 +12,8 @@ import {
 } from "@lucid-evolution/lucid";
 import React from "react";
 import { Button } from "../ui/button";
-import { SYSTEMADDRESS } from "@/config";
 import { SystemWallet } from "@/config/systemWallet";
+import { privateKeytoAddress } from "@/lib/utils";
 
 export default function ArbitratorTokenMinter() {
   const [WalletConnection] = useWallet();
@@ -22,13 +21,14 @@ export default function ArbitratorTokenMinter() {
   const { lucid, address } = WalletConnection;
   async function mint() {
     if (!lucid || !address) throw "Uninitialized Lucid!!!";
-
+    const PRIVATEKEY = process.env.NEXT_PUBLIC_SYSTEM_WALLET as string;
+    const SYSTEMADDRESS = await privateKeytoAddress(PRIVATEKEY);
     const usr_configNFT = {
       [identificationPolicyid + fromText("usr_configNFT")]: 1n,
     };
     const utxoWithIdentificationToken = await lucid.utxosAtWithUnit(
       SYSTEMADDRESS,
-      identificationPolicyid + fromText("usr_configNFT"),
+      identificationPolicyid + fromText("usr_configNFT")
     );
 
     const mintingValidator: Validator = ArbitratorTokenValidator();

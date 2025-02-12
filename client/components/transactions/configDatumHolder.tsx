@@ -1,5 +1,14 @@
-import { NETWORK } from "@/config/lucid";
-import { identificationPolicyid } from "@/config/scripts/scripts";
+import {
+  ArbitrationContractValidator,
+  ArbitratorTokenValidator,
+  ConfigDatumHolderValidator,
+  HoldingContractValidator,
+  identificationPolicyid,
+  MilestoneMINTValidator,
+  MilestoneSpendValidator,
+  ProjectInitiateValidator,
+  TalendroTokenValidator,
+} from "@/config/scripts/scripts";
 import { useWallet } from "@/context/walletContext";
 import { ConfigDatum } from "@/types/cardano";
 import {
@@ -10,18 +19,14 @@ import {
 } from "@lucid-evolution/lucid";
 import React from "react";
 import { Button } from "../ui/button";
+
 import {
-  ARBITRATIONADDR,
-  ARBITRATORPID,
-  CONFIGADDR,
-  HOLDINGADDR,
-  IDENTIFICATIONPID,
-  MILESTONEADDR,
-  MILESTONEPID,
-  PROJECTINITADDR,
-  STAKEADDRESS,
-  TALENDROPID,
-} from "@/config";
+  getAddress,
+  getPolicyId,
+  privateKeytoAddress,
+  seedtoAddress,
+} from "@/lib/utils";
+import { STAKEPRIVATEKEY } from "@/config";
 
 export default function ConfigDatumHolder() {
   const [WalletConnection] = useWallet();
@@ -32,6 +37,19 @@ export default function ConfigDatumHolder() {
     const ref_configNFT = {
       [identificationPolicyid + fromText("ref_configNFT")]: 1n,
     };
+    // const STAKESEED = process.env.NEXT_PUBLIC_STAKE_WALLET as string;
+    const STAKEADDRESS = await privateKeytoAddress(STAKEPRIVATEKEY);
+
+    const MILESTONEPID = getPolicyId(MilestoneMINTValidator);
+    const IDENTIFICATIONPID = process.env
+      .NEXT_PUBLIC_IDENTIFICATION_POLICY_ID as string;
+    const ARBITRATORPID = getPolicyId(ArbitratorTokenValidator);
+    const TALENDROPID = getPolicyId(TalendroTokenValidator);
+    const CONFIGADDR = getAddress(ConfigDatumHolderValidator);
+    const MILESTONEADDR = getAddress(MilestoneSpendValidator);
+    const HOLDINGADDR = getAddress(HoldingContractValidator);
+    const PROJECTINITADDR = getAddress(ProjectInitiateValidator);
+    const ARBITRATIONADDR = getAddress(ArbitrationContractValidator);
 
     const datum: ConfigDatum = {
       identification_nft: IDENTIFICATIONPID,
@@ -42,10 +60,7 @@ export default function ConfigDatumHolder() {
       arbitrator_nft: ARBITRATORPID,
       arbitrator_contract: paymentCredentialOf(ARBITRATIONADDR).hash,
       talendrouser_nft: TALENDROPID,
-      stake_address: [
-        paymentCredentialOf(STAKEADDRESS).hash,
-        stakeCredentialOf(address).hash,
-      ],
+      stake_address: [paymentCredentialOf(STAKEADDRESS).hash, ""],
       stake_amount: 100_000_000n,
     };
 
