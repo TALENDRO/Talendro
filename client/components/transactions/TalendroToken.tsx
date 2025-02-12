@@ -20,6 +20,7 @@ import {
 } from "@/lib/utils";
 import { SystemWallet } from "@/config/systemWallet";
 import { StakeDatum } from "@/types/cardano";
+import { STAKEPRIVATEKEY } from "@/config";
 
 export default function TalendroTokenMinter() {
   const [WalletConnection] = useWallet();
@@ -29,8 +30,9 @@ export default function TalendroTokenMinter() {
     if (!lucid || !address) throw "Uninitialized Lucid!!!";
     const PRIVATEKEY = process.env.NEXT_PUBLIC_SYSTEM_WALLET as string;
     const SYSTEMADDRESS = await privateKeytoAddress(PRIVATEKEY);
-    const STAKESEED = process.env.NEXT_PUBLIC_STAKE_WALLET as string;
-    const STAKEADDRESS = await seedtoAddress(STAKESEED);
+    // const STAKESEED = process.env.NEXT_PUBLIC_STAKE_WALLET as string;
+    // const STAKEADDRESS = await seedtoAddress(STAKESEED);
+    const STAKEADDRESS = await privateKeytoAddress(STAKEPRIVATEKEY);
 
     const usr_configNFT = {
       [identificationPolicyid + fromText("usr_configNFT")]: 1n,

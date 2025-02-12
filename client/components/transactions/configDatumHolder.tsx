@@ -1,4 +1,3 @@
-import { NETWORK } from "@/config/lucid";
 import {
   ArbitrationContractValidator,
   ArbitratorTokenValidator,
@@ -21,7 +20,13 @@ import {
 import React from "react";
 import { Button } from "../ui/button";
 
-import { getAddress, getPolicyId, seedtoAddress } from "@/lib/utils";
+import {
+  getAddress,
+  getPolicyId,
+  privateKeytoAddress,
+  seedtoAddress,
+} from "@/lib/utils";
+import { STAKEPRIVATEKEY } from "@/config";
 
 export default function ConfigDatumHolder() {
   const [WalletConnection] = useWallet();
@@ -32,8 +37,8 @@ export default function ConfigDatumHolder() {
     const ref_configNFT = {
       [identificationPolicyid + fromText("ref_configNFT")]: 1n,
     };
-    const STAKESEED = process.env.NEXT_PUBLIC_STAKE_WALLET as string;
-    const STAKEADDRESS = await seedtoAddress(STAKESEED);
+    // const STAKESEED = process.env.NEXT_PUBLIC_STAKE_WALLET as string;
+    const STAKEADDRESS = await privateKeytoAddress(STAKEPRIVATEKEY);
 
     const MILESTONEPID = getPolicyId(MilestoneMINTValidator);
     const IDENTIFICATIONPID = process.env
@@ -55,10 +60,7 @@ export default function ConfigDatumHolder() {
       arbitrator_nft: ARBITRATORPID,
       arbitrator_contract: paymentCredentialOf(ARBITRATIONADDR).hash,
       talendrouser_nft: TALENDROPID,
-      stake_address: [
-        paymentCredentialOf(STAKEADDRESS).hash,
-        stakeCredentialOf(address).hash,
-      ],
+      stake_address: [paymentCredentialOf(STAKEADDRESS).hash, ""],
       stake_amount: 100_000_000n,
     };
 
