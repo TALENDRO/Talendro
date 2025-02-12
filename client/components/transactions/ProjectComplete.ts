@@ -11,7 +11,13 @@ import {
   refUtxo,
 } from "@/lib/utils";
 import { ProjectDatum, ProjectRedeemer } from "@/types/cardano";
-import { Data, fromText, LucidEvolution, UTxO } from "@lucid-evolution/lucid";
+import {
+  Data,
+  fromText,
+  LucidEvolution,
+  paymentCredentialOf,
+  UTxO,
+} from "@lucid-evolution/lucid";
 
 export async function ProjectComplete(
   lucid: LucidEvolution,
@@ -36,7 +42,7 @@ export async function ProjectComplete(
 
     const ref_utxo = await refUtxo(lucid);
     const UTxO_Talendro = await lucid.utxoByUnit(
-      TALENDROPID + fromText(address.slice(-10))
+      TALENDROPID + paymentCredentialOf(address).hash.slice(-20)
     ); //talendroPolicyID+assetName assetname is user address
 
     const redeemer = Data.to("Complete", ProjectRedeemer);
@@ -46,7 +52,8 @@ export async function ProjectComplete(
     const tx = lucid
       .newTx()
       .readFrom(ref_utxo)
-      .collectFrom([UTxO_Talendro, utxo], redeemer)
+      .collectFrom([utxo], redeemer)
+      .readFrom([UTxO_Talendro])
       .attach.SpendingValidator(HoldingContractValidator());
 
     if (calledByDev) {
@@ -124,7 +131,7 @@ export async function CancelProject(
 
     const ref_utxo = await refUtxo(lucid);
     const UTxO_Talendro = await lucid.utxoByUnit(
-      TALENDROPID + fromText(address.slice(-10))
+      TALENDROPID + paymentCredentialOf(address).hash.slice(-20)
     ); //talendroPolicyID+assetName assetname is user address
     const toPay = datum.pay;
     datum.pay = null;
@@ -136,7 +143,8 @@ export async function CancelProject(
     const tx = lucid
       .newTx()
       .readFrom(ref_utxo)
-      .collectFrom([UTxO_Talendro, utxo], redeemer)
+      .collectFrom([utxo], redeemer)
+      .readFrom([UTxO_Talendro])
       .attach.SpendingValidator(HoldingContractValidator());
 
     if (calledByDev) {
