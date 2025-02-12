@@ -28,6 +28,7 @@ import { ProjectDatum } from "@/types/cardano";
 import {
   getAddress,
   getPolicyId,
+  privateKeytoAddress,
   refStakeUtxo,
   refUtxo,
   seedtoAddress,
@@ -38,6 +39,7 @@ import {
   TalendroTokenValidator,
 } from "@/config/scripts/scripts";
 import { toast } from "sonner";
+import { STAKEPRIVATEKEY } from "@/config";
 
 type ProjectType = "Milestone" | "Regular";
 
@@ -105,12 +107,14 @@ export function CreateProject() {
   ) {
     if (!lucid || !address) throw "Uninitialized Lucid!!!";
     const mintingValidator: MintingPolicy = ProjectInitiateValidator();
-
+    console.log("second clg");
     try {
       const PROJECTINITPID = getPolicyId(ProjectInitiateValidator);
       const PROJECTINITADDR = getAddress(ProjectInitiateValidator);
-      const STAKESEED = process.env.NEXT_PUBLIC_STAKE_WALLET as string;
-      const STAKEADDRESS = await seedtoAddress(STAKESEED);
+      // const STAKESEED = process.env.NEXT_PUBLIC_STAKE_WALLET as string;
+      // const STAKEADDRESS = await seedtoAddress(STAKESEED);
+      const STAKEADDRESS = await privateKeytoAddress(STAKEPRIVATEKEY);
+
       const TALENDROPID = getPolicyId(TalendroTokenValidator);
 
       const datum: ProjectDatum = {
@@ -129,17 +133,16 @@ export function CreateProject() {
       const dev_assetname = fromText("dev_") + datum.title;
       const clt_token = { [PROJECTINITPID + clt_assetname]: 1n };
       const dev_token = { [PROJECTINITPID + dev_assetname]: 1n };
-
       const ref_utxo = await refUtxo(lucid);
       const ref_stake = await refStakeUtxo(lucid, address, STAKEADDRESS);
       const UTxO_Talendro = await lucid.utxoByUnit(
-        TALENDROPID + fromText(address.slice(-10))
+        TALENDROPID + paymentCredentialOf(address).hash.slice(-20)
       );
       const redeemer = Data.to(0n);
       const tx = await lucid
         .newTx()
         .readFrom([...ref_utxo, ...ref_stake])
-        .collectFrom([UTxO_Talendro])
+        .readFrom([UTxO_Talendro])
         .pay.ToAddressWithData(
           PROJECTINITADDR,
           { kind: "inline", value: Data.to(datum, ProjectDatum) },
@@ -162,9 +165,9 @@ export function CreateProject() {
           },
         })
         .complete();
-
       const signed = await tx.sign.withWallet().complete();
       const txHash = await signed.submit();
+
       return { data: txHash, error: null };
     } catch (error: any) {
       return { data: null, error: error.message };

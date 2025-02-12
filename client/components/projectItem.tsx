@@ -84,6 +84,7 @@ export default function ProjectItem({ project, from }: Props) {
         const metadata = await blockfrost.getMetadata(
           PROJECTINITPID + fromText("dev_") + datum?.title
         );
+        console.log(metadata);
         setMetadata(metadata);
       } catch (error) {
         console.error("Error fetching datum:", error);
@@ -123,7 +124,7 @@ export default function ProjectItem({ project, from }: Props) {
 
       const ref_utxo = await refUtxo(lucid);
       const UTxO_Talendro = await lucid.utxoByUnit(
-        TALENDROPID + fromText(address.slice(-10))
+        TALENDROPID + paymentCredentialOf(address).hash.slice(-20)
       );
       const redeemer = Data.to(1n);
 
@@ -131,7 +132,8 @@ export default function ProjectItem({ project, from }: Props) {
       const tx = await lucid
         .newTx()
         .readFrom(ref_utxo)
-        .collectFrom([UTxO_Talendro, project], redeemer)
+        .readFrom([UTxO_Talendro])
+        .collectFrom([project], redeemer)
         .pay.ToAddress(address, dev_token)
         .pay.ToAddressWithData(
           contractAddress,
@@ -230,7 +232,7 @@ export default function ProjectItem({ project, from }: Props) {
 
   if (!datum) return null;
 
-  const imageUrl = metadata?.image.replace("ipfs://", "https://ipfs.io/ipfs/");
+  const imageUrl = metadata?.image?.replace("ipfs://", "https://ipfs.io/ipfs/");
   return (
     <Card className="w-full max-w-md mx-auto">
       <CardHeader>
@@ -242,7 +244,9 @@ export default function ProjectItem({ project, from }: Props) {
       <CardContent>
         <div className="space-y-4">
           <Image
-            src={imageUrl || "/placeholder.svg"}
+            src={
+              imageUrl || "https://avatars.githubusercontent.com/u/68136265?v=4"
+            }
             alt={toText(datum.title)}
             width={500}
             height={500}
