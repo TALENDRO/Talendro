@@ -1,4 +1,4 @@
-import { STAKESEED } from "@/config";
+import { STAKEPRIVATEKEY } from "@/config";
 import {
   ArbitrationContractValidator,
   ArbitratorTokenValidator,
@@ -12,6 +12,7 @@ import {
   getAddress,
   getPolicyId,
   keyHashtoAddress,
+  privateKeytoAddress,
   refStakeUtxo,
   refUtxo,
   seedtoAddress,
@@ -22,7 +23,14 @@ import {
   ProjectDatum,
   ProjectRedeemer,
 } from "@/types/cardano";
-import { Data, fromText, TxHash, UTxO } from "@lucid-evolution/lucid";
+import {
+  Data,
+  fromText,
+  generatePrivateKey,
+  paymentCredentialOf,
+  TxHash,
+  UTxO,
+} from "@lucid-evolution/lucid";
 
 export async function arbitration(
   walletConnection: WalletConnection,
@@ -51,13 +59,14 @@ export async function arbitration(
 
     const ref_utxo = await refUtxo(lucid);
     const UTxO_Talendro = await lucid.utxoByUnit(
-      TALENDROPID + fromText(address.slice(-10))
+      TALENDROPID + paymentCredentialOf(address).hash.slice(-20)
     ); //talendroPolicyID+assetName assetname is user address
     const redeemer = Data.to("Arbitrator", ProjectRedeemer);
     const tx = await lucid
       .newTx()
       .readFrom(ref_utxo)
-      .collectFrom([UTxO_Talendro, utxo], redeemer)
+      .collectFrom([utxo], redeemer)
+      .readFrom([UTxO_Talendro])
       .pay.ToAddressWithData(
         ARBITRATIONADDR,
         { kind: "inline", value: Data.to(arbDatum, ArbitratorDatum) },
@@ -87,7 +96,7 @@ export async function ArbitratorAction(
 
   try {
     const ARBITRATORPID = getPolicyId(ArbitratorTokenValidator);
-    const STAKEADDRESS = await seedtoAddress(STAKESEED);
+    const STAKEADDRESS = await privateKeytoAddress(STAKEPRIVATEKEY);
     const data = await lucid.datumOf(utxo);
     const currentDatum = Data.castFrom(data, ArbitratorDatum);
     const cltAddress = keyHashtoAddress(currentDatum.project_datum.client);
@@ -103,7 +112,7 @@ export async function ArbitratorAction(
     const ref_utxo = await refUtxo(lucid);
     const UTxO_Arbitrator = await lucid.utxosAtWithUnit(
       address,
-      ARBITRATORPID + fromText(address.slice(-10))
+      ARBITRATORPID + paymentCredentialOf(address).hash.slice(-20)
     );
     const redeemer: ArbitratorRedeemer = { payto: devAtFault ? 0n : 1n };
     console.log(ARBITRATORPID);
@@ -123,11 +132,10 @@ export async function ArbitratorAction(
       .attach.SpendingValidator(ArbitrationContractValidator())
       .addSigner(STAKEADDRESS)
       .complete();
-
     const userSigned = await tx.sign.withWallet();
-    const stakeSigned = await (
-      await StakeWallet(walletConnection, userSigned)
-    ).complete();
+    console.log("userSigned", userSigned);
+    const stakeSigned = await (await StakeWallet(userSigned)).complete();
+
     const txHash = await stakeSigned.submit();
     console.log("txHash: ", txHash);
 

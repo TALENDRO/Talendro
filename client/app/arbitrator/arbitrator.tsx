@@ -2,8 +2,10 @@
 
 import { useEffect, useState } from "react";
 import {
+  ArbitrationContractValidator,
   ArbitratorTokenValidator,
   identificationPolicyid,
+  ProjectInitiateValidator,
 } from "@/config/scripts/scripts";
 import { useWallet } from "@/context/walletContext";
 import {
@@ -13,7 +15,7 @@ import {
   type UTxO,
   type Validator,
 } from "@lucid-evolution/lucid";
-import { ARBITRATIONADDR, PROJECTINITPID, SYSTEMADDRESS } from "@/config";
+import { PRIVATEKEY } from "@/config";
 import { SystemWallet } from "@/config/systemWallet";
 import { Button } from "@/components/ui/button";
 import {
@@ -25,9 +27,8 @@ import {
 } from "@/components/ui/card";
 import { Loader2, RefreshCw } from "lucide-react";
 import ArbitratorProjectItem from "@/components/arbitratorProjectItem";
-import { AnyNaptrRecord } from "dns";
-import { Description } from "@radix-ui/react-toast";
 import { toast } from "sonner";
+import { getAddress, getPolicyId, privateKeytoAddress } from "@/lib/utils";
 
 export default function ArbitratorTokenMinter() {
   const [WalletConnection] = useWallet();
@@ -43,9 +44,11 @@ export default function ArbitratorTokenMinter() {
       return;
     }
     try {
+      const ARBITRATIONADDR = getAddress(ArbitrationContractValidator);
+      const PROJECTINITPID = getPolicyId(ProjectInitiateValidator);
       const utxos = await lucid.utxosAt(ARBITRATIONADDR);
       const filteredUtxos = utxos.filter((utxo) =>
-        Object.keys(utxo.assets).some((key) => key.includes(PROJECTINITPID)),
+        Object.keys(utxo.assets).some((key) => key.includes(PROJECTINITPID))
       );
       setProjects(filteredUtxos);
     } catch (error: any) {
@@ -85,12 +88,13 @@ export default function ArbitratorTokenMinter() {
 
     setIsMinting(true);
     try {
+      const SYSTEMADDRESS = await privateKeytoAddress(PRIVATEKEY);
       const usr_configNFT = {
         [identificationPolicyid + fromText("usr_configNFT")]: 1n,
       };
       const utxoWithIdentificationToken = await lucid.utxosAtWithUnit(
         SYSTEMADDRESS,
-        identificationPolicyid + fromText("usr_configNFT"),
+        identificationPolicyid + fromText("usr_configNFT")
       );
 
       const mintingValidator: Validator = ArbitratorTokenValidator();

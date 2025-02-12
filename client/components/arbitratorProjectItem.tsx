@@ -91,7 +91,7 @@ export default function ArbitratorProjectItem({ project }: Props) {
     return <div className="text-center p-4">Loading...</div>;
   }
 
-  const imageUrl = metadata?.image.replace("ipfs://", "https://ipfs.io/ipfs/");
+  const imageUrl = metadata?.image?.replace("ipfs://", "https://ipfs.io/ipfs/");
 
   return (
     <Card className="w-full max-w-md mx-auto">
@@ -104,7 +104,9 @@ export default function ArbitratorProjectItem({ project }: Props) {
       <CardContent>
         <div className="space-y-4">
           <Image
-            src={imageUrl || "/placeholder.svg"}
+            src={
+              imageUrl || "https://avatars.githubusercontent.com/u/68136265?v=4"
+            }
             alt={toText(datum.project_datum.title)}
             width={500}
             height={500}
