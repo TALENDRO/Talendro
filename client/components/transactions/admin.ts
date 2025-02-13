@@ -1,6 +1,10 @@
-import { CONFIGADDR, IDENTIFICATIONPID, SYSTEMADDRESS } from "@/config";
-import { IdentificationNFT_MintValidator } from "@/config/scripts/scripts";
+import { PRIVATEKEY } from "@/config";
+import {
+  ConfigDatumHolderValidator,
+  IdentificationNFT_MintValidator,
+} from "@/config/scripts/scripts";
 import { WalletConnection } from "@/context/walletContext";
+import { getAddress, privateKeytoAddress } from "@/lib/utils";
 import { ConfigDatum } from "@/types/cardano";
 import {
   Constr,
@@ -15,6 +19,8 @@ export async function mint(WalletConnection: WalletConnection) {
   if (!lucid) throw new Error("Uninitalized Lucid");
   if (!address) throw new Error("Wallet not connected");
   try {
+    const SYSTEMADDRESS = await privateKeytoAddress(PRIVATEKEY);
+
     const utxos = await lucid.utxosAt(address);
 
     const orefHash = String(utxos[0].txHash);
@@ -57,6 +63,9 @@ export async function sendConfigDatum(
 ) {
   const { lucid, address } = WalletConnection;
   try {
+    const CONFIGADDR = getAddress(ConfigDatumHolderValidator);
+    const IDENTIFICATIONPID = process.env
+      .NEXT_PUBLIC_IDENTIFICATION_POLICY_ID as string;
     if (!lucid) throw new Error("Uninitalized Lucid");
     if (!address) throw new Error("Wallet not connected");
     const ref_configNFT = {

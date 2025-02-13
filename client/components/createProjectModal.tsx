@@ -24,15 +24,22 @@ import {
 } from "@lucid-evolution/lucid";
 import { useWallet } from "@/context/walletContext";
 import { ProjectDatum } from "@/types/cardano";
+
 import {
-  PROJECTINITADDR,
-  PROJECTINITPID,
-  STAKEADDRESS,
-  TALENDROPID,
-} from "@/config";
-import { refStakeUtxo, refUtxo, toLovelace } from "@/lib/utils";
-import { ProjectInitiateValidator } from "@/config/scripts/scripts";
+  getAddress,
+  getPolicyId,
+  privateKeytoAddress,
+  refStakeUtxo,
+  refUtxo,
+  seedtoAddress,
+  toLovelace,
+} from "@/lib/utils";
+import {
+  ProjectInitiateValidator,
+  TalendroTokenValidator,
+} from "@/config/scripts/scripts";
 import { toast } from "sonner";
+import { STAKEPRIVATEKEY } from "@/config";
 
 type ProjectType = "Milestone" | "Regular";
 
@@ -67,9 +74,10 @@ export function CreateProject() {
       pay,
       projectType,
       projectDescription,
-      projectImageUrl,
+      projectImageUrl
     );
     if (!result.data) {
+      console.log("error", result.error);
       toast.error("ERROR", {
         description: result.error,
       });
@@ -95,12 +103,20 @@ export function CreateProject() {
     pay: number | null,
     type: ProjectType,
     description: string,
-    imageUrl: string,
+    imageUrl: string
   ) {
     if (!lucid || !address) throw "Uninitialized Lucid!!!";
     const mintingValidator: MintingPolicy = ProjectInitiateValidator();
-
+    console.log("second clg");
     try {
+      const PROJECTINITPID = getPolicyId(ProjectInitiateValidator);
+      const PROJECTINITADDR = getAddress(ProjectInitiateValidator);
+      // const STAKESEED = process.env.NEXT_PUBLIC_STAKE_WALLET as string;
+      // const STAKEADDRESS = await seedtoAddress(STAKESEED);
+      const STAKEADDRESS = await privateKeytoAddress(STAKEPRIVATEKEY);
+
+      const TALENDROPID = getPolicyId(TalendroTokenValidator);
+
       const datum: ProjectDatum = {
         title: fromText(title),
         pay: pay ? toLovelace(pay) : null,
@@ -117,21 +133,20 @@ export function CreateProject() {
       const dev_assetname = fromText("dev_") + datum.title;
       const clt_token = { [PROJECTINITPID + clt_assetname]: 1n };
       const dev_token = { [PROJECTINITPID + dev_assetname]: 1n };
-
       const ref_utxo = await refUtxo(lucid);
       const ref_stake = await refStakeUtxo(lucid, address, STAKEADDRESS);
       const UTxO_Talendro = await lucid.utxoByUnit(
-        TALENDROPID + fromText(address.slice(-10)),
+        TALENDROPID + paymentCredentialOf(address).hash.slice(-20)
       );
       const redeemer = Data.to(0n);
       const tx = await lucid
         .newTx()
         .readFrom([...ref_utxo, ...ref_stake])
-        .collectFrom([UTxO_Talendro])
+        .readFrom([UTxO_Talendro])
         .pay.ToAddressWithData(
           PROJECTINITADDR,
           { kind: "inline", value: Data.to(datum, ProjectDatum) },
-          { lovelace: pay ? toLovelace(pay) : 3_000_000n, ...dev_token },
+          { lovelace: pay ? toLovelace(pay) : 3_000_000n, ...dev_token }
         )
         .mintAssets({ ...clt_token, ...dev_token }, redeemer)
         .attach.MintingPolicy(mintingValidator)
@@ -150,9 +165,9 @@ export function CreateProject() {
           },
         })
         .complete();
-
       const signed = await tx.sign.withWallet().complete();
       const txHash = await signed.submit();
+
       return { data: txHash, error: null };
     } catch (error: any) {
       return { data: null, error: error.message };
