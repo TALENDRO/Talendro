@@ -21,6 +21,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { useAuth } from "@/context/authContext";
 import { useEffect, useState } from "react";
+import Orb from "@/components/ui/orbprop";
 
 export default function Homepage() {
   const categories = [
@@ -61,7 +62,7 @@ export default function Homepage() {
   }, [currentUser, userDatObj]);
   return (
     <div className="flex flex-col min-h-screen">
-      <section className="relative from-primary/10 via-primary/5 to-background pt-20 pb-32">
+      <section className="relative from-primary/10 via-primary/5 to-background pt-10 pb-32">
         <div className="container px-4 mx-auto">
           <div className="flex flex-col lg:flex-row items-center gap-12">
             <div className="flex-1 text-center lg:text-left">
@@ -88,13 +89,23 @@ export default function Homepage() {
                 </Button>
               </div>
             </div>
-            <div className="flex-1">
+            {/* <div className="flex-1">
               <Image
                 src="/placeholder.svg?height=400&width=400"
                 alt="Platform Preview"
                 width={400}
                 height={400}
                 className="rounded-lg shadow-2xl"
+              />
+            </div> */}
+            <div
+              style={{ width: "100%", height: "800px", position: "relative" }}
+            >
+              <Orb
+                hoverIntensity={0.5}
+                rotateOnHover={true}
+                hue={0}
+                forceHoverState={false}
               />
             </div>
           </div>
