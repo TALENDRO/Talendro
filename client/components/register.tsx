@@ -26,6 +26,7 @@ function Register({
   const [password, setPassword] = useState("");
   const [fname, setFname] = useState("");
   const [lname, setLname] = useState("");
+  const [authenticating, setAuthenticating] = useState(false);
 
   const { signup } = useAuth();
 
@@ -36,6 +37,7 @@ function Register({
 
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
+    setAuthenticating(true);
     try {
       await signup(email, password);
       console.log("User registered successfully");
@@ -47,6 +49,8 @@ function Register({
       toast.error(error.message, {
         position: "bottom-center",
       });
+    } finally {
+      setAuthenticating(false);
     }
   };
 
@@ -78,14 +82,14 @@ function Register({
 
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
-      <Card>
+      <Card className="w-96 ">
         <CardHeader>
           <CardTitle className="text-2xl">Sign Up</CardTitle>
           <CardDescription>Create a new account to get started</CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleRegister}>
-            <div className="flex flex-col gap-4">
+            <div className="flex flex-col gap-4 text-left py-1 ">
               <div className="grid gap-2">
                 <Label htmlFor="firstName">First Name</Label>
                 <Input
@@ -129,7 +133,7 @@ function Register({
                 />
               </div>
               <Button type="submit" className="w-full mt-2">
-                Sign Up
+                {authenticating ? "Registering..." : "SignUp"}
               </Button>
             </div>
             <div className="mt-4 text-center text-sm">
