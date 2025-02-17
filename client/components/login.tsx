@@ -17,14 +17,33 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import Link from "next/link";
 import Register from "./register";
+import { useAuth } from "@/context/authContext";
 
 function Login({ className, ...props }: React.ComponentPropsWithoutRef<"div">) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [isRegister, setisRegister] = useState(false);
+  const [authenticating, setAuthenticating] = useState(false);
+
+  const { signup, login } = useAuth();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!email || !password || password.length < 6) {
+      return;
+    }
+    setAuthenticating(true);
     try {
+      /////
+      if (isRegister) {
+        console.log("sign successfull");
+        await signup(email, password);
+      } else {
+        console.log("sign fail");
+        await login(email, password);
+      }
+
+      //////
       await signInWithEmailAndPassword(auth, email, password);
       console.log("User logged in Successfully");
       toast.success("User logged in Successfully", {
@@ -35,6 +54,8 @@ function Login({ className, ...props }: React.ComponentPropsWithoutRef<"div">) {
       toast.error(error.message, {
         position: "bottom-center",
       });
+    } finally {
+      setAuthenticating(false);
     }
   };
 
@@ -86,20 +107,17 @@ function Login({ className, ...props }: React.ComponentPropsWithoutRef<"div">) {
                 />
               </div>
               <Button type="submit" className="w-full">
-                Login
+                {authenticating ? "Authenticating..." : "Login"}
               </Button>
-              <Button variant="outline" className="w-full">
+              {/* <Button variant="outline" className="w-full">
                 Login with Google
-              </Button>
+              </Button> */}
             </div>
             <div className="mt-4 text-center text-sm">
               Don&apos;t have an account?{" "}
               <Link href="/signup" className="underline underline-offset-4">
                 Sign up
               </Link>
-              {/* <Button onClick={onregister} className="w-full">
-                Sign Up
-              </Button> */}
             </div>
           </form>
         </CardContent>

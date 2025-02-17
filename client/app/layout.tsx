@@ -10,6 +10,7 @@ import { siteConfig } from "@/config/site";
 import { fontSans, fontComfortaa } from "@/config/fonts";
 import { Navbar } from "@/components/navbar";
 import { AuthProvider } from "@/context/authContext";
+import Ribbons from "@/components/ui/Ribbon";
 
 export const metadata: Metadata = {
   title: {
@@ -36,6 +37,16 @@ export default function RootLayout({
 }) {
   return (
     <html suppressHydrationWarning lang="en">
+      <div className="fixed top-0 left-0 w-full h-full pointer-events-none z-50">
+        <Ribbons
+          baseThickness={7}
+          colors={["#74b3ce"]}
+          speedMultiplier={0.4}
+          maxAge={700}
+          enableFade={true}
+          enableShaderEffect={true}
+        />
+      </div>
       <AuthProvider>
         <head />
         <body
