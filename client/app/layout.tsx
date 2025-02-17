@@ -39,12 +39,12 @@ export default function RootLayout({
     <html suppressHydrationWarning lang="en">
       <div className="fixed top-0 left-0 w-full h-full pointer-events-none z-50">
         <Ribbons
-          baseThickness={30}
-          colors={["#00d8ff"]}
-          speedMultiplier={0.45}
-          maxAge={500}
-          enableFade={false}
-          enableShaderEffect={false}
+          baseThickness={7}
+          colors={["#74b3ce"]}
+          speedMultiplier={0.4}
+          maxAge={700}
+          enableFade={true}
+          enableShaderEffect={true}
         />
       </div>
       <AuthProvider>
