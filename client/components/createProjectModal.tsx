@@ -107,7 +107,6 @@ export function CreateProject() {
   ) {
     if (!lucid || !address) throw "Uninitialized Lucid!!!";
     const mintingValidator: MintingPolicy = ProjectInitiateValidator();
-    console.log("second clg");
     try {
       const PROJECTINITPID = getPolicyId(ProjectInitiateValidator);
       const PROJECTINITADDR = getAddress(ProjectInitiateValidator);

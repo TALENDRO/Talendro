@@ -28,7 +28,11 @@ import {
   type UTxO,
 } from "@lucid-evolution/lucid";
 import { useEffect, useState } from "react";
-import { CancelProject, ProjectComplete } from "./transactions/ProjectComplete";
+import {
+  CancelNotAccepted,
+  CancelProject,
+  ProjectComplete,
+} from "./transactions/ProjectComplete";
 import { arbitration } from "./transactions/arbitration";
 import Image from "next/image";
 import { toast } from "sonner";
@@ -59,6 +63,7 @@ export default function ProjectItem({ project, from }: Props) {
   const [metadata, setMetadata] = useState({ description: "", image: "" });
   const [isArbitrationDialogOpen, setIsArbitrationDialogOpen] = useState(false);
   const [POWLink, setPOWLink] = useState("");
+  const [IsNewListed, setIsNewListed] = useState(false);
 
   useEffect(() => {
     if (!lucid) return;
@@ -88,14 +93,10 @@ export default function ProjectItem({ project, from }: Props) {
         setMetadata(metadata);
       } catch (error) {
         console.error("Error fetching datum:", error);
-        // toast({
-        //   title: "Error",
-        //   description: "Failed to fetch project data",
-        //   variant: "destructive",
-        // })
       }
     }
     fetchDatum();
+    newlisted();
   }, [lucid, project]);
 
   async function acceptProject() {
@@ -186,7 +187,9 @@ export default function ProjectItem({ project, from }: Props) {
     setSubmitting(true);
     try {
       const calledByDev = from.includes("dev");
-      await CancelProject(lucid, project, datum, calledByDev, address);
+      IsNewListed
+        ? await CancelNotAccepted(lucid, project, datum)
+        : await CancelProject(lucid, project, datum, calledByDev, address);
       toast.success("Success", {
         description: "Project cancelled successfully",
       });
@@ -233,6 +236,14 @@ export default function ProjectItem({ project, from }: Props) {
   if (!datum) return null;
 
   const imageUrl = metadata?.image?.replace("ipfs://", "https://ipfs.io/ipfs/");
+
+  function newlisted() {
+    if (!lucid) return;
+    if (project.address == getAddress(ProjectInitiateValidator)) {
+      setIsNewListed(true);
+    }
+  }
+
   return (
     <Card className="w-full max-w-md mx-auto">
       <CardHeader>
@@ -266,45 +277,52 @@ export default function ProjectItem({ project, from }: Props) {
             {submitting ? "Accepting..." : "Accept Project"}
           </Button>
         )}
-        {(from === "myProjects_dev" || from === "myProjects_client") && (
-          <div className="flex gap-2 justify-center items-center flex-wrap">
-            <Button
-              onClick={projectCompleteClick}
-              disabled={
-                submitting ||
-                (isCompleteByDev && from.includes("dev")) ||
-                (!isCompleteByDev && from.includes("client"))
-              }
-            >
-              {submitting
-                ? "Processing..."
-                : isCompleteByDev && from.includes("dev")
-                  ? "Completed"
-                  : !isCompleteByDev && from.includes("client")
-                    ? "Awaiting Completion"
-                    : "Complete Project"}
-            </Button>
-            <Button
-              onClick={cancelProjectClick}
-              disabled={
-                submitting ||
-                (isCancelByDev && from.includes("dev")) ||
-                (!isCancelByDev && from.includes("client"))
-              }
-            >
-              {submitting
-                ? "Processing..."
-                : isCancelByDev && from.includes("dev")
-                  ? "Cancelled"
-                  : !isCancelByDev && from.includes("client")
-                    ? "Awaiting Cancellation"
-                    : "Cancel Project"}
-            </Button>
-            <Button onClick={handleArbitrationClick} disabled={submitting}>
-              {submitting ? "Requesting..." : "Request Arbitration"}
-            </Button>
-          </div>
-        )}
+        {(from === "myProjects_dev" || from === "myProjects_client") &&
+          (!IsNewListed ? (
+            <div className="flex gap-2 justify-center items-center flex-wrap">
+              <Button
+                onClick={projectCompleteClick}
+                disabled={
+                  submitting ||
+                  (isCompleteByDev && from.includes("dev")) ||
+                  (!isCompleteByDev && from.includes("client"))
+                }
+              >
+                {submitting
+                  ? "Processing..."
+                  : isCompleteByDev && from.includes("dev")
+                    ? "Completed"
+                    : !isCompleteByDev && from.includes("client")
+                      ? "Awaiting Completion"
+                      : "Complete Project"}
+              </Button>
+              <Button
+                onClick={cancelProjectClick}
+                disabled={
+                  submitting ||
+                  (isCancelByDev && from.includes("dev")) ||
+                  (!isCancelByDev && from.includes("client"))
+                }
+              >
+                {submitting
+                  ? "Processing..."
+                  : isCancelByDev && from.includes("dev")
+                    ? "Cancelled"
+                    : !isCancelByDev && from.includes("client")
+                      ? "Awaiting Cancellation"
+                      : "Cancel Project"}
+              </Button>
+              <Button onClick={handleArbitrationClick} disabled={submitting}>
+                {submitting ? "Requesting..." : "Request Arbitration"}
+              </Button>
+            </div>
+          ) : (
+            <>
+              Not Accept yet
+              <br></br>
+              <Button onClick={cancelProjectClick}>Cancel Project</Button>
+            </>
+          ))}
       </CardFooter>
       <Dialog
         open={isArbitrationDialogOpen}
