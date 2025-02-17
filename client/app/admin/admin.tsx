@@ -6,7 +6,6 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
-// import { IDENTIFICATIONPID, MILESTONEPID, STAKEADDRESS } from "@/config";
 import { useWallet } from "@/context/walletContext";
 import { toast } from "sonner";
 
@@ -32,9 +31,6 @@ import {
 import { STAKEPRIVATEKEY } from "@/config";
 import { withErrorHandling } from "@/components/errorHandling";
 import { fail } from "assert";
-// import { STAKEADDRESS } from "@/config";
-
-// let stake_address = awaitStakAddr(STAKESEED);
 
 export default function Page() {
   const [stakeAddress, setstakeAddress] = useState("");

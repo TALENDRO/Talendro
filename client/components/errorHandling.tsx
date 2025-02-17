@@ -12,9 +12,3 @@ export function withErrorHandling(asyncFn: any) {
     }
   };
 }
-
-// Usage:
-// const safeCaller = withErrorHandling(fnToCall);
-// safeCaller();
-
-// export default withErrorHandling;
