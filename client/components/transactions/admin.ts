@@ -15,10 +15,10 @@ import {
 } from "@lucid-evolution/lucid";
 
 export async function mint(WalletConnection: WalletConnection) {
-  const { lucid, address } = WalletConnection;
-  if (!lucid) throw new Error("Uninitalized Lucid");
-  if (!address) throw new Error("Wallet not connected");
   try {
+    const { lucid, address } = WalletConnection;
+    if (!lucid) throw new Error("Uninitalized Lucid");
+    if (!address) throw new Error("Wallet not connected");
     const SYSTEMADDRESS = await privateKeytoAddress(PRIVATEKEY);
 
     const utxos = await lucid.utxosAt(address);
@@ -36,7 +36,6 @@ export async function mint(WalletConnection: WalletConnection) {
     const mintedAssets = { ...ref_configNFT, ...usr_configNFT };
     console.log(policyID);
     const redeemer = Data.void();
-
     const tx = await lucid
       .newTx()
       .collectFrom([utxos[0]])
@@ -47,13 +46,14 @@ export async function mint(WalletConnection: WalletConnection) {
       .mintAssets(mintedAssets, redeemer)
       .attach.MintingPolicy(mintingValidator)
       .complete();
+
     const signed = await tx.sign.withWallet().complete();
     const txHash = await signed.submit();
-    console.log("policyId(param for rest of the scripts): ", policyID);
+    console.log("policyId (param for rest of the scripts): ", policyID);
     console.log("txHash: ", txHash);
-    return { data: { txHash, policyID }, error: null };
+    return txHash;
   } catch (error: any) {
-    return { data: null, error: error.message };
+    throw error;
   }
 }
 

@@ -30,6 +30,8 @@ import {
   seedtoAddress,
 } from "@/lib/utils";
 import { STAKEPRIVATEKEY } from "@/config";
+import { withErrorHandling } from "@/components/errorHandling";
+import { fail } from "assert";
 // import { STAKEADDRESS } from "@/config";
 
 // let stake_address = awaitStakAddr(STAKESEED);
@@ -77,18 +79,11 @@ export default function Page() {
 
   async function handleMintClick() {
     setSubmitting(true);
-    const result = await mint(WalletConnection);
-    if (!result.data) {
-      toast.error("ERROR", { description: result.error });
-      return;
-    }
-    console.log(result.data.txHash);
-    setPolicy(result.data.policyID);
+    const saferMint = withErrorHandling(mint);
+    const result = await saferMint(WalletConnection);
 
-    toast.success("Tx Hash", {
-      description:
-        result.data.txHash.slice(0, 20) + "..." + result.data.txHash.slice(-10),
-    });
+    console.log(result);
+
     setSubmitting(false);
   }
 
