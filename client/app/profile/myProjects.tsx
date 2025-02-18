@@ -62,11 +62,6 @@ export default function MyProjectsPage() {
       setDevProjects((prev) => new Set([...prev, ...newDevProjects]));
     } catch (error) {
       console.error("Error fetching projects:", error);
-      // toast({
-      //   title: "Error",
-      //   description: "Failed to fetch projects. Please try again.",
-      //   variant: "destructive",
-      // })
     }
   }
 
@@ -95,16 +90,6 @@ export default function MyProjectsPage() {
 
   return (
     <div className="container mx-auto">
-      {/* <Card className="mb-6">
-        <CardHeader>
-          <CardTitle>Project Management</CardTitle>
-          <CardDescription>Manage your projects as a client or developer</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <CreateProject />
-        </CardContent>
-      </Card> */}
-
       {isLoading ? (
         <div className="flex justify-center items-center h-64">
           <Loader2 className="h-8 w-8 animate-spin" />

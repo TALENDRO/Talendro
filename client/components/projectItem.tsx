@@ -28,7 +28,11 @@ import {
   type UTxO,
 } from "@lucid-evolution/lucid";
 import { useEffect, useState } from "react";
-import { CancelProject, ProjectComplete } from "./transactions/ProjectComplete";
+import {
+  CancelNotAccepted,
+  CancelProject,
+  ProjectComplete,
+} from "./transactions/ProjectComplete";
 import { arbitration } from "./transactions/arbitration";
 import Image from "next/image";
 import { toast } from "sonner";
@@ -41,6 +45,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
+import { withErrorHandling } from "./errorHandling";
 
 interface Props {
   project: UTxO;
@@ -59,6 +64,7 @@ export default function ProjectItem({ project, from }: Props) {
   const [metadata, setMetadata] = useState({ description: "", image: "" });
   const [isArbitrationDialogOpen, setIsArbitrationDialogOpen] = useState(false);
   const [POWLink, setPOWLink] = useState("");
+  const [IsNewListed, setIsNewListed] = useState(false);
 
   useEffect(() => {
     if (!lucid) return;
@@ -88,14 +94,10 @@ export default function ProjectItem({ project, from }: Props) {
         setMetadata(metadata);
       } catch (error) {
         console.error("Error fetching datum:", error);
-        // toast({
-        //   title: "Error",
-        //   description: "Failed to fetch project data",
-        //   variant: "destructive",
-        // })
       }
     }
     fetchDatum();
+    newlisted();
   }, [lucid, project]);
 
   async function acceptProject() {
@@ -108,7 +110,7 @@ export default function ProjectItem({ project, from }: Props) {
       return;
     }
 
-    setSubmitting(true);
+    // setSubmitting(true);
     try {
       const MILESTONEADDR = getAddress(MilestoneSpendValidator);
       const HOLDINGADDR = getAddress(HoldingContractValidator);
@@ -147,14 +149,12 @@ export default function ProjectItem({ project, from }: Props) {
       const signed = await tx.sign.withWallet().complete();
       const txHash = await signed.submit();
       console.log("txHash: ", txHash);
-      toast.success("Success", {
-        description: "Project accepted successfully",
-      });
     } catch (error: any) {
       console.error(error);
-      toast.error("Error", { description: "Failed to accept project" });
     }
-    setSubmitting(false);
+    // finally {
+    // setSubmitting(false);
+    // }
   }
 
   async function projectCompleteClick() {
@@ -166,13 +166,10 @@ export default function ProjectItem({ project, from }: Props) {
     setSubmitting(true);
     try {
       const calledByDev = from.includes("dev");
-      await ProjectComplete(lucid, project, datum, calledByDev, address);
-      toast.success("Success", {
-        description: "Project completed successfully",
-      });
+      const safePrjComplete = withErrorHandling(ProjectComplete);
+      await safePrjComplete(lucid, project, datum, calledByDev, address);
     } catch (error) {
       console.error(error);
-      toast.error("Error", { description: "Failed to complete project" });
     }
     setSubmitting(false);
   }
@@ -186,13 +183,13 @@ export default function ProjectItem({ project, from }: Props) {
     setSubmitting(true);
     try {
       const calledByDev = from.includes("dev");
-      await CancelProject(lucid, project, datum, calledByDev, address);
-      toast.success("Success", {
-        description: "Project cancelled successfully",
-      });
+      const safeCnlnotAccept = withErrorHandling(CancelNotAccepted);
+      const safeCnlPrj = withErrorHandling(CancelProject);
+      IsNewListed
+        ? await safeCnlnotAccept(lucid, project, datum)
+        : await safeCnlPrj(lucid, project, datum, calledByDev, address);
     } catch (error) {
       console.error(error);
-      toast.error("Error", { description: "Failed to cancel project" });
     }
     setSubmitting(false);
   }
@@ -202,29 +199,19 @@ export default function ProjectItem({ project, from }: Props) {
   }
 
   async function confirmArbitration() {
-    setSubmitting(true);
     try {
+      setSubmitting(true);
       const calledByDev = from.includes("dev");
-      const result = await arbitration(
+      const safeArbitration = withErrorHandling(arbitration);
+      const result = await safeArbitration(
         walletConnection,
         project,
         calledByDev,
         POWLink
       );
-      if (!result.data) {
-        toast.error("ERROR", {
-          description: result.error,
-        });
-        setIsArbitrationDialogOpen(false);
-        return;
-      }
-      toast.success("Success", {
-        description: "Arbitration requested successfully",
-      });
       setIsArbitrationDialogOpen(false);
     } catch (error) {
       console.error(error);
-      toast.error("Error", { description: "Failed to request arbitration" });
     }
     setSubmitting(false);
     setPOWLink("");
@@ -233,6 +220,22 @@ export default function ProjectItem({ project, from }: Props) {
   if (!datum) return null;
 
   const imageUrl = metadata?.image?.replace("ipfs://", "https://ipfs.io/ipfs/");
+
+  function newlisted() {
+    if (!lucid) return;
+    if (project.address == getAddress(ProjectInitiateValidator)) {
+      setIsNewListed(true);
+    }
+  }
+
+  async function handleAcceptClick() {
+    setSubmitting(true);
+    const saferMint = withErrorHandling(acceptProject);
+    const result = await saferMint();
+
+    setSubmitting(false);
+  }
+
   return (
     <Card className="w-full max-w-md mx-auto">
       <CardHeader>
@@ -262,49 +265,56 @@ export default function ProjectItem({ project, from }: Props) {
       </CardContent>
       <CardFooter className="flex flex-wrap gap-2 justify-center">
         {from === "projects" && (
-          <Button onClick={acceptProject} disabled={submitting}>
+          <Button onClick={handleAcceptClick} disabled={submitting}>
             {submitting ? "Accepting..." : "Accept Project"}
           </Button>
         )}
-        {(from === "myProjects_dev" || from === "myProjects_client") && (
-          <div className="flex gap-2 justify-center items-center flex-wrap">
-            <Button
-              onClick={projectCompleteClick}
-              disabled={
-                submitting ||
-                (isCompleteByDev && from.includes("dev")) ||
-                (!isCompleteByDev && from.includes("client"))
-              }
-            >
-              {submitting
-                ? "Processing..."
-                : isCompleteByDev && from.includes("dev")
-                  ? "Completed"
-                  : !isCompleteByDev && from.includes("client")
-                    ? "Awaiting Completion"
-                    : "Complete Project"}
-            </Button>
-            <Button
-              onClick={cancelProjectClick}
-              disabled={
-                submitting ||
-                (isCancelByDev && from.includes("dev")) ||
-                (!isCancelByDev && from.includes("client"))
-              }
-            >
-              {submitting
-                ? "Processing..."
-                : isCancelByDev && from.includes("dev")
-                  ? "Cancelled"
-                  : !isCancelByDev && from.includes("client")
-                    ? "Awaiting Cancellation"
-                    : "Cancel Project"}
-            </Button>
-            <Button onClick={handleArbitrationClick} disabled={submitting}>
-              {submitting ? "Requesting..." : "Request Arbitration"}
-            </Button>
-          </div>
-        )}
+        {(from === "myProjects_dev" || from === "myProjects_client") &&
+          (!IsNewListed ? (
+            <div className="flex gap-2 justify-center items-center flex-wrap">
+              <Button
+                onClick={projectCompleteClick}
+                disabled={
+                  submitting ||
+                  (isCompleteByDev && from.includes("dev")) ||
+                  (!isCompleteByDev && from.includes("client"))
+                }
+              >
+                {submitting
+                  ? "Processing..."
+                  : isCompleteByDev && from.includes("dev")
+                    ? "Completed"
+                    : !isCompleteByDev && from.includes("client")
+                      ? "Awaiting Completion"
+                      : "Complete Project"}
+              </Button>
+              <Button
+                onClick={cancelProjectClick}
+                disabled={
+                  submitting ||
+                  (isCancelByDev && from.includes("dev")) ||
+                  (!isCancelByDev && from.includes("client"))
+                }
+              >
+                {submitting
+                  ? "Processing..."
+                  : isCancelByDev && from.includes("dev")
+                    ? "Cancelled"
+                    : !isCancelByDev && from.includes("client")
+                      ? "Awaiting Cancellation"
+                      : "Cancel Project"}
+              </Button>
+              <Button onClick={handleArbitrationClick} disabled={submitting}>
+                {submitting ? "Requesting..." : "Request Arbitration"}
+              </Button>
+            </div>
+          ) : (
+            <>
+              Not Accept yet
+              <br></br>
+              <Button onClick={cancelProjectClick}>Cancel Project</Button>
+            </>
+          ))}
       </CardFooter>
       <Dialog
         open={isArbitrationDialogOpen}

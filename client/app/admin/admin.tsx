@@ -6,7 +6,6 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
-// import { IDENTIFICATIONPID, MILESTONEPID, STAKEADDRESS } from "@/config";
 import { useWallet } from "@/context/walletContext";
 import { toast } from "sonner";
 
@@ -30,9 +29,8 @@ import {
   seedtoAddress,
 } from "@/lib/utils";
 import { STAKEPRIVATEKEY } from "@/config";
-// import { STAKEADDRESS } from "@/config";
-
-// let stake_address = awaitStakAddr(STAKESEED);
+import { withErrorHandling } from "@/components/errorHandling";
+import { fail } from "assert";
 
 export default function Page() {
   const [stakeAddress, setstakeAddress] = useState("");
@@ -77,33 +75,21 @@ export default function Page() {
 
   async function handleMintClick() {
     setSubmitting(true);
-    const result = await mint(WalletConnection);
-    if (!result.data) {
-      toast.error("ERROR", { description: result.error });
-      return;
-    }
-    console.log(result.data.txHash);
-    setPolicy(result.data.policyID);
+    const saferMint = withErrorHandling(mint);
+    const result = await saferMint(WalletConnection);
 
-    toast.success("Tx Hash", {
-      description:
-        result.data.txHash.slice(0, 20) + "..." + result.data.txHash.slice(-10),
-    });
+    console.log(result);
+
     setSubmitting(false);
   }
 
   async function sendConfigDatumClick() {
     setSubmitting(true);
 
-    if (isEmulator && !policyID) return;
-    const result = await sendConfigDatum(WalletConnection, CONFIGDATUM);
-    if (!result.data) {
-      toast.error("ERROR", { description: result.error });
-      return;
-    }
-    toast.success("Success", {
-      description: "Successfully Attach Config Datum",
-    });
+    // if (isEmulator && !policyID) return;
+    const safe_configDatum = withErrorHandling(sendConfigDatum);
+    const result = await safe_configDatum(WalletConnection, CONFIGDATUM);
+    console.log(result);
     setSubmitting(false);
   }
 

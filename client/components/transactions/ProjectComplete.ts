@@ -14,10 +14,12 @@ import { ProjectDatum, ProjectRedeemer } from "@/types/cardano";
 import {
   Data,
   fromText,
+  Lucid,
   LucidEvolution,
   paymentCredentialOf,
   UTxO,
 } from "@lucid-evolution/lucid";
+import { error } from "console";
 
 export async function ProjectComplete(
   lucid: LucidEvolution,
@@ -26,9 +28,8 @@ export async function ProjectComplete(
   calledByDev: boolean,
   address: string
 ) {
-  const mintingValidator = ProjectInitiateValidator();
-
   try {
+    const mintingValidator = ProjectInitiateValidator();
     const HOLDINGADDR = getAddress(HoldingContractValidator);
     const PROJECTINITPID = getPolicyId(ProjectInitiateValidator);
     const TALENDROPID = getPolicyId(TalendroTokenValidator);
@@ -79,9 +80,9 @@ export async function ProjectComplete(
     // const finalTx = calledByDev ? dev : clt
     // const txSystemSigned = await SystemWallet(tx)
     const txHash = await signed.submit();
-    console.log("txHash: ", txHash);
+    return txHash;
   } catch (error) {
-    console.log(error);
+    throw error;
   }
 }
 
@@ -116,8 +117,8 @@ export async function CancelProject(
   calledByDev: boolean,
   address: string
 ) {
-  const mintingValidator = ProjectInitiateValidator();
   try {
+    const mintingValidator = ProjectInitiateValidator();
     const HOLDINGADDR = getAddress(HoldingContractValidator);
     const PROJECTINITPID = getPolicyId(ProjectInitiateValidator);
     const TALENDROPID = getPolicyId(TalendroTokenValidator);
@@ -167,8 +168,46 @@ export async function CancelProject(
       signed = await clt.sign.withWallet().complete();
     }
     const txHash = await signed.submit();
-    console.log("txHash: ", txHash);
-  } catch (err) {
-    console.log(err);
+    return txHash;
+  } catch (error) {
+    throw error;
+  }
+}
+
+export async function CancelNotAccepted(
+  lucid: LucidEvolution,
+  utxo: UTxO,
+  datum: ProjectDatum
+) {
+  try {
+    const PROJECTINITPID = getPolicyId(ProjectInitiateValidator);
+
+    const dev_assetname = fromText("dev_") + datum.title;
+    const dev_token = { [PROJECTINITPID + dev_assetname]: -1n };
+
+    const clt_assetname = fromText("clt_") + datum.title;
+    const clt_token = { [PROJECTINITPID + clt_assetname]: -1n };
+
+    const clientaddr = keyHashtoAddress(datum.client);
+    const pay = datum.pay;
+
+    const redeemer = Data.to(1n);
+    const spend_redeemer = Data.to(2n);
+
+    const tx = await lucid
+      .newTx()
+      .collectFrom([utxo], spend_redeemer)
+      .pay.ToAddress(clientaddr, {
+        lovelace: pay as bigint,
+      })
+      .mintAssets({ ...clt_token, ...dev_token }, redeemer)
+      .attach.Script(ProjectInitiateValidator())
+      .complete();
+
+    const sign = await tx.sign.withWallet().complete();
+    const submit = await sign.submit();
+    return submit;
+  } catch (error) {
+    return error;
   }
 }

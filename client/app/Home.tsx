@@ -99,10 +99,11 @@ export default function Homepage() {
               />
             </div> */}
             <div
-              style={{ width: "100%", height: "800px", position: "relative" }}
+              className="max-md:hidden overflow-visible"
+              style={{ width: "100%", height: "600px", position: "relative" }}
             >
               <Orb
-                hoverIntensity={0.5}
+                hoverIntensity={0.6}
                 rotateOnHover={true}
                 hue={0}
                 forceHoverState={false}

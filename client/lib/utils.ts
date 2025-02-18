@@ -12,8 +12,6 @@ export function toLovelace(value: number) {
   return BigInt(value * 1_000_000);
 }
 
-// import { toast } from "react-toastify";
-
 import {
   ConfigDatumHolderValidator,
   identificationPolicyid,
@@ -117,13 +115,7 @@ export async function refStakeUtxo(
     STAKEADDRESS,
     TALENDROPID + paymentCredentialOf(address).hash.slice(-20)
   );
-  // const datum = { staked_by: paymentCredentialOf(address).hash };
-  // const stake_utxo = utxos.filter((utxo) => {
-  //   if (!utxo.datum) return false;
-  //   const isEqual = utxo.datum === Data.to(datum, StakeDatum);
-  //   return isEqual;
-  // });
-  // return stake_utxo;
+
   return utxos;
 }
 export function signWithPrivateKey(tx: TxSignBuilder, privateKey: string) {

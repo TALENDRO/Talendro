@@ -29,6 +29,7 @@ import { blockfrost } from "@/lib/blockfrost";
 import Link from "next/link";
 import { ExternalLink } from "lucide-react";
 import { ProjectInitiateValidator } from "@/config/scripts/scripts";
+import { withErrorHandling } from "./errorHandling";
 // import { useToast } from "@/components/ui/use-toast"
 
 interface Props {
@@ -69,21 +70,14 @@ export default function ArbitratorProjectItem({ project }: Props) {
   async function handleArbAction() {
     if (!datum) return;
     setSubmitting(true);
-    const result = await ArbitratorAction(
+    const safeArbiAction = withErrorHandling(ArbitratorAction);
+    const result = await safeArbiAction(
       walletConnection,
       project,
       atFault.includes("dev")
     );
-    if (!result.data) {
-      toast.error("Error", {
-        description: result.error,
-      });
-      setSubmitting(false);
-      return;
-    }
-    toast.success("Success", {
-      description: "Arbitration action submitted successfully",
-    });
+    console.log(result);
+
     setSubmitting(false);
   }
 

@@ -37,7 +37,7 @@ export default function RootLayout({
 }) {
   return (
     <html suppressHydrationWarning lang="en">
-      <div className="fixed top-0 left-0 w-full h-full pointer-events-none z-50">
+      {/* <div className="fixed top-0 left-0 w-full h-full pointer-events-none z-50">
         <Ribbons
           baseThickness={7}
           colors={["#74b3ce"]}
@@ -46,7 +46,7 @@ export default function RootLayout({
           enableFade={true}
           enableShaderEffect={true}
         />
-      </div>
+      </div> */}
       <AuthProvider>
         <head />
         <body

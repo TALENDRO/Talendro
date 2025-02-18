@@ -52,7 +52,7 @@ export async function arbitration(
       project_datum: datum,
       pow: fromText(arbitrationLink),
     };
-    console.log(arbDatum, arbitrationLink);
+
     const tokenName = isDev ? "dev_" : "clt_";
     const project_assetname = fromText(tokenName) + datum.title;
     const projecttoken = { [PROJECTINITPID + project_assetname]: 1n };
@@ -79,10 +79,9 @@ export async function arbitration(
     const signed = await tx.sign.withWallet().complete();
     const txHash = await signed.submit();
     console.log("txHash: ", txHash);
-    return { data: txHash, error: null };
+    return txHash;
   } catch (error: any) {
-    console.log(error);
-    return { data: null, error: error.message };
+    throw error;
   }
 }
 
@@ -91,10 +90,9 @@ export async function ArbitratorAction(
   utxo: UTxO,
   devAtFault: boolean
 ) {
-  const { lucid, address } = walletConnection;
-  if (!lucid || !address) throw new Error("Uninitialized Lucid!!!");
-
   try {
+    const { lucid, address } = walletConnection;
+    if (!lucid || !address) throw new Error("Uninitialized Lucid!!!");
     const ARBITRATORPID = getPolicyId(ArbitratorTokenValidator);
     const STAKEADDRESS = await privateKeytoAddress(STAKEPRIVATEKEY);
     const data = await lucid.datumOf(utxo);
@@ -133,14 +131,12 @@ export async function ArbitratorAction(
       .addSigner(STAKEADDRESS)
       .complete();
     const userSigned = await tx.sign.withWallet();
-    console.log("userSigned", userSigned);
+
     const stakeSigned = await (await StakeWallet(userSigned)).complete();
 
     const txHash = await stakeSigned.submit();
-    console.log("txHash: ", txHash);
-
-    return { data: txHash, error: null };
+    return txHash;
   } catch (error: any) {
-    return { data: null, error: error.message };
+    throw error;
   }
 }
