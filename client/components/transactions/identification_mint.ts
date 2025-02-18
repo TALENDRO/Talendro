@@ -17,8 +17,8 @@ import {
 } from "@lucid-evolution/lucid";
 
 export async function mint(walletConnection: WalletConnection) {
-  const { lucid, address } = walletConnection;
   try {
+    const { lucid, address } = walletConnection;
     if (!lucid) throw "Uninitialized Lucid!!!";
     if (!address) throw "Wallet not Connected!!!";
     // const STAKESEED = process.env.NEXT_PUBLIC_STAKE_WALLET as string;
@@ -79,8 +79,8 @@ export async function mint(walletConnection: WalletConnection) {
     const txHash = await signed.submit();
     console.log("TalendroToken PiD", policyID);
     console.log("txHash: ", txHash);
-    return { data: txHash, error: null };
+    return txHash;
   } catch (error: any) {
-    return { data: null, error: error.message };
+    throw error;
   }
 }
