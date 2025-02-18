@@ -40,6 +40,7 @@ import {
 } from "@/config/scripts/scripts";
 import { toast } from "sonner";
 import { STAKEPRIVATEKEY } from "@/config";
+import { withErrorHandling } from "./errorHandling";
 
 type ProjectType = "Milestone" | "Regular";
 
@@ -68,28 +69,18 @@ export function CreateProject() {
     // Console log the new fields
     console.log("Project Description:", projectDescription);
     console.log("Project Image URL:", projectImageUrl);
-
-    const result = await createProject(
+    const saferCreateProject = withErrorHandling(createProject);
+    const result = await saferCreateProject(
       projectTitle,
       pay,
       projectType,
       projectDescription,
       projectImageUrl
     );
-    if (!result.data) {
-      console.log("error", result.error);
-      toast.error("ERROR", {
-        description: result.error,
-      });
-      setSubmitting(false);
+    console.log(result);
 
-      return;
-    }
-    toast.success("SUCCESSFULL", {
-      description: "Project Created Successfully",
-    });
     // Reset the form
-    setTxHash(result.data);
+    setTxHash("");
     setProjectTitle("");
     setProjectDescription("");
     setProjectImageUrl("");
@@ -105,9 +96,9 @@ export function CreateProject() {
     description: string,
     imageUrl: string
   ) {
-    if (!lucid || !address) throw "Uninitialized Lucid!!!";
-    const mintingValidator: MintingPolicy = ProjectInitiateValidator();
     try {
+      if (!lucid || !address) throw "Uninitialized Lucid!!!";
+      const mintingValidator: MintingPolicy = ProjectInitiateValidator();
       const PROJECTINITPID = getPolicyId(ProjectInitiateValidator);
       const PROJECTINITADDR = getAddress(ProjectInitiateValidator);
       // const STAKESEED = process.env.NEXT_PUBLIC_STAKE_WALLET as string;
@@ -167,9 +158,9 @@ export function CreateProject() {
       const signed = await tx.sign.withWallet().complete();
       const txHash = await signed.submit();
 
-      return { data: txHash, error: null };
+      return txHash;
     } catch (error: any) {
-      return { data: null, error: error.message };
+      throw error;
     }
   }
 
