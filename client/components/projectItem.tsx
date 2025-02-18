@@ -45,6 +45,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
+import { withErrorHandling } from "./errorHandling";
 
 interface Props {
   project: UTxO;
@@ -109,7 +110,7 @@ export default function ProjectItem({ project, from }: Props) {
       return;
     }
 
-    setSubmitting(true);
+    // setSubmitting(true);
     try {
       const MILESTONEADDR = getAddress(MilestoneSpendValidator);
       const HOLDINGADDR = getAddress(HoldingContractValidator);
@@ -148,14 +149,12 @@ export default function ProjectItem({ project, from }: Props) {
       const signed = await tx.sign.withWallet().complete();
       const txHash = await signed.submit();
       console.log("txHash: ", txHash);
-      toast.success("Success", {
-        description: "Project accepted successfully",
-      });
     } catch (error: any) {
       console.error(error);
-      toast.error("Error", { description: "Failed to accept project" });
     }
-    setSubmitting(false);
+    // finally {
+    // setSubmitting(false);
+    // }
   }
 
   async function projectCompleteClick() {
@@ -167,13 +166,10 @@ export default function ProjectItem({ project, from }: Props) {
     setSubmitting(true);
     try {
       const calledByDev = from.includes("dev");
-      await ProjectComplete(lucid, project, datum, calledByDev, address);
-      toast.success("Success", {
-        description: "Project completed successfully",
-      });
+      const safePrjComplete = withErrorHandling(ProjectComplete);
+      await safePrjComplete(lucid, project, datum, calledByDev, address);
     } catch (error) {
       console.error(error);
-      toast.error("Error", { description: "Failed to complete project" });
     }
     setSubmitting(false);
   }
@@ -244,6 +240,14 @@ export default function ProjectItem({ project, from }: Props) {
     }
   }
 
+  async function handleAcceptClick() {
+    setSubmitting(true);
+    const saferMint = withErrorHandling(acceptProject);
+    const result = await saferMint();
+
+    setSubmitting(false);
+  }
+
   return (
     <Card className="w-full max-w-md mx-auto">
       <CardHeader>
@@ -273,7 +277,7 @@ export default function ProjectItem({ project, from }: Props) {
       </CardContent>
       <CardFooter className="flex flex-wrap gap-2 justify-center">
         {from === "projects" && (
-          <Button onClick={acceptProject} disabled={submitting}>
+          <Button onClick={handleAcceptClick} disabled={submitting}>
             {submitting ? "Accepting..." : "Accept Project"}
           </Button>
         )}

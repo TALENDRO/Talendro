@@ -27,9 +27,8 @@ export async function ProjectComplete(
   calledByDev: boolean,
   address: string
 ) {
-  const mintingValidator = ProjectInitiateValidator();
-
   try {
+    const mintingValidator = ProjectInitiateValidator();
     const HOLDINGADDR = getAddress(HoldingContractValidator);
     const PROJECTINITPID = getPolicyId(ProjectInitiateValidator);
     const TALENDROPID = getPolicyId(TalendroTokenValidator);
@@ -80,9 +79,9 @@ export async function ProjectComplete(
     // const finalTx = calledByDev ? dev : clt
     // const txSystemSigned = await SystemWallet(tx)
     const txHash = await signed.submit();
-    console.log("txHash: ", txHash);
+    return txHash;
   } catch (error) {
-    console.log(error);
+    throw error;
   }
 }
 
