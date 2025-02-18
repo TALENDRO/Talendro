@@ -61,8 +61,8 @@ export async function sendConfigDatum(
   WalletConnection: WalletConnection,
   CONFIGDATUM: ConfigDatum
 ) {
-  const { lucid, address } = WalletConnection;
   try {
+    const { lucid, address } = WalletConnection;
     const CONFIGADDR = getAddress(ConfigDatumHolderValidator);
     const IDENTIFICATIONPID = process.env
       .NEXT_PUBLIC_IDENTIFICATION_POLICY_ID as string;
@@ -83,8 +83,8 @@ export async function sendConfigDatum(
     const signed = await tx.sign.withWallet().complete();
     const txHash = await signed.submit();
     console.log("txHash: ", txHash);
-    return { data: txHash, error: null };
+    return txHash;
   } catch (error: any) {
-    return { data: null, error: error.message };
+    throw error;
   }
 }

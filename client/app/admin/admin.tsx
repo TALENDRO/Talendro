@@ -86,15 +86,10 @@ export default function Page() {
   async function sendConfigDatumClick() {
     setSubmitting(true);
 
-    if (isEmulator && !policyID) return;
-    const result = await sendConfigDatum(WalletConnection, CONFIGDATUM);
-    if (!result.data) {
-      toast.error("ERROR", { description: result.error });
-      return;
-    }
-    toast.success("Success", {
-      description: "Successfully Attach Config Datum",
-    });
+    // if (isEmulator && !policyID) return;
+    const safe_configDatum = withErrorHandling(sendConfigDatum);
+    const result = await safe_configDatum(WalletConnection, CONFIGDATUM);
+    console.log(result);
     setSubmitting(false);
   }
 
