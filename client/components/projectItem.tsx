@@ -183,15 +183,13 @@ export default function ProjectItem({ project, from }: Props) {
     setSubmitting(true);
     try {
       const calledByDev = from.includes("dev");
+      const safeCnlnotAccept = withErrorHandling(CancelNotAccepted);
+      const safeCnlPrj = withErrorHandling(CancelProject);
       IsNewListed
-        ? await CancelNotAccepted(lucid, project, datum)
-        : await CancelProject(lucid, project, datum, calledByDev, address);
-      toast.success("Success", {
-        description: "Project cancelled successfully",
-      });
+        ? await safeCnlnotAccept(lucid, project, datum)
+        : await safeCnlPrj(lucid, project, datum, calledByDev, address);
     } catch (error) {
       console.error(error);
-      toast.error("Error", { description: "Failed to cancel project" });
     }
     setSubmitting(false);
   }

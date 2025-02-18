@@ -19,6 +19,7 @@ import {
   paymentCredentialOf,
   UTxO,
 } from "@lucid-evolution/lucid";
+import { error } from "console";
 
 export async function ProjectComplete(
   lucid: LucidEvolution,
@@ -116,8 +117,8 @@ export async function CancelProject(
   calledByDev: boolean,
   address: string
 ) {
-  const mintingValidator = ProjectInitiateValidator();
   try {
+    const mintingValidator = ProjectInitiateValidator();
     const HOLDINGADDR = getAddress(HoldingContractValidator);
     const PROJECTINITPID = getPolicyId(ProjectInitiateValidator);
     const TALENDROPID = getPolicyId(TalendroTokenValidator);
@@ -167,9 +168,9 @@ export async function CancelProject(
       signed = await clt.sign.withWallet().complete();
     }
     const txHash = await signed.submit();
-    console.log("txHash: ", txHash);
-  } catch (err) {
-    console.log(err);
+    return txHash;
+  } catch (error) {
+    throw error;
   }
 }
 
@@ -205,8 +206,8 @@ export async function CancelNotAccepted(
 
     const sign = await tx.sign.withWallet().complete();
     const submit = await sign.submit();
-    console.log("TxHASH", submit);
-  } catch (err) {
-    console.log(err);
+    return submit;
+  } catch (error) {
+    return error;
   }
 }
