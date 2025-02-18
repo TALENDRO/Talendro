@@ -79,10 +79,9 @@ export async function arbitration(
     const signed = await tx.sign.withWallet().complete();
     const txHash = await signed.submit();
     console.log("txHash: ", txHash);
-    return { data: txHash, error: null };
+    return txHash;
   } catch (error: any) {
-    console.log(error);
-    return { data: null, error: error.message };
+    throw error;
   }
 }
 

@@ -199,29 +199,19 @@ export default function ProjectItem({ project, from }: Props) {
   }
 
   async function confirmArbitration() {
-    setSubmitting(true);
     try {
+      setSubmitting(true);
       const calledByDev = from.includes("dev");
-      const result = await arbitration(
+      const safeArbitration = withErrorHandling(arbitration);
+      const result = await safeArbitration(
         walletConnection,
         project,
         calledByDev,
         POWLink
       );
-      if (!result.data) {
-        toast.error("ERROR", {
-          description: result.error,
-        });
-        setIsArbitrationDialogOpen(false);
-        return;
-      }
-      toast.success("Success", {
-        description: "Arbitration requested successfully",
-      });
       setIsArbitrationDialogOpen(false);
     } catch (error) {
       console.error(error);
-      toast.error("Error", { description: "Failed to request arbitration" });
     }
     setSubmitting(false);
     setPOWLink("");
