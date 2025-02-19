@@ -22,6 +22,7 @@ import { Badge } from "@/components/ui/badge";
 import { useAuth } from "@/context/authContext";
 import { useEffect, useState } from "react";
 import Orb from "@/components/ui/orbprop";
+import GlitchText from "@/components/ui/glitchText";
 
 export default function Homepage() {
   const categories = [
@@ -85,7 +86,7 @@ export default function Homepage() {
                   <Link href="/signup">Sign Up</Link>
                 </Button>
                 <Button size="lg" variant="outline" asChild>
-                  <Link href="/create-project">Post a Project</Link>
+                  <Link href="/projects">Post a Project</Link>
                 </Button>
               </div>
             </div>
@@ -98,7 +99,7 @@ export default function Homepage() {
                 className="rounded-lg shadow-2xl"
               />
             </div> */}
-            <div
+            {/* <div
               style={{ width: "100%", height: "800px", position: "relative" }}
             >
               <Orb
@@ -107,7 +108,24 @@ export default function Homepage() {
                 hue={0}
                 forceHoverState={false}
               />
-            </div>
+            </div> */}
+
+            {/* <GlitchText
+              speed={1}
+              enableShadows={true}
+              enableOnHover={false}
+              className="custom-class"
+            >
+              TALENDRO
+            </GlitchText> */}
+            <GlitchText
+              speed={1.2}
+              enableShadows={true}
+              enableOnHover={false}
+              className="custom-class border-4 border-white rounded-lg px-4 py-2"
+            >
+              TALENDRO
+            </GlitchText>
           </div>
         </div>
       </section>
@@ -222,7 +240,7 @@ export default function Homepage() {
             Join the future of decentralized project management
           </p>
           <Button size="lg" variant="secondary" asChild>
-            <Link href="/register">
+            <Link href="/signup">
               Create Your Account <ArrowRight className="ml-2 h-5 w-5" />
             </Link>
           </Button>
