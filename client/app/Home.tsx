@@ -23,6 +23,7 @@ import { useAuth } from "@/context/authContext";
 import { useEffect, useState } from "react";
 import Orb from "@/components/ui/orbprop";
 import GlitchText from "@/components/ui/glitchText";
+import FuzzyText from "@/components/ui/fuzz";
 
 export default function Homepage() {
   const categories = [
@@ -118,16 +119,25 @@ export default function Homepage() {
             >
               TALENDRO
             </GlitchText> */}
-            <GlitchText
-              speed={1.2}
-              enableShadows={true}
-              enableOnHover={false}
-              className="custom-class border-4 border-white rounded-lg px-4 py-2"
+            {/* <div className="flex flex-col gap-3">
+              <GlitchText
+                speed={1.2}
+                enableShadows={true}
+                enableOnHover={false}
+                className="custom-class border-4 border-white rounded-lg px-4 py-2"
+              >
+                TALENDRO
+              </GlitchText> */}
+            <FuzzyText
+              baseIntensity={0.2}
+              hoverIntensity={0.3}
+              enableHover={true}
             >
               TALENDRO
-            </GlitchText>
+            </FuzzyText>
           </div>
         </div>
+        {/* </div> */}
       </section>
 
       <section className="py-20">
