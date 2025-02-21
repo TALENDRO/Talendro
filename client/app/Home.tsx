@@ -24,6 +24,7 @@ import { useEffect, useState } from "react";
 import Orb from "@/components/ui/orbprop";
 import GlitchText from "@/components/ui/glitchText";
 import FuzzyText from "@/components/ui/fuzz";
+import Iridescence, { LiquidChrome } from "@/components/ui/scene";
 
 export default function Homepage() {
   const categories = [
@@ -64,7 +65,15 @@ export default function Homepage() {
   }, [currentUser, userDatObj]);
   return (
     <div className="flex flex-col min-h-screen">
-      <section className="relative from-primary/10 via-primary/5 to-background pt-10 pb-32">
+      <section className="relative pt-10 pb-32">
+        <div style={{ width: "100%", height: "600px", position: "absolute" }}>
+          <LiquidChrome
+            baseColor={[0.1, 0.1, 0.1]}
+            speed={1}
+            amplitude={0.6}
+            interactive={false}
+          />
+        </div>
         <div className="container px-4 mx-auto">
           <div className="flex flex-col lg:flex-row items-center gap-12">
             <div className="flex-1 text-center lg:text-left">
