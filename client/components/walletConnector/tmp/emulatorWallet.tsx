@@ -56,7 +56,7 @@ export default function WalletConnector() {
           };
           return acc;
         },
-        {} as Record<string, { account: EmulatorAccount; connected: boolean }>,
+        {} as Record<string, { account: EmulatorAccount; connected: boolean }>
       );
       setWallets(updatedWallets);
       setWalletConnection((walletConnection) => {
@@ -79,15 +79,23 @@ export default function WalletConnector() {
 
   return (
     <div className="flex gap-2 items-center">
-      <Button onClick={emulatorlog} className="w-fit max-sm:hidden">
+      <Button
+        onClick={emulatorlog}
+        className="w-fit max-sm:hidden"
+        variant={"outline"}
+      >
         Log
       </Button>
-      <Button onClick={awaitlog} className="w-fit max-sm:hidden">
+      <Button
+        onClick={awaitlog}
+        className="w-fit max-sm:hidden"
+        variant={"outline"}
+      >
         Await Block
       </Button>
       <Popover open={isOpen} onOpenChange={setIsOpen}>
         <PopoverTrigger asChild>
-          <Button size="icon">
+          <Button size="icon" variant={"outline"}>
             <WalletIcon />
           </Button>
         </PopoverTrigger>

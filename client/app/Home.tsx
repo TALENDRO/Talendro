@@ -87,11 +87,11 @@ export default function Homepage() {
         <section className="relative min-h-screen flex items-center justify-center bg-background">
           <div className="container mx-auto px-4 py-24 text-center">
             <h2 className="text-3xl md:text-5xl font-light mb-8">
-              Let's Connect
+              Let&apos;s Connect
             </h2>
             <p className="text-muted-foreground max-w-2xl mx-auto">
-              Have a project in mind? I'd love to hear about it. Let's create
-              something amazing together.
+              Have a project in mind? I&apos;d love to hear about it. Let&apos;s
+              create something amazing together.
             </p>
           </div>
         </section>
