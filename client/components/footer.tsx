@@ -1,11 +1,12 @@
+"use client";
 import React from "react";
 
-import { Github, Twitter, Linkedin } from "lucide-react";
 import { TalendroLogo } from "./icons";
+import { Marquee } from "./magicui/marquee";
 export default function Footer() {
   return (
     <footer className="w-full border-t border-border bg-background">
-      <div className="container mx-auto px-6 py-8">
+      <div className="container mx-auto py-8">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           {/* Company Info */}
           <div className="space-y-4">
@@ -116,41 +117,20 @@ export default function Footer() {
         </div>
 
         {/* Bottom Section */}
-        <div className="mt-8 pt-8 border-t border-border">
-          <div className="flex flex-col md:flex-row justify-between items-center gap-4">
-            <p className="text-sm text-muted-foreground">
-              © {new Date().getFullYear()} Company Name. All rights reserved.
-            </p>
-
-            {/* Social Links */}
-            <div className="flex space-x-4">
-              <a
-                href="https://github.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-muted-foreground hover:text-primary transition-colors"
-              >
-                <Github size={20} />
-              </a>
-              <a
-                href="https://twitter.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-muted-foreground hover:text-primary transition-colors"
-              >
-                <Twitter size={20} />
-              </a>
-              <a
-                href="https://linkedin.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-muted-foreground hover:text-primary transition-colors"
-              >
-                <Linkedin size={20} />
-              </a>
+      </div>
+      <div className="mt-8 pt-8 border-t border-border px-0 space-x-4">
+        <Marquee className="[--duration:50s]">
+          {Array.from({ length: 5 }).map((_, index) => (
+            <div key={index}>
+              <span className="max-sm:hidden">
+                <TalendroLogo size={100} />
+              </span>
+              <span className="sm:hidden">
+                <TalendroLogo size={40} />
+              </span>
             </div>
-          </div>
-        </div>
+          ))}
+        </Marquee>
       </div>
     </footer>
   );
