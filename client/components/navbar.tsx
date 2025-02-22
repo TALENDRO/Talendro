@@ -56,7 +56,7 @@ export const Navbar = () => {
   }, []);
 
   return (
-    <div className="fixed top-0 left-0 right-0 z-50 flex justify-center px-4">
+    <div className="fixed top-0 left-0 right-0 z-50 flex justify-center px-2 sm:px-4">
       <NextUINavbar
         onMenuOpenChange={setIsMenuOpen}
         isBordered
@@ -67,7 +67,7 @@ export const Navbar = () => {
               : "opacity-0 -translate-y-full"
             : "opacity-100 translate-y-0",
           scrolled &&
-            "mx-auto my-4 w-[75%] rounded-lg shadow-lg border-2 border-primary/50",
+            "mx-auto my-4 md:w-[80%] sm:w-[75%] rounded-lg shadow-lg border-2 border-primary/50",
           "font-comfortaa transition-all duration-500 "
         )}
       >

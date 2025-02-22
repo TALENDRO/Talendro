@@ -9,6 +9,7 @@ import { AnimatedBeamDemo } from "@/components/home/animatedBeam";
 
 export default function Homepage() {
   const [scrollProgress, setScrollProgress] = useState(0);
+  const [wHeight, setWHeight] = useState(0);
   const [hideHero, setHideHero] = useState(false);
   const heroRef = useRef<HTMLDivElement>(null);
 
@@ -18,6 +19,7 @@ export default function Homepage() {
       const windowHeight = window.innerHeight;
       const progress = Math.min(scrollPosition / windowHeight, 2);
       setHideHero(scrollPosition / windowHeight > 2);
+      setWHeight(windowHeight);
       setScrollProgress(progress);
     };
 
@@ -64,7 +66,7 @@ export default function Homepage() {
 
         {/* Selected Works Section */}
         <section
-          className="relative min-h-screen bg-secondary/50 flex items-center justify-center explore-project rounded-md"
+          className="relative min-h-[80vh]  bg-secondary/50 flex items-center justify-center explore-project rounded-md"
           style={{
             transform: `translateY(${(1 - scrollProgress) * 50}%)`,
             opacity: opacity,
@@ -87,7 +89,7 @@ export default function Homepage() {
           <AnimatedBeamDemo />
         </section>
 
-        <section className="relative min-h-screen flex items-center justify-center bg-background">
+        <section className="relative min-h-[80vh] flex items-center justify-center bg-background">
           <div className="container mx-auto px-4 py-24 text-center space-y-3 sm:space-y-6">
             <Link
               href="/projects"

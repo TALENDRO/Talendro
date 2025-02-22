@@ -7,98 +7,29 @@ export default function Footer() {
   return (
     <footer className="w-full border-t border-border bg-background">
       <div className="container mx-auto py-8">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 px-8">
           {/* Company Info */}
-          <div className="space-y-4">
-            <h3 className="text-lg font-bold">
-              <TalendroLogo />
-            </h3>
+          <div className="">
+            <span className="max-sm:hidden -ml-1">
+              <TalendroLogo size={48} />
+            </span>
+            <span className="sm:hidden -ml-1">
+              <TalendroLogo size={38} />
+            </span>
             <p className="text-sm text-muted-foreground">
               Building the future of web applications. Join us on our journey to
               create amazing experiences.
             </p>
           </div>
 
-          {/* Quick Links */}
-          <div className="space-y-4">
-            <h3 className="text-lg font-bold">Quick Links</h3>
-            <ul className="space-y-2">
-              <li>
-                <a
-                  href="/about"
-                  className="text-sm text-muted-foreground hover:text-primary transition-colors"
-                >
-                  About Us
-                </a>
-              </li>
-              <li>
-                <a
-                  href="/products"
-                  className="text-sm text-muted-foreground hover:text-primary transition-colors"
-                >
-                  Products
-                </a>
-              </li>
-              <li>
-                <a
-                  href="/blog"
-                  className="text-sm text-muted-foreground hover:text-primary transition-colors"
-                >
-                  Blog
-                </a>
-              </li>
-              <li>
-                <a
-                  href="/contact"
-                  className="text-sm text-muted-foreground hover:text-primary transition-colors"
-                >
-                  Contact
-                </a>
-              </li>
-            </ul>
-          </div>
+          <div className="flex max-sm:flex-row gap-8 justify-start sm:justify-evenly">
+            <LinkSection title="Quick Links" links={QUICK_LINKS} />
 
-          {/* Resources */}
-          <div className="space-y-4">
-            <h3 className="text-lg font-bold">Resources</h3>
-            <ul className="space-y-2">
-              <li>
-                <a
-                  href="/documentation"
-                  className="text-sm text-muted-foreground hover:text-primary transition-colors"
-                >
-                  Documentation
-                </a>
-              </li>
-              <li>
-                <a
-                  href="/pricing"
-                  className="text-sm text-muted-foreground hover:text-primary transition-colors"
-                >
-                  Pricing
-                </a>
-              </li>
-              <li>
-                <a
-                  href="/support"
-                  className="text-sm text-muted-foreground hover:text-primary transition-colors"
-                >
-                  Support
-                </a>
-              </li>
-              <li>
-                <a
-                  href="/terms"
-                  className="text-sm text-muted-foreground hover:text-primary transition-colors"
-                >
-                  Terms of Service
-                </a>
-              </li>
-            </ul>
+            <LinkSection title="Resources" links={RESOURCES} />
           </div>
 
           {/* Newsletter */}
-          <div className="space-y-4">
+          <div className="space-y-2 sm:space-y-4">
             <h3 className="text-lg font-bold">Stay Updated</h3>
             <p className="text-sm text-muted-foreground">
               Subscribe to our newsletter
@@ -126,7 +57,7 @@ export default function Footer() {
                 <TalendroLogo size={100} />
               </span>
               <span className="sm:hidden">
-                <TalendroLogo size={40} />
+                <TalendroLogo size={70} />
               </span>
             </div>
           ))}
@@ -135,3 +66,38 @@ export default function Footer() {
     </footer>
   );
 }
+
+const QUICK_LINKS = [
+  { href: "/about", label: "About Us" },
+  { href: "/products", label: "Products" },
+  { href: "/blog", label: "Blog" },
+  { href: "/contact", label: "Contact" },
+];
+
+const RESOURCES = [
+  { href: "/documentation", label: "Documentation" },
+  { href: "/pricing", label: "Pricing" },
+  { href: "/support", label: "Support" },
+  { href: "/terms", label: "Terms of Service" },
+];
+
+const LinkSection: React.FC<{ title: string; links: any[] }> = ({
+  title,
+  links,
+}) => (
+  <div className="space-y-4">
+    <h3 className="text-lg font-bold">{title}</h3>
+    <ul className="space-y-2">
+      {links.map(({ href, label }) => (
+        <li key={href}>
+          <a
+            href={href}
+            className="text-sm text-muted-foreground hover:text-primary transition-colors"
+          >
+            {label}
+          </a>
+        </li>
+      ))}
+    </ul>
+  </div>
+);
