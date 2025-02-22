@@ -43,6 +43,18 @@ export const Navbar = () => {
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, [pathname]);
+
+  const [scrolled, setScrolled] = useState(false);
+
+  // useEffect(() => {
+  //   const handleScroll = () => {
+  //     const isScrolled = window.scrollY > 150;
+  //     setScrolled(isScrolled);
+  //   };
+
+  //   window.addEventListener("scroll", handleScroll);
+  //   return () => window.removeEventListener("scroll", handleScroll);
+  // }, []);
   return (
     <NextUINavbar
       maxWidth="xl"
@@ -55,6 +67,8 @@ export const Navbar = () => {
               ? "opacity-100 translate-y-0"
               : "opacity-0 -translate-y-full"
             : "opacity-100 translate-y-0"
+          // scrolled &&
+          //   "mx-4 my-4 w-[calc(100%-32px)] rounded-lg bg-white shadow-lg",
         ) + "font-comfortaa transition-all duration-500 "
       }
     >
@@ -69,7 +83,7 @@ export const Navbar = () => {
 
       <NavbarContent></NavbarContent>
 
-      <NavbarContent className="flex basis-1/5 sm:basis-full" justify="end">
+      <NavbarContent className="flex basis-1/5 sm:basis-full" justify="center">
         <ul className="hidden lg:flex gap-4 justify-start ml-2">
           {siteConfig.navItems.map((item) => (
             <NavbarItem key={item.href}>
@@ -87,9 +101,9 @@ export const Navbar = () => {
             </NavbarItem>
           ))}
         </ul>
+      </NavbarContent>
 
-        {/* Github & Dark/light Mode */}
-
+      <NavbarContent className="flex basis-1/5 sm:basis-full" justify="end">
         <NavbarItem className="hidden md:block">
           <WalletConnector />
         </NavbarItem>
