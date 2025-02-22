@@ -46,103 +46,109 @@ export const Navbar = () => {
 
   const [scrolled, setScrolled] = useState(false);
 
-  // useEffect(() => {
-  //   const handleScroll = () => {
-  //     const isScrolled = window.scrollY > 150;
-  //     setScrolled(isScrolled);
-  //   };
+  useEffect(() => {
+    const handleScroll = () => {
+      const isScrolled = window.scrollY > 150;
+      setScrolled(isScrolled);
+    };
 
-  //   window.addEventListener("scroll", handleScroll);
-  //   return () => window.removeEventListener("scroll", handleScroll);
-  // }, []);
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
   return (
-    <NextUINavbar
-      maxWidth="xl"
-      onMenuOpenChange={setIsMenuOpen}
-      isBordered
-      className={
-        cn(
+    <div className="fixed top-0 left-0 right-0 z-50 flex justify-center px-4">
+      <NextUINavbar
+        onMenuOpenChange={setIsMenuOpen}
+        isBordered
+        className={cn(
           pathname === "/"
             ? isVisible
               ? "opacity-100 translate-y-0"
               : "opacity-0 -translate-y-full"
-            : "opacity-100 translate-y-0"
-          // scrolled &&
-          //   "mx-4 my-4 w-[calc(100%-32px)] rounded-lg bg-white shadow-lg",
-        ) + "font-comfortaa transition-all duration-500 "
-      }
-    >
-      <NavbarContent className="basis-1/5 sm:basis-full" justify="start">
-        <NavbarBrand as="li" className="gap-3 max-w-fit">
-          <NextLink className="flex justify-start items-center gap-1" href="/">
-            <Logo />
-            <TalendroLogo />
-          </NextLink>
-        </NavbarBrand>
-      </NavbarContent>
+            : "opacity-100 translate-y-0",
+          scrolled &&
+            "mx-auto my-4 w-[75%] rounded-lg shadow-lg border-2 border-primary/50",
+          "font-comfortaa transition-all duration-500 "
+        )}
+      >
+        <NavbarContent className="basis-1/5 sm:basis-full" justify="start">
+          <NavbarBrand as="li" className="gap-3 max-w-fit">
+            <NextLink
+              className="flex justify-start items-center gap-1"
+              href="/"
+            >
+              <Logo />
+              <TalendroLogo />
+            </NextLink>
+          </NavbarBrand>
+        </NavbarContent>
 
-      <NavbarContent></NavbarContent>
+        <NavbarContent></NavbarContent>
 
-      <NavbarContent className="flex basis-1/5 sm:basis-full" justify="center">
-        <ul className="hidden lg:flex gap-4 justify-start ml-2">
+        <NavbarContent
+          className="flex basis-1/5 sm:basis-full"
+          justify="center"
+        >
+          <ul className="hidden lg:flex gap-4 justify-start ml-2">
+            {siteConfig.navItems.map((item) => (
+              <NavbarItem key={item.href}>
+                <Link
+                  className={clsx(
+                    linkStyles({ color: "foreground" }),
+                    "data-[active=true]:text-primary data-[active=true]:font-medium",
+                    !isEmulator && item.label === "Admin" && "hidden"
+                  )}
+                  color="foreground"
+                  href={item.href}
+                >
+                  {item.label}
+                </Link>
+              </NavbarItem>
+            ))}
+          </ul>
+        </NavbarContent>
+
+        <NavbarContent className="flex basis-1/5 sm:basis-full" justify="end">
+          <NavbarItem className="hidden md:block">
+            <WalletConnector />
+          </NavbarItem>
+          <NavbarMenuToggle
+            aria-label={isMenuOpen ? "Close menu" : "Open menu"}
+            className="max-md:hidden lg:hidden justify-end"
+          />
+        </NavbarContent>
+
+        <NavbarContent justify="end" className="sm:hidden">
+          <NavbarItem className="flex gap-2">
+            <WalletConnector />
+          </NavbarItem>
+          <NavbarMenuToggle
+            aria-label={isMenuOpen ? "Close menu" : "Open menu"}
+            className="sm:hidden justify-end"
+          />
+        </NavbarContent>
+        {/* mobile menu open */}
+        <NavbarMenu className="py-10">
           {siteConfig.navItems.map((item) => (
-            <NavbarItem key={item.href}>
-              <Link
+            <NavbarMenuItem key={item.href}>
+              <NextLink
                 className={clsx(
                   linkStyles({ color: "foreground" }),
-                  "data-[active=true]:text-primary data-[active=true]:font-medium",
-                  !isEmulator && item.label === "Admin" && "hidden"
+                  "data-[active=true]:text-primary data-[active=true]:font-medium"
                 )}
                 color="foreground"
                 href={item.href}
               >
                 {item.label}
-              </Link>
-            </NavbarItem>
+              </NextLink>
+            </NavbarMenuItem>
           ))}
-        </ul>
-      </NavbarContent>
-
-      <NavbarContent className="flex basis-1/5 sm:basis-full" justify="end">
-        <NavbarItem className="hidden md:block">
-          <WalletConnector />
-        </NavbarItem>
-        <NavbarMenuToggle
-          aria-label={isMenuOpen ? "Close menu" : "Open menu"}
-          className="max-md:hidden lg:hidden justify-end"
-        />
-      </NavbarContent>
-
-      <NavbarContent justify="end" className="sm:hidden">
-        <NavbarItem className="flex gap-2">
-          <WalletConnector />
-        </NavbarItem>
-        <NavbarMenuToggle
-          aria-label={isMenuOpen ? "Close menu" : "Open menu"}
-          className="sm:hidden justify-end"
-        />
-      </NavbarContent>
-      {/* mobile menu open */}
-      <NavbarMenu className="py-10">
-        {siteConfig.navItems.map((item) => (
-          <NavbarMenuItem key={item.href}>
-            <NextLink
-              className={clsx(
-                linkStyles({ color: "foreground" }),
-                "data-[active=true]:text-primary data-[active=true]:font-medium"
-              )}
-              color="foreground"
-              href={item.href}
-            >
-              {item.label}
-            </NextLink>
+          <NavbarMenuItem className="my-10">
+            {/* <WalletConnectors /> */}
+            {/* <WalletClient /> */}
           </NavbarMenuItem>
-        ))}
-        <NavbarMenuItem className="my-10">
-          {/* <WalletConnectors /> */}
-          {/* <WalletClient /> */}
-        </NavbarMenuItem>
-      </NavbarMenu>
-    </NextUINavbar>
+        </NavbarMenu>
+      </NextUINavbar>
+    </div>
   );
 };

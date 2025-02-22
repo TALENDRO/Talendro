@@ -44,8 +44,8 @@ export default function Homepage() {
             </span>
           </h1>
 
-          <p className="text-muted-foreground max-sm:text-sm">
-            A connection that Sparks growth
+          <p className="text-muted-foreground max-sm:text-sm font-comfortaa">
+            a connection that sparks growth
           </p>
         </div>
         <div className="absolute bottom-8 scroll-indicator">
