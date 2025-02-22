@@ -11,6 +11,7 @@ import { fontSans, fontComfortaa } from "@/config/fonts";
 import { Navbar } from "@/components/navbar";
 import { AuthProvider } from "@/context/authContext";
 import Ribbons from "@/components/ui/Ribbon";
+import { ThemeSwitch } from "@/components/theme-switch";
 
 export const metadata: Metadata = {
   title: {
@@ -56,7 +57,7 @@ export default function RootLayout({
             fontComfortaa.variable
           )}
         >
-          <Providers themeProps={{ attribute: "class", defaultTheme: "dark" }}>
+          <Providers themeProps={{ attribute: "class", defaultTheme: "light" }}>
             <div className="relative flex flex-col h-screen">
               <Navbar />
               <main className="container mx-auto pt-16 px-6 flex-grow">
@@ -64,6 +65,7 @@ export default function RootLayout({
               </main>
             </div>
             <Toaster richColors />
+            <ThemeSwitch />
           </Providers>
         </body>
       </AuthProvider>

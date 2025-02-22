@@ -6,15 +6,11 @@ export const siteConfig = {
     "Empowering your search for trusted talent—Talendro connects you with skilled professionals you can rely on.",
   navItems: [
     {
-      label: "Home",
-      href: "/",
-    },
-    {
       label: "Admin",
       href: "/admin",
     },
     {
-      label: "Projects",
+      label: "Explore",
       href: "/projects",
     },
     {

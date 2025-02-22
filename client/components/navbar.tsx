@@ -14,21 +14,49 @@ import NextLink from "next/link";
 import clsx from "clsx";
 
 import { siteConfig } from "@/config/site";
-import { GithubIcon, Logo, TalendroLogo } from "@/components/icons";
-import { useState } from "react";
-import { ThemeSwitch } from "./theme-switch";
+import { Logo, TalendroLogo } from "@/components/icons";
+import { useEffect, useState } from "react";
 import WalletConnector from "./walletConnector/client";
+import { useWallet } from "@/context/walletContext";
+import { usePathname } from "next/navigation";
+import { cn } from "@/lib/utils";
 
 export const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [WallectConnection] = useWallet();
+  const { isEmulator } = WallectConnection;
 
+  const [isVisible, setIsVisible] = useState(false);
+  const pathname = usePathname();
+
+  useEffect(() => {
+    if (pathname !== "/") {
+      setIsVisible(true);
+      return;
+    }
+
+    const handleScroll = () => {
+      const scrollPosition = window.scrollY;
+      setIsVisible(scrollPosition > 100);
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [pathname]);
   return (
     <NextUINavbar
       maxWidth="xl"
       onMenuOpenChange={setIsMenuOpen}
-      shouldHideOnScroll
       isBordered
-      className="font-comfortaa"
+      className={
+        cn(
+          pathname === "/"
+            ? isVisible
+              ? "opacity-100 translate-y-0"
+              : "opacity-0 -translate-y-full"
+            : "opacity-100 translate-y-0"
+        ) + "font-comfortaa transition-all duration-500 "
+      }
     >
       <NavbarContent className="basis-1/5 sm:basis-full" justify="start">
         <NavbarBrand as="li" className="gap-3 max-w-fit">
@@ -48,7 +76,8 @@ export const Navbar = () => {
               <Link
                 className={clsx(
                   linkStyles({ color: "foreground" }),
-                  "data-[active=true]:text-primary data-[active=true]:font-medium"
+                  "data-[active=true]:text-primary data-[active=true]:font-medium",
+                  !isEmulator && item.label === "Admin" && "hidden"
                 )}
                 color="foreground"
                 href={item.href}
@@ -60,12 +89,6 @@ export const Navbar = () => {
         </ul>
 
         {/* Github & Dark/light Mode */}
-        <NavbarItem className="hidden md:flex gap-2">
-          <Link isExternal aria-label="Github" href={siteConfig.links.github}>
-            <GithubIcon className="text-default-500" />
-          </Link>
-          <ThemeSwitch />
-        </NavbarItem>
 
         <NavbarItem className="hidden md:block">
           <WalletConnector />
@@ -78,7 +101,6 @@ export const Navbar = () => {
 
       <NavbarContent justify="end" className="sm:hidden">
         <NavbarItem className="flex gap-2">
-          <ThemeSwitch />
           <WalletConnector />
         </NavbarItem>
         <NavbarMenuToggle

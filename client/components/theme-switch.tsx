@@ -8,6 +8,7 @@ import { useIsSSR } from "@react-aria/ssr";
 import clsx from "clsx";
 
 import { SunFilledIcon, MoonFilledIcon } from "@/components/icons";
+import { MoonIcon, SunIcon } from "lucide-react";
 
 export interface ThemeSwitchProps {
   className?: string;
@@ -15,7 +16,7 @@ export interface ThemeSwitchProps {
 }
 
 export const ThemeSwitch: FC<ThemeSwitchProps> = ({
-  className,
+  className = "fixed bottom-4 left-4 ",
   classNames,
 }) => {
   const { theme, setTheme } = useTheme();
@@ -42,9 +43,9 @@ export const ThemeSwitch: FC<ThemeSwitchProps> = ({
     <Component
       {...getBaseProps({
         className: clsx(
-          "px-px transition-opacity hover:opacity-80 cursor-pointer",
+          "px-px transition-opacity cursor-pointer p-[3px] rounded-full bg-current ",
           className,
-          classNames?.base,
+          classNames?.base
         ),
       })}
     >
@@ -61,19 +62,19 @@ export const ThemeSwitch: FC<ThemeSwitchProps> = ({
               "rounded-lg",
               "flex items-center justify-center",
               "group-data-[selected=true]:bg-transparent",
-              "!text-default-500",
-              "pt-px",
-              "px-0",
+              // "!text-default-500",
+              "p-0",
               "mx-0",
+              "text-center",
             ],
-            classNames?.wrapper,
+            classNames?.wrapper
           ),
         })}
       >
         {!isSelected || isSSR ? (
-          <SunFilledIcon size={22} />
+          <SunIcon size={18} color="#000000" />
         ) : (
-          <MoonFilledIcon size={22} />
+          <MoonIcon size={18} color="#ffffff" />
         )}
       </div>
     </Component>
