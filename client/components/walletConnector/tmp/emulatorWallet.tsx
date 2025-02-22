@@ -81,21 +81,25 @@ export default function WalletConnector() {
     <div className="flex gap-2 items-center">
       <Button
         onClick={emulatorlog}
-        className="w-fit max-sm:hidden"
+        className="w-fit max-sm:hidden border-primary/50 border-2"
         variant={"outline"}
       >
         Log
       </Button>
       <Button
         onClick={awaitlog}
-        className="w-fit max-sm:hidden"
+        className="w-fit max-sm:hidden border-primary/50 border-2"
         variant={"outline"}
       >
         Await Block
       </Button>
       <Popover open={isOpen} onOpenChange={setIsOpen}>
         <PopoverTrigger asChild>
-          <Button size="icon" variant={"outline"}>
+          <Button
+            size="icon"
+            variant={"outline"}
+            className="border-primary/50 border-2"
+          >
             <WalletIcon />
           </Button>
         </PopoverTrigger>
