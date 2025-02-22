@@ -31,6 +31,7 @@ import {
 import { STAKEPRIVATEKEY } from "@/config";
 import { withErrorHandling } from "@/components/errorHandling";
 import { fail } from "assert";
+import { ShineBorder } from "@/components/magicui/shine-border";
 
 export default function Page() {
   const [stakeAddress, setstakeAddress] = useState("");
@@ -125,9 +126,32 @@ export default function Page() {
 
   return (
     <div className="container mx-auto p-4">
-      <h1 className="text-3xl font-bold mb-6">Configuration Management</h1>
+      <h1 className="text-3xl font-bold mb-6 text-center">
+        Configuration Management
+      </h1>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <Card>
+        <ShineBorder
+          className="relative w-full rounded-lg p-[2px]"
+          color={["#A07CFE", "#FE8FB5", "#FFBE7B"]}
+        >
+          <Card className="bg-background rounded-lg p-4">
+            <CardHeader>
+              <CardTitle className="text-center">Config Datum</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <pre className="bg-secondary/30 p-4 rounded-md overflow-auto max-h-96">
+                {JSON.stringify(
+                  CONFIGDATUM,
+                  (key, value) =>
+                    typeof value === "bigint" ? value.toString() : value,
+                  2
+                )}
+              </pre>
+            </CardContent>
+          </Card>
+        </ShineBorder>
+
+        {/* <Card>
           <CardHeader>
             <CardTitle>Config Datum</CardTitle>
           </CardHeader>
@@ -141,37 +165,42 @@ export default function Page() {
               )}
             </pre>
           </CardContent>
-        </Card>
-        <Card>
-          <CardHeader>
-            <CardTitle>Actions</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <Button
-              onClick={handleMintClick}
-              disabled={submitting}
-              className="w-full"
-            >
-              {submitting ? "Processing..." : "Mint Identification Token"}
-            </Button>
-            <Button
-              onClick={sendConfigDatumClick}
-              disabled={submitting}
-              className="w-full"
-            >
-              {submitting ? "Processing..." : "Attach Config Datum"}
-            </Button>
-            <div className="">
-              <Label>Do you Have a Policy ID already?</Label>
-              <Input
-                type="text"
-                value={policyID}
-                onChange={(e) => setPolicy(e.target.value)}
-                placeholder="Policy ID"
-              />
-            </div>
-          </CardContent>
-        </Card>
+        </Card> */}
+        <ShineBorder
+          className="relative w-full rounded-lg p-[2px]"
+          color={["#A07CFE", "#FE8FB5", "#FFBE7B"]}
+        >
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-center">Actions</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <Button
+                onClick={handleMintClick}
+                disabled={submitting}
+                className="w-full"
+              >
+                {submitting ? "Processing..." : "Mint Identification Token"}
+              </Button>
+              <Button
+                onClick={sendConfigDatumClick}
+                disabled={submitting}
+                className="w-full"
+              >
+                {submitting ? "Processing..." : "Attach Config Datum"}
+              </Button>
+              <div className="">
+                <Label>Do you Have a Policy ID already?</Label>
+                <Input
+                  type="text"
+                  value={policyID}
+                  onChange={(e) => setPolicy(e.target.value)}
+                  placeholder="Policy ID"
+                />
+              </div>
+            </CardContent>
+          </Card>
+        </ShineBorder>
       </div>
     </div>
   );
