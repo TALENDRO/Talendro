@@ -3,6 +3,8 @@
 import { useEffect, useRef, useState } from "react";
 import { ArrowDown } from "lucide-react";
 import { TalendroLogo } from "@/components/icons";
+import MouseFollower from "@/components/home/MouseFollower";
+import Link from "next/link";
 
 export default function Homepage() {
   const [scrollProgress, setScrollProgress] = useState(0);
@@ -25,6 +27,7 @@ export default function Homepage() {
 
   return (
     <main>
+      <MouseFollower />
       {/* Fixed Hero Section */}
       <div
         ref={heroRef}
@@ -60,21 +63,24 @@ export default function Homepage() {
 
         {/* Selected Works Section */}
         <section
-          className="relative min-h-screen bg-secondary/50 flex items-center justify-center"
+          className="relative min-h-screen bg-secondary/50 flex items-center justify-center explore-project rounded-md"
           style={{
             transform: `translateY(${(1 - scrollProgress) * 50}%)`,
             opacity: opacity,
           }}
         >
-          <div className="container mx-auto px-4 py-24 text-center">
+          <Link
+            href={"/projects"}
+            className="container mx-auto px-4 py-24 text-center cursor-none"
+          >
             <h2 className="text-3xl md:text-5xl font-light mb-8 tracking-widest">
               EXPLORE PROJECTS
             </h2>
             <p className="text-muted-foreground max-w-2xl mx-auto">
               Explore collection of projects and find that aligns with your
-              passion for design and development.
+              passion of design and development.
             </p>
-          </div>
+          </Link>
         </section>
 
         {/* Connect Section */}
