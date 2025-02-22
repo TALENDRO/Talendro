@@ -1,18 +1,16 @@
 import "@/styles/globals.css";
 import { Metadata, Viewport } from "next";
-import { Link } from "@heroui/link";
 import clsx from "clsx";
 import { Toaster } from "@/components/ui/sonner";
-
 import { Providers } from "./providers";
-
 import { siteConfig } from "@/config/site";
 import { fontSans, fontComfortaa } from "@/config/fonts";
 import { Navbar } from "@/components/navbar";
 import { AuthProvider } from "@/context/authContext";
-import Ribbons from "@/components/ui/Ribbon";
 import { ThemeSwitch } from "@/components/theme-switch";
-
+import Footer from "@/components/footer";
+import { Suspense } from "react";
+import Loading from "./loading";
 export const metadata: Metadata = {
   title: {
     default: siteConfig.name,
@@ -38,16 +36,6 @@ export default function RootLayout({
 }) {
   return (
     <html suppressHydrationWarning lang="en">
-      {/* <div className="fixed top-0 left-0 w-full h-full pointer-events-none z-50">
-        <Ribbons
-          baseThickness={7}
-          colors={["#74b3ce"]}
-          speedMultiplier={0.4}
-          maxAge={700}
-          enableFade={true}
-          enableShaderEffect={true}
-        />
-      </div> */}
       <AuthProvider>
         <head />
         <body
@@ -57,16 +45,20 @@ export default function RootLayout({
             fontComfortaa.variable
           )}
         >
+          {/* <Suspense fallback={<Loading />}> */}
+
           <Providers themeProps={{ attribute: "class", defaultTheme: "light" }}>
             <div className="relative flex flex-col h-screen">
               <Navbar />
               <main className="container mx-auto pt-16 px-6 flex-grow">
                 {children}
               </main>
+              <Footer />
             </div>
             <Toaster richColors />
             <ThemeSwitch />
           </Providers>
+          {/* <Suspense/> */}
         </body>
       </AuthProvider>
     </html>

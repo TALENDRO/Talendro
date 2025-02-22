@@ -43,7 +43,7 @@ export const ThemeSwitch: FC<ThemeSwitchProps> = ({
     <Component
       {...getBaseProps({
         className: clsx(
-          "px-px transition-opacity cursor-pointer p-[3px] rounded-full bg-current ",
+          "px-px transition-opacity cursor-pointer p-[5px] rounded-lg bg-current ",
           className,
           classNames?.base
         ),
