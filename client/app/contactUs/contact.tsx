@@ -2,7 +2,8 @@
 
 import { useEffect, useState } from "react";
 import { TalendroLogo } from "@/components/icons";
-import { ArrowDown } from "lucide-react";
+import { ArrowDown, Send } from "lucide-react";
+import MouseFollower from "@/components/home/MouseFollower";
 
 export default function ContactPage() {
   const [scrollProgress, setScrollProgress] = useState(0);
@@ -19,9 +20,15 @@ export default function ContactPage() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    // Add your form submission logic here
+  };
+
   return (
     <main>
       {/* Fixed Hero Section */}
+      <MouseFollower />
       <div
         className="fixed inset-0 flex items-center justify-center transition-all duration-300"
         style={{
@@ -29,9 +36,11 @@ export default function ContactPage() {
         }}
       >
         <div className="text-center sm:space-y-4">
-          <h1 className="text-4xl md:text-6xl font-light">TALENDRO</h1>
+          <h1 className="text-4xl md:text-6xl font-light">
+            <TalendroLogo size={140} />
+          </h1>
           <p className="text-muted-foreground max-sm:text-sm font-comfortaa">
-            let&apos;s connect
+            a connection that sparks growth
           </p>
         </div>
         <div className="absolute bottom-8">
@@ -74,26 +83,94 @@ export default function ContactPage() {
               <h2 className="text-3xl md:text-5xl font-light tracking-widest">
                 LOCATION
               </h2>
-              <p className="text-muted-foreground">
-                Based in Your City, Country
-              </p>
+              <p className="text-muted-foreground">INDIA</p>
             </div>
           </div>
         </section>
 
-        <section className="relative min-h-[80vh] flex items-center justify-center bg-background">
+        <section className="relative min-h-[80vh] flex flex-col items-center justify-center bg-background">
           <div className="container mx-auto px-4 py-24 text-center space-y-3 sm:space-y-6">
             <a
               href="mailto:hello@example.com"
               className="relative text-3xl md:text-5xl font-light group inline-block"
             >
-              Start a Project
+              Let’s Connect and Create Something Amazing"
               <span className="absolute left-0 bottom-0 w-0 h-[2px] bg-foreground transition-all duration-300 group-hover:w-full" />
             </a>
             <p className="text-muted-foreground max-w-2xl mx-auto">
-              Have an idea? Let&apos;s bring it to life together.
+              We’re excited to bring your ideas to life. Whether you have a
+              project in mind or just want to say hello, drop us a message!
             </p>
           </div>
+
+          {/* Contact Form */}
+          <form
+            onSubmit={handleSubmit}
+            className="max-w-md w-full mx-auto space-y-8"
+          >
+            <div className="space-y-6">
+              <div className="relative">
+                <input
+                  type="text"
+                  name="name"
+                  required
+                  className="w-full bg-transparent border-b border-muted-foreground/30 py-2 px-1 focus:outline-none focus:border-foreground transition-colors peer placeholder:text-transparent"
+                  placeholder="Name"
+                />
+                <label className="absolute left-1 -top-6 text-sm text-muted-foreground peer-placeholder-shown:text-base peer-placeholder-shown:top-2 transition-all peer-focus:-top-6 peer-focus:text-sm">
+                  Name
+                </label>
+              </div>
+
+              <div className="relative">
+                <input
+                  type="email"
+                  name="email"
+                  required
+                  className="w-full bg-transparent border-b border-muted-foreground/30 py-2 px-1 focus:outline-none focus:border-foreground transition-colors peer placeholder:text-transparent"
+                  placeholder="Email"
+                />
+                <label className="absolute left-1 -top-6 text-sm text-muted-foreground peer-placeholder-shown:text-base peer-placeholder-shown:top-2 transition-all peer-focus:-top-6 peer-focus:text-sm">
+                  Email
+                </label>
+              </div>
+
+              <div className="relative">
+                <input
+                  type="text"
+                  name="subject"
+                  required
+                  className="w-full bg-transparent border-b border-muted-foreground/30 py-2 px-1 focus:outline-none focus:border-foreground transition-colors peer placeholder:text-transparent"
+                  placeholder="Subject"
+                />
+                <label className="absolute left-1 -top-6 text-sm text-muted-foreground peer-placeholder-shown:text-base peer-placeholder-shown:top-2 transition-all peer-focus:-top-6 peer-focus:text-sm">
+                  Subject
+                </label>
+              </div>
+
+              <div className="relative">
+                <textarea
+                  name="message"
+                  required
+                  rows={4}
+                  className="w-full bg-transparent border-b border-muted-foreground/30 py-2 px-1 focus:outline-none focus:border-foreground transition-colors peer placeholder:text-transparent resize-none"
+                  placeholder="Message"
+                />
+                <label className="absolute left-1 -top-6 text-sm text-muted-foreground peer-placeholder-shown:text-base peer-placeholder-shown:top-2 transition-all peer-focus:-top-6 peer-focus:text-sm">
+                  Message
+                </label>
+              </div>
+            </div>
+            <div className="p-2">
+              <button
+                type="submit"
+                className="group flex items-center justify-center space-x-2 w-full border border-muted-foreground/30 py-2 hover:border-foreground transition-colors "
+              >
+                <span>Send Message</span>
+                <Send className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+              </button>
+            </div>
+          </form>
         </section>
       </div>
     </main>

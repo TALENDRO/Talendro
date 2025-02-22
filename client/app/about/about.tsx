@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { TalendroLogo } from "@/components/icons";
+import MouseFollower from "@/components/home/MouseFollower";
 
 export default function AboutPage() {
   const [scrollProgress, setScrollProgress] = useState(0);
@@ -20,6 +21,7 @@ export default function AboutPage() {
 
   return (
     <main>
+      <MouseFollower />
       {/* Fixed Hero Section */}
       <div
         className="fixed inset-0 flex items-center justify-center transition-all duration-300"
@@ -28,9 +30,11 @@ export default function AboutPage() {
         }}
       >
         <div className="text-center sm:space-y-4">
-          <h1 className="text-4xl md:text-6xl font-light">Talendro</h1>
+          <h1 className="text-4xl md:text-6xl font-light">
+            <TalendroLogo size={140} />
+          </h1>
           <p className="text-muted-foreground max-sm:text-sm font-comfortaa">
-            our story
+            a connection that sparks growth
           </p>
         </div>
       </div>
