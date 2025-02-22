@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { ArrowDown } from "lucide-react";
 import { TalendroLogo } from "@/components/icons";
+import FuzzyText from "@/components/ui/fuzz";
 // import Navbar from "@/components/navbar"
 
 export default function Home() {
@@ -37,11 +38,24 @@ export default function Home() {
           opacity: 1 - scrollProgress * 0.5, // Fade out slightly as we scroll
         }}
       >
-        <div className="text-center space-y-4">
+        <div className="text-center sm:space-y-4">
           <h1 className="text-4xl md:text-6xl font-light">
-            <TalendroLogo size={140} />
+            <span className="max-sm:hidden">
+              <TalendroLogo size={140} />
+            </span>
+            <span className="sm:hidden">
+              <TalendroLogo size={60} />
+            </span>
           </h1>
-          <p className="text-muted-foreground">
+          {/* <FuzzyText
+            fontWeight={600}
+            baseIntensity={0.2}
+            hoverIntensity={0.3}
+            enableHover={false}
+          >
+            TALENDRO
+          </FuzzyText> */}
+          <p className="text-muted-foreground max-sm:text-sm">
             A connection that Sparks growth
           </p>
         </div>
