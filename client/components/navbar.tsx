@@ -17,14 +17,13 @@ import { siteConfig } from "@/config/site";
 import { Logo, TalendroLogo } from "@/components/icons";
 import { useEffect, useState } from "react";
 import WalletConnector from "./walletConnector/client";
-import { useWallet } from "@/context/walletContext";
 import { usePathname } from "next/navigation";
-import { cn } from "@/lib/utils";
+import { useWallet } from "@/context/walletContext";
 
 export const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  // const [WallectConnection] = useWallet();
-  // const { isEmulator } = WallectConnection;
+  const [WallectConnection] = useWallet();
+  const { isEmulator } = WallectConnection;
 
   const [isVisible, setIsVisible] = useState(false);
   const pathname = usePathname();
@@ -55,12 +54,13 @@ export const Navbar = () => {
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
+
   return (
     <div className="fixed top-0 left-0 right-0 z-50 flex justify-center px-4">
       <NextUINavbar
         onMenuOpenChange={setIsMenuOpen}
         isBordered
-        className={cn(
+        className={clsx(
           pathname === "/"
             ? isVisible
               ? "opacity-100 translate-y-0"
@@ -83,8 +83,6 @@ export const Navbar = () => {
           </NavbarBrand>
         </NavbarContent>
 
-        <NavbarContent></NavbarContent>
-
         <NavbarContent
           className="flex basis-1/5 sm:basis-full"
           justify="center"
@@ -95,8 +93,8 @@ export const Navbar = () => {
                 <Link
                   className={clsx(
                     linkStyles({ color: "foreground" }),
-                    "data-[active=true]:text-primary data-[active=true]:font-medium"
-                    // !isEmulator && item.label === "Admin" && "hidden"
+                    "data-[active=true]:text-primary data-[active=true]:font-medium",
+                    !isEmulator && item.label === "Admin" && "hidden"
                   )}
                   color="foreground"
                   href={item.href}
@@ -127,6 +125,7 @@ export const Navbar = () => {
             className="sm:hidden justify-end"
           />
         </NavbarContent>
+
         {/* mobile menu open */}
         <NavbarMenu className="py-10">
           {siteConfig.navItems.map((item) => (
@@ -143,10 +142,7 @@ export const Navbar = () => {
               </NextLink>
             </NavbarMenuItem>
           ))}
-          <NavbarMenuItem className="my-10">
-            {/* <WalletConnectors /> */}
-            {/* <WalletClient /> */}
-          </NavbarMenuItem>
+          <NavbarMenuItem className="my-10"></NavbarMenuItem>
         </NavbarMenu>
       </NextUINavbar>
     </div>
