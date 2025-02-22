@@ -23,8 +23,8 @@ import { cn } from "@/lib/utils";
 
 export const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [WallectConnection] = useWallet();
-  const { isEmulator } = WallectConnection;
+  // const [WallectConnection] = useWallet();
+  // const { isEmulator } = WallectConnection;
 
   const [isVisible, setIsVisible] = useState(false);
   const pathname = usePathname();
@@ -95,8 +95,8 @@ export const Navbar = () => {
                 <Link
                   className={clsx(
                     linkStyles({ color: "foreground" }),
-                    "data-[active=true]:text-primary data-[active=true]:font-medium",
-                    !isEmulator && item.label === "Admin" && "hidden"
+                    "data-[active=true]:text-primary data-[active=true]:font-medium"
+                    // !isEmulator && item.label === "Admin" && "hidden"
                   )}
                   color="foreground"
                   href={item.href}

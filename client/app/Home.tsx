@@ -67,13 +67,12 @@ export default function Homepage() {
           }}
         >
           <div className="container mx-auto px-4 py-24 text-center">
-            <h2 className="text-3xl md:text-5xl font-light mb-8">
-              Selected Works
+            <h2 className="text-3xl md:text-5xl font-light mb-8 tracking-widest">
+              EXPLORE PROJECTS
             </h2>
             <p className="text-muted-foreground max-w-2xl mx-auto">
-              A collection of projects that showcase my passion for design and
-              development. Each piece represents a unique challenge and creative
-              solution.
+              Explore collection of projects and find that aligns with your
+              passion for design and development.
             </p>
           </div>
         </section>
