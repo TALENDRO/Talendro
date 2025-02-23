@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { TalendroLogo } from "@/components/icons";
 import { ArrowDown, Send } from "lucide-react";
 import MouseFollower from "@/components/home/MouseFollower";
+import { Label } from "@/components/ui/label";
 
 export default function ContactPage() {
   const [scrollProgress, setScrollProgress] = useState(0);
@@ -94,11 +95,11 @@ export default function ContactPage() {
               href="mailto:hello@example.com"
               className="relative text-3xl md:text-5xl font-light group inline-block"
             >
-              Let’s Connect and Create Something Amazing"
+              Let&apos;s Connect and Create Something Amazing
               <span className="absolute left-0 bottom-0 w-0 h-[2px] bg-foreground transition-all duration-300 group-hover:w-full" />
             </a>
             <p className="text-muted-foreground max-w-2xl mx-auto">
-              We’re excited to bring your ideas to life. Whether you have a
+              We&apos;re excited to bring your ideas to life. Whether you have a
               project in mind or just want to say hello, drop us a message!
             </p>
           </div>
@@ -117,9 +118,9 @@ export default function ContactPage() {
                   className="w-full bg-transparent border-b border-muted-foreground/30 py-2 px-1 focus:outline-none focus:border-foreground transition-colors peer placeholder:text-transparent"
                   placeholder="Name"
                 />
-                <label className="absolute left-1 -top-6 text-sm text-muted-foreground peer-placeholder-shown:text-base peer-placeholder-shown:top-2 transition-all peer-focus:-top-6 peer-focus:text-sm">
+                <Label className="absolute left-1 -top-6 text-sm text-muted-foreground peer-placeholder-shown:text-base peer-placeholder-shown:top-2 transition-all peer-focus:-top-6 peer-focus:text-sm">
                   Name
-                </label>
+                </Label>
               </div>
 
               <div className="relative">
@@ -130,9 +131,9 @@ export default function ContactPage() {
                   className="w-full bg-transparent border-b border-muted-foreground/30 py-2 px-1 focus:outline-none focus:border-foreground transition-colors peer placeholder:text-transparent"
                   placeholder="Email"
                 />
-                <label className="absolute left-1 -top-6 text-sm text-muted-foreground peer-placeholder-shown:text-base peer-placeholder-shown:top-2 transition-all peer-focus:-top-6 peer-focus:text-sm">
+                <Label className="absolute left-1 -top-6 text-sm text-muted-foreground peer-placeholder-shown:text-base peer-placeholder-shown:top-2 transition-all peer-focus:-top-6 peer-focus:text-sm">
                   Email
-                </label>
+                </Label>
               </div>
 
               <div className="relative">
@@ -143,9 +144,9 @@ export default function ContactPage() {
                   className="w-full bg-transparent border-b border-muted-foreground/30 py-2 px-1 focus:outline-none focus:border-foreground transition-colors peer placeholder:text-transparent"
                   placeholder="Subject"
                 />
-                <label className="absolute left-1 -top-6 text-sm text-muted-foreground peer-placeholder-shown:text-base peer-placeholder-shown:top-2 transition-all peer-focus:-top-6 peer-focus:text-sm">
+                <Label className="absolute left-1 -top-6 text-sm text-muted-foreground peer-placeholder-shown:text-base peer-placeholder-shown:top-2 transition-all peer-focus:-top-6 peer-focus:text-sm">
                   Subject
-                </label>
+                </Label>
               </div>
 
               <div className="relative">
@@ -156,9 +157,9 @@ export default function ContactPage() {
                   className="w-full bg-transparent border-b border-muted-foreground/30 py-2 px-1 focus:outline-none focus:border-foreground transition-colors peer placeholder:text-transparent resize-none"
                   placeholder="Message"
                 />
-                <label className="absolute left-1 -top-6 text-sm text-muted-foreground peer-placeholder-shown:text-base peer-placeholder-shown:top-2 transition-all peer-focus:-top-6 peer-focus:text-sm">
+                <Label className="absolute left-1 -top-6 text-sm text-muted-foreground peer-placeholder-shown:text-base peer-placeholder-shown:top-2 transition-all peer-focus:-top-6 peer-focus:text-sm">
                   Message
-                </label>
+                </Label>
               </div>
             </div>
             <div className="p-2">
