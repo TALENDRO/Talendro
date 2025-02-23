@@ -3,6 +3,9 @@
 import { useEffect, useState } from "react";
 import { TalendroLogo } from "@/components/icons";
 import MouseFollower from "@/components/home/MouseFollower";
+import { Github, Linkedin, Mail } from "lucide-react";
+import Link from "next/link";
+import Image from "next/image";
 
 export default function AboutPage() {
   const [scrollProgress, setScrollProgress] = useState(0);
@@ -76,11 +79,104 @@ export default function AboutPage() {
           </div>
         </section>
 
-        <section className="relative min-h-[80vh] flex items-center justify-center bg-background">
+        {/* <section className="relative min-h-[80vh] flex items-center justify-center bg-background">
           <div className="container mx-auto px-4 py-24 text-center">
             <h2 className="text-3xl md:text-5xl font-light">
               Let&apos;s create something meaningful
             </h2>
+          </div>
+        </section> */}
+        <section className="relative min-h-[80vh] flex items-center justify-center bg-background">
+          <div className="container mx-auto px-4 py-24">
+            <h2 className="text-3xl md:text-5xl font-light text-center mb-16">
+              Let&apos;s create something meaningful
+            </h2>
+
+            <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+              {/* Team Member Card 1 */}
+              <div className="group relative bg-secondary/20 rounded-lg p-6 border-3 transition-all duration-300 hover:bg-secondary/30">
+                <div className="aspect-square relative rounded-lg overflow-hidden mb-6">
+                  <Image
+                    src="/placeholder.svg?height=400&width=400"
+                    alt="Team Member 1"
+                    width={400}
+                    height={400}
+                    className="object-cover transition-transform duration-500 "
+                  />
+                </div>
+                <h3 className="text-xl font-light mb-2 text-center">
+                  Faizan Shaikh
+                </h3>
+                <p className="text-muted-foreground mb-4 text-center">
+                  Developer
+                </p>
+                <div className="flex items-center justify-center gap-4">
+                  <Link
+                    href="#"
+                    className="text-muted-foreground hover:text-primary transition-colors"
+                  >
+                    <Github className="size-5" />
+                    <span className="sr-only">Github</span>
+                  </Link>
+                  <Link
+                    href="#"
+                    className="text-muted-foreground hover:text-primary transition-colors"
+                  >
+                    <Linkedin className="size-5" />
+                    <span className="sr-only">LinkedIn</span>
+                  </Link>
+                  <Link
+                    href="#"
+                    className="text-muted-foreground hover:text-primary transition-colors"
+                  >
+                    <Mail className="size-5" />
+                    <span className="sr-only">Email</span>
+                  </Link>
+                </div>
+              </div>
+
+              {/* Team Member Card 2 */}
+              <div className="group relative bg-secondary/20 border-3 rounded-lg p-6 transition-all duration-300 hover:bg-secondary/30">
+                <div className="aspect-square relative rounded-lg overflow-hidden mb-6">
+                  <Image
+                    src="/placeholder.svg?height=400&width=400"
+                    alt="Team Member 2"
+                    width={400}
+                    height={400}
+                    className="object-cover transition-transform duration-500 "
+                  />
+                </div>
+                <h3 className="text-xl font-light mb-2 text-center">
+                  Rahat Sayeyd
+                </h3>
+                <p className="text-muted-foreground mb-4 text-center">
+                  Developer
+                </p>
+                <div className="flex items-center justify-center gap-4">
+                  <Link
+                    href="#"
+                    className="text-muted-foreground hover:text-primary transition-colors"
+                  >
+                    <Github className="size-5" />
+                    <span className="sr-only">Github</span>
+                  </Link>
+                  <Link
+                    href="#"
+                    className="text-muted-foreground hover:text-primary transition-colors"
+                  >
+                    <Linkedin className="size-5" />
+                    <span className="sr-only">LinkedIn</span>
+                  </Link>
+                  <Link
+                    href="#"
+                    className="text-muted-foreground hover:text-primary transition-colors"
+                  >
+                    <Mail className="size-5" />
+                    <span className="sr-only">Email</span>
+                  </Link>
+                </div>
+              </div>
+            </div>
           </div>
         </section>
       </div>
