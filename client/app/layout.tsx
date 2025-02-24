@@ -45,21 +45,20 @@ export default function RootLayout({
             fontComfortaa.variable
           )}
         >
-          {/* <Suspense fallback={<Loading />}> */}
-
           <Providers themeProps={{ attribute: "class", defaultTheme: "light" }}>
             <div className="relative flex flex-col h-screen">
+              {/* <Suspense fallback={<Loading />}> */}
               <Navbar />
-              <Loading />
+              {/* <Loading /> */}
               <main className="container mx-auto pt-16 px-6 flex-grow">
                 {children}
               </main>
               <Footer />
+              {/* </Suspense> */}
             </div>
             <Toaster richColors />
             <ThemeSwitch />
           </Providers>
-          {/* <Suspense/> */}
         </body>
       </AuthProvider>
     </html>
