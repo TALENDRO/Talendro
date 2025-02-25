@@ -7,6 +7,8 @@ import MouseFollower from "@/components/home/MouseFollower";
 import Link from "next/link";
 import { MagicCard } from "@/components/magicui/magic-card";
 import { useTheme } from "next-themes";
+import { Timeline } from "@/components/ui/timeline";
+import { timelineData } from "@/components/ui/timelineData";
 
 export default function Homepage() {
   const [scrollProgress, setScrollProgress] = useState(0);
@@ -118,23 +120,26 @@ export default function Homepage() {
           </Link>
         </section>
 
-        <section className="relative min-h-[80vh] flex items-center justify-center bg-background">
+        <section className="relative min-h-[80vh] flex flex-col items-center justify-center bg-background">
           <div className="container mx-auto px-4 py-24 text-center space-y-3 sm:space-y-6">
             <Link
               href="/projects"
               className="relative text-3xl md:text-5xl font-light group"
             >
               Let&apos;s Create
-              <span className="absolute left-0 bottom-0 w-0 h-[2px] bg-foreground transition-all duration-300 group-hover:w-full">
-                {" "}
-              </span>
+              <span className="absolute left-0 bottom-0 w-0 h-[2px] bg-foreground transition-all duration-300 group-hover:w-full"></span>
             </Link>
             <p className="text-muted-foreground max-w-2xl mx-auto">
               Have a project in mind? Let&apos;s create something amazing
               together.
             </p>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 p-4">
+          <div className="w-full">
+            <Timeline data={timelineData} />
+          </div>
+        </section>
+
+        {/* <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 p-4">
             {steps.map((step, index) => (
               <MagicCard
                 key={index}
@@ -147,9 +152,22 @@ export default function Homepage() {
                 </p>
               </MagicCard>
             ))}
-          </div>
-        </section>
+          </div> */}
       </div>
     </main>
   );
 }
+
+// <MagicCard
+// className="cursor-pointer flex flex-col items-start text-left p-4"
+// gradientColor="#D9D9D955"
+// >
+// <div className="flex items-center gap-2 text-2xl font-semibold">
+//   <Users className="h-5 w-5" />
+//   Freelancer Stake
+// </div>
+// <p className="text-sm text-muted-foreground text-wrap ">
+//   Freelancers must stake 2% of the project value as a commitment
+//   deposit to ensure quality delivery and accountability.
+// </p>
+// </MagicCard>
