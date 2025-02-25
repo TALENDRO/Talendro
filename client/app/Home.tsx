@@ -5,11 +5,14 @@ import { ArrowDown } from "lucide-react";
 import { TalendroLogo } from "@/components/icons";
 import MouseFollower from "@/components/home/MouseFollower";
 import Link from "next/link";
+import { MagicCard } from "@/components/magicui/magic-card";
+import { useTheme } from "next-themes";
 
 export default function Homepage() {
   const [scrollProgress, setScrollProgress] = useState(0);
   const [hideHero, setHideHero] = useState(false);
   const heroRef = useRef<HTMLDivElement>(null);
+  const { theme } = useTheme();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -26,6 +29,39 @@ export default function Homepage() {
 
   const blurAmount = Math.min(scrollProgress * 10, 5); // Max blur of 5px
   const opacity = Math.min(scrollProgress * 2, 1); // Fade in effect
+  const steps = [
+    {
+      title: "Stake Reputation",
+      description:
+        "Freelancers must stake 2% of the project value as a commitment deposit. Arbitrators must stake an amount equal to or greater than the project value.",
+    },
+    {
+      title: "Post Job",
+      description:
+        "Clients post job listings with a detailed description, budget, and deadline. Freelancers can browse and apply based on their expertise.",
+    },
+    {
+      title: "Hire & Fund Smart Contract",
+      description:
+        "Clients select a freelancer and deposit the agreed payment into a smart contract. Funds remain locked until the job is completed or disputed.",
+    },
+    {
+      title: "Work Submission & Review",
+      description:
+        "Freelancer submits work within the deadline. The client reviews and either accepts or requests revisions.",
+    },
+    {
+      title: "Payment & Reputation Update",
+      description:
+        "If the client accepts: The smart contract releases payment to the freelancer. Reputation increases for both parties. If the freelancer fails to deliver: Their stake is slashed, and the client is refunded. This affects the freelancer’s reputation.",
+    },
+    {
+      title: "Dispute Resolution (If Needed)",
+      description:
+        "If there's a dispute, an arbitrator steps in. If the arbitrator rules against the freelancer, their stake is partially slashed. If an arbitrator is biased, a higher-level arbitrator reviews and penalizes them if necessary.",
+    },
+  ];
+
   return (
     <main>
       <MouseFollower />
@@ -97,6 +133,20 @@ export default function Homepage() {
               Have a project in mind? Let&apos;s create something amazing
               together.
             </p>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 p-4">
+            {steps.map((step, index) => (
+              <MagicCard
+                key={index}
+                className="cursor-pointer flex flex-col items-center justify-center text-center p-6 rounded-lg shadow-lg h-full"
+                gradientColor={theme === "dark" ? "#262626" : "#D9D9D955"}
+              >
+                <h3 className="text-xl font-bold mb-2">{step.title}</h3>
+                <p className="text-sm leading-relaxed text-gray-700 dark:text-gray-300">
+                  {step.description}
+                </p>
+              </MagicCard>
+            ))}
           </div>
         </section>
       </div>
