@@ -5,11 +5,9 @@ import { ArrowDown } from "lucide-react";
 import { TalendroLogo } from "@/components/icons";
 import MouseFollower from "@/components/home/MouseFollower";
 import Link from "next/link";
-import { AnimatedBeamDemo } from "@/components/home/animatedBeam";
 
 export default function Homepage() {
   const [scrollProgress, setScrollProgress] = useState(0);
-  const [wHeight, setWHeight] = useState(0);
   const [hideHero, setHideHero] = useState(false);
   const heroRef = useRef<HTMLDivElement>(null);
 
@@ -19,7 +17,6 @@ export default function Homepage() {
       const windowHeight = window.innerHeight;
       const progress = Math.min(scrollPosition / windowHeight, 2);
       setHideHero(scrollPosition / windowHeight > 2);
-      setWHeight(windowHeight);
       setScrollProgress(progress);
     };
 
@@ -32,7 +29,6 @@ export default function Homepage() {
   return (
     <main>
       <MouseFollower />
-      {/* Fixed Hero Section */}
       <div
         ref={heroRef}
         className={`fixed inset-0 flex items-center justify-center transition-all duration-300 ${hideHero && "hidden"}`}
@@ -84,9 +80,6 @@ export default function Homepage() {
               passion of design and development.
             </p>
           </Link>
-        </section>
-        <section>
-          <AnimatedBeamDemo />
         </section>
 
         <section className="relative min-h-[80vh] flex items-center justify-center bg-background">

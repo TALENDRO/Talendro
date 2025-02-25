@@ -96,7 +96,8 @@ export async function createProject(
   } catch (error: any) {
     console.log("message: ", error.message);
     console.error("error: ", error);
-    console.log("error: ", JSON.stringify(error));
+    const err = JSON.stringify(error);
+    console.log("Json: ", JSON.parse(err));
     throw error;
   }
 }

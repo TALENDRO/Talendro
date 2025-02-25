@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 
-const Loader = () => {
+export default function Loader() {
   const [show, setShow] = useState(true);
 
   useEffect(() => {
@@ -27,7 +27,7 @@ const Loader = () => {
       </div>
     </div>
   );
-};
+}
 
 const StyledWrapper = styled.div`
   .spinner {
@@ -94,5 +94,3 @@ const StyledWrapper = styled.div`
     }
   }
 `;
-
-export default Loader;
