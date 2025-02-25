@@ -94,6 +94,9 @@ export async function createProject(
 
     return txHash;
   } catch (error: any) {
+    console.log("message: ", error.message);
+    console.error("error: ", error);
+    console.log("error: ", JSON.stringify(error));
     throw error;
   }
 }
