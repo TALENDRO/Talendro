@@ -1,44 +1,58 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { TalendroLogo } from "@/components/icons";
 import MouseFollower from "@/components/home/MouseFollower";
-import { Github, Linkedin, Mail } from "lucide-react";
+import { ArrowDown, Github, Linkedin, Mail } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 
 export default function AboutPage() {
   const [scrollProgress, setScrollProgress] = useState(0);
+  const [hideHero, setHideHero] = useState(false);
+  const heroRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const handleScroll = () => {
       const scrollPosition = window.scrollY;
       const windowHeight = window.innerHeight;
-      const progress = Math.min(scrollPosition / windowHeight, 1);
+      const progress = Math.min(scrollPosition / windowHeight, 2);
+      setHideHero(scrollPosition / windowHeight > 2);
       setScrollProgress(progress);
     };
-
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
-
+  const blurAmount = Math.min(scrollProgress * 10, 5); // Max blur of 5px
+  const opacity = Math.min(scrollProgress * 2, 1); // Fade in effect
   return (
     <main>
       <MouseFollower />
       {/* Fixed Hero Section */}
       <div
-        className="fixed inset-0 flex items-center justify-center transition-all duration-300"
+        ref={heroRef}
+        className={`fixed inset-0 flex items-center justify-center transition-all duration-300 ${hideHero && "hidden"}`}
         style={{
-          opacity: 1 - scrollProgress * 0.5,
+          filter: `blur(${blurAmount}px)`,
+          opacity: 1 - scrollProgress * 0.5, // Fade out slightly as we scroll
         }}
       >
         <div className="text-center sm:space-y-4">
           <h1 className="text-4xl md:text-6xl font-light">
-            <TalendroLogo size={140} />
+            <span className="max-sm:hidden">
+              <TalendroLogo size={140} />
+            </span>
+            <span className="sm:hidden">
+              <TalendroLogo size={60} />
+            </span>
           </h1>
+
           <p className="text-muted-foreground max-sm:text-sm font-comfortaa">
             a connection that sparks growth
           </p>
+        </div>
+        <div className="absolute bottom-8 scroll-indicator">
+          <ArrowDown className="w-6 h-6" />
         </div>
       </div>
 

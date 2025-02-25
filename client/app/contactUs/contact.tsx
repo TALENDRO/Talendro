@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { TalendroLogo } from "@/components/icons";
 import { ArrowDown, Send } from "lucide-react";
 import MouseFollower from "@/components/home/MouseFollower";
@@ -8,18 +8,24 @@ import { Label } from "@/components/ui/label";
 
 export default function ContactPage() {
   const [scrollProgress, setScrollProgress] = useState(0);
+  const [hideHero, setHideHero] = useState(false);
+  const heroRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const handleScroll = () => {
       const scrollPosition = window.scrollY;
       const windowHeight = window.innerHeight;
-      const progress = Math.min(scrollPosition / windowHeight, 1);
+      const progress = Math.min(scrollPosition / windowHeight, 2);
+      setHideHero(scrollPosition / windowHeight > 2);
       setScrollProgress(progress);
     };
 
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
+
+  const blurAmount = Math.min(scrollProgress * 10, 5); // Max blur of 5px
+  const opacity = Math.min(scrollProgress * 2, 1);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -31,20 +37,28 @@ export default function ContactPage() {
       {/* Fixed Hero Section */}
       <MouseFollower />
       <div
-        className="fixed inset-0 flex items-center justify-center transition-all duration-300"
+        ref={heroRef}
+        className={`fixed inset-0 flex items-center justify-center transition-all duration-300 ${hideHero && "hidden"}`}
         style={{
-          opacity: 1 - scrollProgress * 0.5,
+          filter: `blur(${blurAmount}px)`,
+          opacity: 1 - scrollProgress * 0.5, // Fade out slightly as we scroll
         }}
       >
         <div className="text-center sm:space-y-4">
           <h1 className="text-4xl md:text-6xl font-light">
-            <TalendroLogo size={140} />
+            <span className="max-sm:hidden">
+              <TalendroLogo size={140} />
+            </span>
+            <span className="sm:hidden">
+              <TalendroLogo size={60} />
+            </span>
           </h1>
+
           <p className="text-muted-foreground max-sm:text-sm font-comfortaa">
             a connection that sparks growth
           </p>
         </div>
-        <div className="absolute bottom-8">
+        <div className="absolute bottom-8 scroll-indicator">
           <ArrowDown className="w-6 h-6" />
         </div>
       </div>
@@ -95,7 +109,7 @@ export default function ContactPage() {
               href="mailto:hello@example.com"
               className="relative text-3xl md:text-5xl font-light group inline-block"
             >
-              Let&apos;s Connect and Create Something Amazing
+              Let&apos;s Connect
               <span className="absolute left-0 bottom-0 w-0 h-[2px] bg-foreground transition-all duration-300 group-hover:w-full" />
             </a>
             <p className="text-muted-foreground max-w-2xl mx-auto">

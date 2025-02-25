@@ -61,8 +61,9 @@ export default function ArbitratorTokenMinter() {
   };
 
   useEffect(() => {
+    if (!address) return;
     fetchProjects();
-  }, [lucid]);
+  }, [lucid, address]);
 
   async function handleClickMint() {
     setIsMinting(true);
