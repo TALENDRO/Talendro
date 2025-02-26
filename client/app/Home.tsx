@@ -134,9 +134,9 @@ export default function Homepage() {
               together.
             </p>
           </div>
-          <div className="w-full">
-            <Timeline data={timelineData} />
-          </div>
+        </section>
+        <section className="w-full">
+          <Timeline data={timelineData} />
         </section>
 
         {/* <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 p-4">
