@@ -5,7 +5,6 @@ import React, { useState } from "react";
 import { auth, db } from "@/firebase";
 import { setDoc, doc } from "firebase/firestore";
 import { toast } from "sonner";
-import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -17,6 +16,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useAuth } from "@/context/authContext";
+import clsx from "clsx";
 
 function Register({
   className,
@@ -81,7 +81,7 @@ function Register({
   // };
 
   return (
-    <div className={cn("flex flex-col gap-6", className)} {...props}>
+    <div className={clsx("flex flex-col gap-6", className)} {...props}>
       <Card className="w-96 ">
         <CardHeader>
           <CardTitle className="text-2xl">Sign Up</CardTitle>

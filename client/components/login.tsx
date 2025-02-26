@@ -4,7 +4,6 @@ import { signInWithEmailAndPassword } from "firebase/auth";
 import React, { useState } from "react";
 import { auth } from "@/firebase";
 import { toast } from "sonner";
-import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -18,6 +17,7 @@ import { Label } from "@/components/ui/label";
 import Link from "next/link";
 import Register from "./register";
 import { useAuth } from "@/context/authContext";
+import clsx from "clsx";
 
 function Login({ className, ...props }: React.ComponentPropsWithoutRef<"div">) {
   const [email, setEmail] = useState("");
@@ -60,7 +60,7 @@ function Login({ className, ...props }: React.ComponentPropsWithoutRef<"div">) {
   };
 
   return (
-    <div className={cn("flex flex-col gap-6", className)} {...props}>
+    <div className={clsx("flex flex-col gap-6", className)} {...props}>
       <Card>
         <CardHeader>
           <CardTitle className="text-2xl">Login</CardTitle>

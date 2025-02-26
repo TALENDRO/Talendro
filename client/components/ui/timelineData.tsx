@@ -9,10 +9,8 @@ import {
   BadgeCheck,
   AlertCircle,
 } from "lucide-react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { MagicCard } from "../magicui/magic-card";
-import { useTheme } from "next-themes";
-import clsx from "clsx";
 
 export const DATA = {
   "step 1": {

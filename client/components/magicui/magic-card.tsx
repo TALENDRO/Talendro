@@ -3,8 +3,8 @@
 import { motion, useMotionTemplate, useMotionValue } from "motion/react";
 import React, { useCallback, useEffect, useRef } from "react";
 
-import { cn } from "@/lib/utils";
 import { useTheme } from "next-themes";
+import clsx from "clsx";
 
 interface MagicCardProps extends React.HTMLAttributes<HTMLDivElement> {
   gradientSize?: number;
@@ -79,7 +79,7 @@ export function MagicCard({
   return (
     <div
       ref={cardRef}
-      className={cn("group relative flex size-full rounded-xl", className)}
+      className={clsx("group relative flex size-full rounded-xl", className)}
     >
       <div className="absolute inset-px z-10 rounded-xl bg-background" />
       <div className="relative z-30">{children}</div>
