@@ -1,4 +1,4 @@
-import { cn } from "@/lib/utils";
+import clsx from "clsx";
 import React from "react";
 
 export interface OrbitingCirclesProps
@@ -55,10 +55,10 @@ export function OrbitingCircles({
                 "--icon-size": `${iconSize}px`,
               } as React.CSSProperties
             }
-            className={cn(
+            className={clsx(
               `absolute flex size-[var(--icon-size)] transform-gpu animate-orbit items-center justify-center rounded-full`,
               { "[animation-direction:reverse]": reverse },
-              className,
+              className
             )}
             {...props}
           >
