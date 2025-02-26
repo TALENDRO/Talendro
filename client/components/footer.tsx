@@ -3,6 +3,7 @@ import React from "react";
 
 import { TalendroLogo } from "./icons";
 import { Marquee } from "./magicui/marquee";
+import Link from "next/link";
 export default function Footer() {
   return (
     <footer className="w-full border-t border-border bg-background">
@@ -90,12 +91,12 @@ const LinkSection: React.FC<{ title: string; links: any[] }> = ({
     <ul className="space-y-2">
       {links.map(({ href, label }) => (
         <li key={href}>
-          <a
+          <Link
             href={href}
             className="text-sm text-muted-foreground hover:text-primary transition-colors"
           >
             {label}
-          </a>
+          </Link>
         </li>
       ))}
     </ul>

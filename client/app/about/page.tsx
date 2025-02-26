@@ -1,9 +1,10 @@
+import AboutPage from "./about";
 import Client from "./client";
 
 export default function Page() {
   return (
     <>
-      <Client />
+      <AboutPage />
     </>
   );
 }
