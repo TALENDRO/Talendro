@@ -100,7 +100,7 @@ export default function ProjectsPage() {
           <CardTitle>Available Projects</CardTitle>
           <CardDescription>Browse and accept projects</CardDescription>
         </CardHeader>
-        <CardContent>
+        <CardContent className="min-h-[50vh]">
           <div className="flex space-x-2 mb-4">
             <div className="relative flex-grow">
               <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
@@ -125,9 +125,9 @@ export default function ProjectsPage() {
               ))}
             </div>
           ) : (
-            <p className="text-center text-muted-foreground">
-              No projects found.
-            </p>
+            <div className="flex justify-center items-center min-h-[40vh]">
+              <p className="text-muted-foreground ">No projects found.</p>
+            </div>
           )}
 
           {!isLoading && displayedProjects.length < projects.length && (

@@ -29,7 +29,7 @@ export default function TalendroTokenMinter() {
   }
 
   return (
-    <>
+    <div className="container mx-auto p-4">
       <Card className="mb-6">
         <CardHeader>
           <CardTitle>Get Started</CardTitle>
@@ -58,6 +58,6 @@ export default function TalendroTokenMinter() {
       </Card>
 
       <MyProjectsPage />
-    </>
+    </div>
   );
 }

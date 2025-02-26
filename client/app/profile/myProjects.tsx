@@ -90,72 +90,88 @@ export default function MyProjectsPage() {
 
   return (
     <div className="container mx-auto">
-      {isLoading ? (
-        <div className="flex justify-center items-center h-64">
-          <Loader2 className="h-8 w-8 animate-spin" />
-        </div>
-      ) : (
-        <Tabs defaultValue="client" className="w-full">
-          <TabsList className="grid w-full grid-cols-2">
-            <TabsTrigger value="client">Created Projects</TabsTrigger>
-            <TabsTrigger value="developer">Accepted Projects</TabsTrigger>
-          </TabsList>
-          <TabsContent value="client">
-            <Card>
-              <CardHeader>
-                <CardTitle>Your Client Projects</CardTitle>
-                <CardDescription>
-                  Projects you&apos;ve created as a client
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                {clientProjects.size > 0 ? (
-                  <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-                    {Array.from(clientProjects).map((project, i) => (
-                      <ProjectItem
-                        project={project}
-                        key={i}
-                        from="myProjects_client"
-                      />
-                    ))}
-                  </div>
-                ) : (
-                  <p className="text-center text-muted-foreground">
+      <Tabs defaultValue="client" className="w-full">
+        <TabsList className="grid w-full grid-cols-2">
+          <TabsTrigger value="client">Created Projects</TabsTrigger>
+          <TabsTrigger value="developer">Accepted Projects</TabsTrigger>
+        </TabsList>
+        {/* created Projects */}
+        <TabsContent value="client">
+          <Card>
+            <CardHeader>
+              <CardTitle>Your Client Projects</CardTitle>
+              <CardDescription>
+                Projects you&apos;ve created as a client
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              {isLoading ? (
+                <div className="flex justify-center items-center h-64">
+                  {!address ? (
+                    <p className="text-muted-foreground">Connect Wallet</p>
+                  ) : (
+                    <Loader2 className="h-8 w-8 animate-spin" />
+                  )}
+                </div>
+              ) : clientProjects.size > 0 ? (
+                <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+                  {Array.from(clientProjects).map((project, i) => (
+                    <ProjectItem
+                      project={project}
+                      key={i}
+                      from="myProjects_client"
+                    />
+                  ))}
+                </div>
+              ) : (
+                <div className="flex justify-center items-center min-h-[30vh]">
+                  <p className="text-muted-foreground ">
                     No client projects found.
                   </p>
-                )}
-              </CardContent>
-            </Card>
-          </TabsContent>
-          <TabsContent value="developer">
-            <Card>
-              <CardHeader>
-                <CardTitle>Your Developer Projects</CardTitle>
-                <CardDescription>
-                  Projects you&apos;ve accepted as a developer
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                {devProjects.size > 0 ? (
-                  <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-                    {Array.from(devProjects).map((project, i) => (
-                      <ProjectItem
-                        project={project}
-                        key={i}
-                        from="myProjects_dev"
-                      />
-                    ))}
-                  </div>
-                ) : (
-                  <p className="text-center text-muted-foreground">
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </TabsContent>
+        {/* accepted projects */}
+        <TabsContent value="developer">
+          <Card>
+            <CardHeader>
+              <CardTitle>Your Developer Projects</CardTitle>
+              <CardDescription>
+                Projects you&apos;ve accepted as a developer
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              {isLoading ? (
+                <div className="flex justify-center items-center h-64">
+                  {!address ? (
+                    <p className="text-muted-foreground">Connect Wallet</p>
+                  ) : (
+                    <Loader2 className="h-8 w-8 animate-spin" />
+                  )}
+                </div>
+              ) : devProjects.size > 0 ? (
+                <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+                  {Array.from(devProjects).map((project, i) => (
+                    <ProjectItem
+                      project={project}
+                      key={i}
+                      from="myProjects_dev"
+                    />
+                  ))}
+                </div>
+              ) : (
+                <div className="flex justify-center items-center min-h-[30vh]">
+                  <p className="text-muted-foreground ">
                     No developer projects found.
                   </p>
-                )}
-              </CardContent>
-            </Card>
-          </TabsContent>
-        </Tabs>
-      )}
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </TabsContent>
+      </Tabs>
     </div>
   );
 }
