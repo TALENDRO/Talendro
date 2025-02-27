@@ -1,3 +1,4 @@
+import { STAKEPRIVATEKEY } from "@/config";
 import {
   HoldingContractValidator,
   ProjectInitiateValidator,
@@ -7,6 +8,8 @@ import {
   getAddress,
   getPolicyId,
   keyHashtoAddress,
+  privateKeytoAddress,
+  refStakeUtxo,
   refUtxo,
 } from "@/lib/utils";
 import { ProjectDatum, ProjectRedeemer } from "@/types/cardano";
@@ -26,6 +29,7 @@ export async function CancelProject(
   address: string
 ) {
   try {
+    const STAKEADDRESS = await privateKeytoAddress(STAKEPRIVATEKEY);
     const mintingValidator = ProjectInitiateValidator();
     const HOLDINGADDR = getAddress(HoldingContractValidator);
     const PROJECTINITPID = getPolicyId(ProjectInitiateValidator);
@@ -39,9 +43,8 @@ export async function CancelProject(
     const clt_token = { [PROJECTINITPID + clt_assetname]: qty };
 
     const ref_utxo = await refUtxo(lucid);
-    const UTxO_Talendro = await lucid.utxoByUnit(
-      TALENDROPID + paymentCredentialOf(address).hash.slice(-20)
-    ); //talendroPolicyID+assetName assetname is user address
+    const ref_stake = await refStakeUtxo(lucid, address, STAKEADDRESS);
+    //talendroPolicyID+assetName assetname is user address
     const toPay = datum.pay;
     datum.pay = null;
     datum.developer = null;
@@ -51,9 +54,8 @@ export async function CancelProject(
     let dev, clt, signed;
     const tx = lucid
       .newTx()
-      .readFrom(ref_utxo)
+      .readFrom([...ref_utxo, ...ref_stake])
       .collectFrom([utxo], redeemer)
-      .readFrom([UTxO_Talendro])
       .attach.SpendingValidator(HoldingContractValidator());
 
     if (calledByDev) {
