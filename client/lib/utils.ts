@@ -143,8 +143,9 @@ export async function seedtoAddress(seed: string) {
   return privatekeyAddress;
 }
 
-export function keyHashtoAddress(keyHash: string) {
-  const credentials = keyHashToCredential(keyHash);
-  const address = credentialToAddress(NETWORK, credentials);
+export function keyHashtoAddress(keyHash: string[]) {
+  const payment = keyHashToCredential(keyHash[0]);
+  const stake = keyHashToCredential(keyHash[1]);
+  const address = credentialToAddress(NETWORK, payment, stake);
   return address;
 }

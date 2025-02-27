@@ -43,8 +43,8 @@ export const MilestoneDatum = MilestoneDatumSchema as unknown as MilestoneDatum;
 export const ProjectDatumSchema = Data.Object({
   title: Data.Bytes(),
   pay: Data.Nullable(Data.Integer()),
-  developer: Data.Nullable(Data.Bytes()),
-  client: Data.Bytes(),
+  developer: Data.Nullable(AddressSchema),
+  client: AddressSchema,
   milestones: Data.Array(MilestoneDatumSchema),
   current_milestone: Data.Nullable(MilestoneDatumSchema),
   next_milestone: Data.Nullable(MilestoneDatumSchema),

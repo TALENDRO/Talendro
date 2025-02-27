@@ -97,7 +97,7 @@ export async function ArbitratorAction(
     const currentDatum = Data.castFrom(data, ArbitratorDatum);
     const cltAddress = keyHashtoAddress(currentDatum.project_datum.client);
     const devAddress = keyHashtoAddress(
-      currentDatum.project_datum.developer as string
+      currentDatum.project_datum.developer as string[]
     );
     let PaytoAddress = devAtFault ? cltAddress : devAddress;
     let AtFaultAddress = devAtFault ? devAddress : cltAddress;

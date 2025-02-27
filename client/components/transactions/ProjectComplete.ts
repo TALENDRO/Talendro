@@ -66,7 +66,7 @@ export async function ProjectComplete(
       signed = await dev.sign.withWallet().complete();
     } else {
       clt = await tx.pay
-        .ToAddress(keyHashtoAddress(datum.developer as string), {
+        .ToAddress(keyHashtoAddress(datum.developer as string[]), {
           lovelace: datum.pay as bigint,
         })
         .mintAssets({ ...clt_token, ...dev_token }, Data.to(1n))
