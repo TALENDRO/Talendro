@@ -71,23 +71,36 @@ export default function AboutPage() {
         >
           <div className="container mx-auto px-4 py-24 text-center space-y-16">
             <div className="space-y-8">
-              <h2 className="text-3xl md:text-5xl font-light tracking-widest">
+              <h2 className="relative group inline-block text-3xl md:text-5xl font-bold tracking-widest">
                 WHO WE ARE
+                <span className="absolute left-0 bottom-0 w-0 h-[2px] bg-foreground transition-all duration-300 group-hover:w-full"></span>
               </h2>
+
               <p className="text-muted-foreground max-w-2xl mx-auto">
-                A creative studio dedicated to crafting meaningful digital
-                experiences through minimalist design and thoughtful
-                development.
+                We are a team of passionate blockchain developers, and technical
+                writers dedicated to building and educating within the Cardano
+                ecosystem. With expertise in{" "}
+                <b className="text-white">smart contract development</b> and
+                decentralized technologies, we strive to push the boundaries of
+                blockchain adoption and innovation.
               </p>
             </div>
 
             <div className="space-y-8">
-              <h2 className="text-3xl md:text-5xl font-light tracking-widest">
+              <h2 className="relative group inline-block text-3xl md:text-5xl font-bold tracking-widest">
                 WHAT WE DO
+                <span className="absolute left-0 bottom-0 w-0 h-[2px] bg-foreground transition-all duration-300 group-hover:w-full"></span>
               </h2>
+
               <p className="text-muted-foreground max-w-2xl mx-auto">
-                We transform ideas into elegant solutions, focusing on
-                simplicity and purpose in every project we undertake.
+                We develop secure and efficient smart contracts using{" "}
+                <b className="text-white">Aiken, Plutus, and Marlowe </b>,
+                contribute to Cardano governance as a{" "}
+                <b className="text-white">DRep</b>, and actively engage in
+                technical writing to educate the community. We also conduct
+                blockchain workshops, contribute to{" "}
+                <b className="text-white">open-source </b> projects, and explore
+                real-world applications of decentralized solutions.
               </p>
             </div>
           </div>
