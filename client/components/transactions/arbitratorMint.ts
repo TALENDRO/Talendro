@@ -1,27 +1,25 @@
 "use client";
+
 import {
   ArbitratorTokenValidator,
   identificationPolicyid,
 } from "@/config/scripts/scripts";
-import { useWallet } from "@/context/walletContext";
+import { WalletConnection } from "@/context/walletContext";
 import {
   Data,
   fromText,
   mintingPolicyToId,
-  Validator,
+  type Validator,
 } from "@lucid-evolution/lucid";
-import React from "react";
-import { Button } from "../ui/button";
+import { PRIVATEKEY } from "@/config";
 import { SystemWallet } from "@/config/systemWallet";
 import { privateKeytoAddress } from "@/lib/utils";
 
-export default function ArbitratorTokenMinter() {
-  const [WalletConnection] = useWallet();
+export async function ArbitratorMint(walletConnection: WalletConnection) {
+  const { lucid, address } = walletConnection;
 
-  const { lucid, address } = WalletConnection;
-  async function mint() {
-    if (!lucid || !address) throw "Uninitialized Lucid!!!";
-    const PRIVATEKEY = process.env.NEXT_PUBLIC_SYSTEM_WALLET as string;
+  try {
+    if (!lucid || !address) throw new Error("Wallet not Connected");
     const SYSTEMADDRESS = await privateKeytoAddress(PRIVATEKEY);
     const usr_configNFT = {
       [identificationPolicyid + fromText("usr_configNFT")]: 1n,
@@ -33,13 +31,16 @@ export default function ArbitratorTokenMinter() {
 
     const mintingValidator: Validator = ArbitratorTokenValidator();
     const policyID = mintingPolicyToId(mintingValidator);
-    const usr_assetName = "arbitratorA";
-    const mintedAssets = { [policyID + fromText(usr_assetName)]: 1n };
+    const ArbitratorID = address.slice(-10);
+    const mintedAssets = { [policyID + fromText(ArbitratorID)]: 1n };
     const redeemer = Data.void();
     const tx = await lucid
       .newTx()
       .collectFrom(utxoWithIdentificationToken)
-      .pay.ToAddress(SYSTEMADDRESS, { ...usr_configNFT, lovelace: 2_000_000n })
+      .pay.ToAddress(SYSTEMADDRESS, {
+        ...usr_configNFT,
+        lovelace: 2_000_000n,
+      })
       .mintAssets(mintedAssets, redeemer)
       .attach.MintingPolicy(mintingValidator)
       .addSigner(SYSTEMADDRESS)
@@ -50,7 +51,9 @@ export default function ArbitratorTokenMinter() {
     const txHash = await signed.submit();
     console.log("Arbitrator PiD", policyID);
     console.log("txHash: ", txHash);
-  }
 
-  return <Button onClick={mint}>Arbitrator mint</Button>;
+    return { data: txHash, error: null };
+  } catch (error: any) {
+    return { data: null, error: error.message };
+  }
 }

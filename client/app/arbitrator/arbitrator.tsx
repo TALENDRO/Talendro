@@ -29,6 +29,7 @@ import { Loader2, RefreshCw } from "lucide-react";
 import ArbitratorProjectItem from "@/components/projectCards/arbitratorProjectItem";
 import { toast } from "sonner";
 import { getAddress, getPolicyId, privateKeytoAddress } from "@/lib/utils";
+import { ArbitratorMint } from "@/components/transactions/arbitratorMint";
 
 export default function ArbitratorTokenMinter() {
   const [WalletConnection] = useWallet();
@@ -67,7 +68,7 @@ export default function ArbitratorTokenMinter() {
 
   async function handleClickMint() {
     setIsMinting(true);
-    const result = await mint();
+    const result = await ArbitratorMint(WalletConnection);
     if (!result.data) {
       toast.error("ERROR", {
         description: result.error,
@@ -80,53 +81,6 @@ export default function ArbitratorTokenMinter() {
       description: "Arbitrator Minted successfully",
     });
     setIsMinting(false);
-  }
-
-  async function mint() {
-    if (!lucid || !address) {
-      throw new Error("Wallet not Connected");
-    }
-
-    setIsMinting(true);
-    try {
-      const SYSTEMADDRESS = await privateKeytoAddress(PRIVATEKEY);
-      const usr_configNFT = {
-        [identificationPolicyid + fromText("usr_configNFT")]: 1n,
-      };
-      const utxoWithIdentificationToken = await lucid.utxosAtWithUnit(
-        SYSTEMADDRESS,
-        identificationPolicyid + fromText("usr_configNFT")
-      );
-
-      const mintingValidator: Validator = ArbitratorTokenValidator();
-      const policyID = mintingPolicyToId(mintingValidator);
-      const ArbitratorID = address.slice(-10);
-      const mintedAssets = { [policyID + fromText(ArbitratorID)]: 1n };
-      const redeemer = Data.void();
-      const tx = await lucid
-        .newTx()
-        .collectFrom(utxoWithIdentificationToken)
-        .pay.ToAddress(SYSTEMADDRESS, {
-          ...usr_configNFT,
-          lovelace: 2_000_000n,
-        })
-        .mintAssets(mintedAssets, redeemer)
-        .attach.MintingPolicy(mintingValidator)
-        .addSigner(SYSTEMADDRESS)
-        .complete();
-
-      const systemSigned = await SystemWallet(tx);
-      const signed = await systemSigned.sign.withWallet().complete();
-      const txHash = await signed.submit();
-      console.log("Arbitrator PiD", policyID);
-      console.log("txHash: ", txHash);
-
-      return { data: txHash, error: null };
-    } catch (error: any) {
-      return { data: null, error: error.message };
-    } finally {
-      setIsMinting(false);
-    }
   }
 
   return (

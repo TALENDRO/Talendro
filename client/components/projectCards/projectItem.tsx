@@ -9,8 +9,6 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-// import { useToast } from "@/components/ui/use-toast"
-
 import { ProjectInitiateValidator } from "@/config/scripts/scripts";
 import { useWallet } from "@/context/walletContext";
 import { getAddress, getPolicyId, refUtxo, toAda } from "@/lib/utils";
