@@ -168,21 +168,21 @@ export default function AboutPage() {
                 </p>
                 <div className="flex items-center justify-center gap-4">
                   <Link
-                    href="#"
+                    href="https://github.com/youreachedrahat"
                     className="text-muted-foreground hover:text-primary transition-colors"
                   >
                     <Github className="size-5" />
                     <span className="sr-only">Github</span>
                   </Link>
                   <Link
-                    href="#"
+                    href="https://www.linkedin.com/in/youreachedrahat/"
                     className="text-muted-foreground hover:text-primary transition-colors"
                   >
                     <Linkedin className="size-5" />
                     <span className="sr-only">LinkedIn</span>
                   </Link>
                   <Link
-                    href="#"
+                    href="mailto:rahxtsayyed@gmail.com"
                     className="text-muted-foreground hover:text-primary transition-colors"
                   >
                     <Mail className="size-5" />
