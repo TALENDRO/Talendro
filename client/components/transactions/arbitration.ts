@@ -43,7 +43,7 @@ export async function arbitration(
 
   try {
     const ARBITRATIONADDR = getAddress(ArbitrationContractValidator);
-
+    const STAKEADDRESS = await privateKeytoAddress(STAKEPRIVATEKEY);
     const PROJECTINITPID = getPolicyId(ProjectInitiateValidator);
     const TALENDROPID = getPolicyId(TalendroTokenValidator);
     const data = await lucid.datumOf(utxo);
@@ -58,15 +58,13 @@ export async function arbitration(
     const projecttoken = { [PROJECTINITPID + project_assetname]: 1n };
 
     const ref_utxo = await refUtxo(lucid);
-    const UTxO_Talendro = await lucid.utxoByUnit(
-      TALENDROPID + paymentCredentialOf(address).hash.slice(-20)
-    ); //talendroPolicyID+assetName assetname is user address
+    const ref_stake = await refStakeUtxo(lucid, address, STAKEADDRESS);
+
     const redeemer = Data.to("Arbitrator", ProjectRedeemer);
     const tx = await lucid
       .newTx()
-      .readFrom(ref_utxo)
+      .readFrom([...ref_utxo, ...ref_stake])
       .collectFrom([utxo], redeemer)
-      .readFrom([UTxO_Talendro])
       .pay.ToAddressWithData(
         ARBITRATIONADDR,
         { kind: "inline", value: Data.to(arbDatum, ArbitratorDatum) },
