@@ -1,5 +1,5 @@
 "use client";
-import { CreateProject } from "@/components/createProjectModal";
+import { CreateProject } from "@/components/projectCards/createProjectModal";
 import { useWallet } from "@/context/walletContext";
 import {
   type Address,
@@ -8,7 +8,7 @@ import {
   type UTxO,
 } from "@lucid-evolution/lucid";
 import React, { useEffect, useState } from "react";
-import ProjectItem from "@/components/projectItem";
+import ProjectItem from "@/components/projectCards/projectItem";
 import { ProjectDatum } from "@/types/cardano";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {

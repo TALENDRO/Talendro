@@ -28,7 +28,7 @@ import {
   type UTxO,
 } from "@lucid-evolution/lucid";
 import { useEffect, useState } from "react";
-import { arbitration } from "./transactions/arbitration";
+import { arbitration } from "../transactions/arbitration";
 import Image from "next/image";
 import { toast } from "sonner";
 import { blockfrost } from "@/lib/blockfrost";
@@ -40,10 +40,13 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import { withErrorHandling } from "./errorHandling";
-import { acceptProject } from "./transactions/acceptProject";
-import { CancelNotAccepted, CancelProject } from "./transactions/cancelProject";
-import { ProjectComplete } from "./transactions/projectComplete";
+import { withErrorHandling } from "../errorHandling";
+import { acceptProject } from "../transactions/acceptProject";
+import {
+  CancelNotAccepted,
+  CancelProject,
+} from "../transactions/cancelProject";
+import { ProjectComplete } from "../transactions/projectComplete";
 
 interface Props {
   project: UTxO;

@@ -14,7 +14,7 @@ import { useWallet } from "@/context/walletContext";
 import { getPolicyId, toAda } from "@/lib/utils";
 import { ArbitratorDatum } from "@/types/cardano";
 import { Data, fromText, toText, type UTxO } from "@lucid-evolution/lucid";
-import { ArbitratorAction } from "./transactions/arbitration";
+import { ArbitratorAction } from "../transactions/arbitration";
 import {
   Card,
   CardContent,
@@ -29,7 +29,7 @@ import { blockfrost } from "@/lib/blockfrost";
 import Link from "next/link";
 import { ExternalLink } from "lucide-react";
 import { ProjectInitiateValidator } from "@/config/scripts/scripts";
-import { withErrorHandling } from "./errorHandling";
+import { withErrorHandling } from "../errorHandling";
 // import { useToast } from "@/components/ui/use-toast"
 
 interface Props {

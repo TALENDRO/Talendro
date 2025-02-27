@@ -1,5 +1,5 @@
 "use client";
-import { CreateProject } from "@/components/createProjectModal";
+import { CreateProject } from "@/components/projectCards/createProjectModal";
 import { useWallet } from "@/context/walletContext";
 import type { UTxO } from "@lucid-evolution/lucid";
 import type React from "react";
@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import ProjectItem from "@/components/projectItem";
+import ProjectItem from "@/components/projectCards/projectItem";
 import { Loader2, Search } from "lucide-react";
 import { useInView } from "react-intersection-observer";
 import { toast } from "sonner";

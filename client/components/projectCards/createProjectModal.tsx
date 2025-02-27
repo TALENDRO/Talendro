@@ -40,8 +40,8 @@ import {
 } from "@/config/scripts/scripts";
 import { toast } from "sonner";
 import { STAKEPRIVATEKEY } from "@/config";
-import { withErrorHandling } from "./errorHandling";
-import { createProject } from "./transactions/createProject";
+import { withErrorHandling } from "../errorHandling";
+import { createProject } from "../transactions/createProject";
 
 type ProjectType = "Milestone" | "Regular";
 
