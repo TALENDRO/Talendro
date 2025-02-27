@@ -46,6 +46,7 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { withErrorHandling } from "./errorHandling";
+import { acceptProject } from "./transactions/acceptProject";
 
 interface Props {
   project: UTxO;
@@ -99,63 +100,6 @@ export default function ProjectItem({ project, from }: Props) {
     fetchDatum();
     newlisted();
   }, [lucid, project]);
-
-  async function acceptProject() {
-    if (!lucid || !address) {
-      toast.error("Error", { description: "Wallet not connected" });
-      return;
-    }
-    if (!datum) {
-      toast.error("Error", { description: "Project data not found" });
-      return;
-    }
-
-    // setSubmitting(true);
-    try {
-      const MILESTONEADDR = getAddress(MilestoneSpendValidator);
-      const HOLDINGADDR = getAddress(HoldingContractValidator);
-      const PROJECTINITPID = getPolicyId(ProjectInitiateValidator);
-      const TALENDROPID = getPolicyId(TalendroTokenValidator);
-      const updatedDatum: ProjectDatum = {
-        ...datum,
-        developer: paymentCredentialOf(address).hash,
-      };
-
-      const dev_assetname = fromText("dev_") + datum.title;
-      const dev_token = { [PROJECTINITPID + dev_assetname]: 1n };
-
-      const ref_utxo = await refUtxo(lucid);
-      const UTxO_Talendro = await lucid.utxoByUnit(
-        TALENDROPID + paymentCredentialOf(address).hash.slice(-20)
-      );
-      const redeemer = Data.to(1n);
-
-      const contractAddress = datum.pay ? HOLDINGADDR : MILESTONEADDR;
-      const tx = await lucid
-        .newTx()
-        .readFrom(ref_utxo)
-        .readFrom([UTxO_Talendro])
-        .collectFrom([project], redeemer)
-        .pay.ToAddress(address, dev_token)
-        .pay.ToAddressWithData(
-          contractAddress,
-          { kind: "inline", value: Data.to(updatedDatum, ProjectDatum) },
-          { lovelace: datum.pay ? BigInt(datum.pay) : 3_000_000n }
-        )
-        .attach.SpendingValidator(ProjectInitiateValidator())
-        .addSigner(address)
-        .complete();
-
-      const signed = await tx.sign.withWallet().complete();
-      const txHash = await signed.submit();
-      console.log("txHash: ", txHash);
-    } catch (error: any) {
-      console.error(error);
-    }
-    // finally {
-    // setSubmitting(false);
-    // }
-  }
 
   async function projectCompleteClick() {
     if (!lucid || !address || !datum) {
@@ -229,10 +173,13 @@ export default function ProjectItem({ project, from }: Props) {
   }
 
   async function handleAcceptClick() {
+    if (!datum) {
+      toast.error("Error", { description: "Project data not found" });
+      return;
+    }
     setSubmitting(true);
     const saferMint = withErrorHandling(acceptProject);
-    const result = await saferMint();
-
+    await saferMint(walletConnection, project, datum);
     setSubmitting(false);
   }
 
