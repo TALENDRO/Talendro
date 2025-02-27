@@ -84,26 +84,26 @@ export async function ProjectComplete(
   }
 }
 
-export async function AlreadyComplete(
-  lucid: LucidEvolution,
-  datum: ProjectDatum
-) {
-  const PROJECTINITPID = getPolicyId(ProjectInitiateValidator);
-  const [walletConnection] = useWallet();
-  const { address } = walletConnection;
+// export async function AlreadyComplete(
+//   lucid: LucidEvolution,
+//   datum: ProjectDatum
+// ) {
+//   const PROJECTINITPID = getPolicyId(ProjectInitiateValidator);
+//   const [walletConnection] = useWallet();
+//   const { address } = walletConnection;
 
-  const mintingValidator = ProjectInitiateValidator();
+//   const mintingValidator = ProjectInitiateValidator();
 
-  const dev_assetname = fromText("dev_") + datum.title;
-  const dev_token = { [PROJECTINITPID + dev_assetname]: 1 };
+//   const dev_assetname = fromText("dev_") + datum.title;
+//   const dev_token = { [PROJECTINITPID + dev_assetname]: 1 };
 
-  const have_dev_token = await lucid.utxosAtWithUnit(
-    address as string,
-    dev_assetname
-  );
-  if (have_dev_token.length > 0) {
-    return true;
-  }
-  console.log(have_dev_token);
-  return false;
-}
+//   const have_dev_token = await lucid.utxosAtWithUnit(
+//     address as string,
+//     dev_assetname
+//   );
+//   if (have_dev_token.length > 0) {
+//     return true;
+//   }
+//   console.log(have_dev_token);
+//   return false;
+// }
