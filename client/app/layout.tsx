@@ -5,10 +5,10 @@ import { Toaster } from "@/components/ui/sonner";
 import { Providers } from "./providers";
 import { siteConfig } from "@/config/site";
 import { fontSans, fontComfortaa } from "@/config/fonts";
-import { Navbar } from "@/components/navbar";
+import { Navbar } from "@/components/layout/navbar";
 import { AuthProvider } from "@/context/authContext";
 import { ThemeSwitch } from "@/components/theme-switch";
-import Footer from "@/components/footer";
+import Footer from "@/components/layout/footer";
 import { Suspense } from "react";
 import Loading from "./loading";
 export const metadata: Metadata = {

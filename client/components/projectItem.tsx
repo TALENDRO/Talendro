@@ -43,7 +43,7 @@ import { Input } from "@/components/ui/input";
 import { withErrorHandling } from "./errorHandling";
 import { acceptProject } from "./transactions/acceptProject";
 import { CancelNotAccepted, CancelProject } from "./transactions/cancelProject";
-import { ProjectComplete } from "./transactions/ProjectComplete";
+import { ProjectComplete } from "./transactions/projectComplete";
 
 interface Props {
   project: UTxO;
