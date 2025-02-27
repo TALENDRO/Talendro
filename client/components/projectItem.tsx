@@ -28,11 +28,6 @@ import {
   type UTxO,
 } from "@lucid-evolution/lucid";
 import { useEffect, useState } from "react";
-import {
-  CancelNotAccepted,
-  CancelProject,
-  ProjectComplete,
-} from "./transactions/ProjectComplete";
 import { arbitration } from "./transactions/arbitration";
 import Image from "next/image";
 import { toast } from "sonner";
@@ -47,6 +42,8 @@ import {
 import { Input } from "@/components/ui/input";
 import { withErrorHandling } from "./errorHandling";
 import { acceptProject } from "./transactions/acceptProject";
+import { CancelNotAccepted, CancelProject } from "./transactions/cancelProject";
+import { ProjectComplete } from "./transactions/ProjectComplete";
 
 interface Props {
   project: UTxO;
@@ -56,8 +53,6 @@ interface Props {
 export default function ProjectItem({ project, from }: Props) {
   const [walletConnection] = useWallet();
   const { lucid, address } = walletConnection;
-  // const { toast } = useToast()
-
   const [submitting, setSubmitting] = useState(false);
   const [datum, setDatum] = useState<ProjectDatum>();
   const [isCompleteByDev, setIsCompleteByDev] = useState(false);
@@ -101,20 +96,23 @@ export default function ProjectItem({ project, from }: Props) {
     newlisted();
   }, [lucid, project]);
 
-  async function projectCompleteClick() {
-    if (!lucid || !address || !datum) {
-      toast.error("Error", { description: "Missing required data" });
+  if (!datum) return null;
 
+  function newlisted() {
+    if (!lucid) return;
+    if (project.address == getAddress(ProjectInitiateValidator)) {
+      setIsNewListed(true);
+    }
+  }
+
+  async function handleAcceptClick() {
+    if (!datum) {
+      toast.error("Error", { description: "Project data not found" });
       return;
     }
     setSubmitting(true);
-    try {
-      const calledByDev = from.includes("dev");
-      const safePrjComplete = withErrorHandling(ProjectComplete);
-      await safePrjComplete(lucid, project, datum, calledByDev, address);
-    } catch (error) {
-      console.error(error);
-    }
+    const saferMint = withErrorHandling(acceptProject);
+    await saferMint(walletConnection, project, datum);
     setSubmitting(false);
   }
 
@@ -138,6 +136,23 @@ export default function ProjectItem({ project, from }: Props) {
     setSubmitting(false);
   }
 
+  async function projectCompleteClick() {
+    if (!lucid || !address || !datum) {
+      toast.error("Error", { description: "Missing required data" });
+
+      return;
+    }
+    setSubmitting(true);
+    try {
+      const calledByDev = from.includes("dev");
+      const safePrjComplete = withErrorHandling(ProjectComplete);
+      await safePrjComplete(lucid, project, datum, calledByDev, address);
+    } catch (error) {
+      console.error(error);
+    }
+    setSubmitting(false);
+  }
+
   async function handleArbitrationClick() {
     setIsArbitrationDialogOpen(true);
   }
@@ -147,12 +162,7 @@ export default function ProjectItem({ project, from }: Props) {
       setSubmitting(true);
       const calledByDev = from.includes("dev");
       const safeArbitration = withErrorHandling(arbitration);
-      const result = await safeArbitration(
-        walletConnection,
-        project,
-        calledByDev,
-        POWLink
-      );
+      await safeArbitration(walletConnection, project, calledByDev, POWLink);
       setIsArbitrationDialogOpen(false);
     } catch (error) {
       console.error(error);
@@ -161,27 +171,7 @@ export default function ProjectItem({ project, from }: Props) {
     setPOWLink("");
   }
 
-  if (!datum) return null;
-
   const imageUrl = metadata?.image?.replace("ipfs://", "https://ipfs.io/ipfs/");
-
-  function newlisted() {
-    if (!lucid) return;
-    if (project.address == getAddress(ProjectInitiateValidator)) {
-      setIsNewListed(true);
-    }
-  }
-
-  async function handleAcceptClick() {
-    if (!datum) {
-      toast.error("Error", { description: "Project data not found" });
-      return;
-    }
-    setSubmitting(true);
-    const saferMint = withErrorHandling(acceptProject);
-    await saferMint(walletConnection, project, datum);
-    setSubmitting(false);
-  }
 
   return (
     <Card className="w-full max-w-md mx-auto">
