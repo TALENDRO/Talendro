@@ -140,8 +140,11 @@ export const timelineData = Object.entries(DATA).map(
     title: "..." + (stepIndex + 1),
     content: (
       <div>
-        <h4 className="text-xl sm:text-3xl md:text-4xl font-bold text-neutral-500 pb-5 md:pb-10">
-          {stepValue.title}
+        <h4 className="text-xl sm:text-3xl md:text-4xl font-bold text-white pb-5 md:pb-10">
+          <span className="relative inline-block group">
+            {stepValue.title}
+            <span className="absolute left-0 bottom-0 w-0 h-[2px] bg-foreground transition-all duration-300 group-hover:w-full"></span>
+          </span>
         </h4>
         <div className={`grid gap-4 grid-cols-4 items-center`}>
           {stepValue.card.map((card, cardIndex) => (
