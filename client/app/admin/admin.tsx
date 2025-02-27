@@ -10,7 +10,11 @@ import { useWallet } from "@/context/walletContext";
 import { toast } from "sonner";
 
 import { ConfigDatum } from "@/types/cardano";
-import { paymentCredentialOf, stakeCredentialOf } from "@lucid-evolution/lucid";
+import {
+  generatePrivateKey,
+  paymentCredentialOf,
+  stakeCredentialOf,
+} from "@lucid-evolution/lucid";
 import React, { useEffect, useState } from "react";
 import {
   ArbitrationContractValidator,
