@@ -83,10 +83,16 @@ export default function ContactPage() {
               </h2>
               <div className="space-y-4">
                 <a
-                  href="mailto:hello@example.com"
+                  href="mailto:faizanvit8@gmail.com"
                   className="block text-xl md:text-2xl text-muted-foreground hover:text-foreground transition-colors"
                 >
-                  hello@example.com
+                  Faizan Shaikh
+                </a>
+                <a
+                  href="mailto:rahxtsayyed@gmail.com"
+                  className="block text-xl md:text-2xl text-muted-foreground hover:text-foreground transition-colors"
+                >
+                  Rahat Sayyed
                 </a>
                 <p className="text-muted-foreground">
                   Available for new projects and collaborations
@@ -98,7 +104,7 @@ export default function ContactPage() {
               <h2 className="text-3xl md:text-5xl font-light tracking-widest">
                 LOCATION
               </h2>
-              <p className="text-muted-foreground">INDIA</p>
+              <p className="text-muted-foreground text-xl">INDIA</p>
             </div>
           </div>
         </section>
@@ -106,7 +112,7 @@ export default function ContactPage() {
         <section className="relative min-h-[80vh] flex flex-col items-center justify-center bg-background">
           <div className="container mx-auto px-4 py-24 text-center space-y-3 sm:space-y-6">
             <a
-              href="mailto:hello@example.com"
+              href="mailto:faizanvit8@gmail.com"
               className="relative text-3xl md:text-5xl font-light group inline-block"
             >
               Let&apos;s Connect
