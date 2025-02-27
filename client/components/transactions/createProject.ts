@@ -1,8 +1,5 @@
 import { STAKEPRIVATEKEY } from "@/config";
-import {
-  ProjectInitiateValidator,
-  TalendroTokenValidator,
-} from "@/config/scripts/scripts";
+import { ProjectInitiateValidator } from "@/config/scripts/scripts";
 import { WalletConnection } from "@/context/walletContext";
 import {
   getPolicyId,
@@ -39,8 +36,6 @@ export async function createProject(
     // const STAKEADDRESS = await seedtoAddress(STAKESEED);
     const STAKEADDRESS = await privateKeytoAddress(STAKEPRIVATEKEY);
 
-    const TALENDROPID = getPolicyId(TalendroTokenValidator);
-
     const datum: ProjectDatum = {
       title: fromText(title),
       pay: pay ? toLovelace(pay) : null,
@@ -59,14 +54,11 @@ export async function createProject(
     const dev_token = { [PROJECTINITPID + dev_assetname]: 1n };
     const ref_utxo = await refUtxo(lucid);
     const ref_stake = await refStakeUtxo(lucid, address, STAKEADDRESS);
-    const UTxO_Talendro = await lucid.utxoByUnit(
-      TALENDROPID + paymentCredentialOf(address).hash.slice(-20)
-    );
     const redeemer = Data.to(0n);
     const tx = await lucid
       .newTx()
       .readFrom([...ref_utxo, ...ref_stake])
-      .readFrom([UTxO_Talendro])
+      // .readFrom([UTxO_Talendro])
       .pay.ToAddressWithData(
         PROJECTINITADDR,
         { kind: "inline", value: Data.to(datum, ProjectDatum) },

@@ -73,7 +73,7 @@ validator project_initiator(config_nft: PolicyId) {
 
   /// mint 2 project token with names as clt_projectName dev_projectName and confirms for the correct datum
   mint(redeemer: Int, policy_id: PolicyId, tx: Transaction) {
-    let Transaction { inputs, outputs, reference_inputs, mint, .. } = tx
+    let Transaction { outputs, reference_inputs, mint, .. } = tx
     // find ref_input and Datum type
     when redeemer is {
       // 0 = MINT

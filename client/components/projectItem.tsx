@@ -28,11 +28,6 @@ import {
   type UTxO,
 } from "@lucid-evolution/lucid";
 import { useEffect, useState } from "react";
-import {
-  CancelNotAccepted,
-  CancelProject,
-  ProjectComplete,
-} from "./transactions/ProjectComplete";
 import { arbitration } from "./transactions/arbitration";
 import Image from "next/image";
 import { toast } from "sonner";
@@ -46,6 +41,9 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { withErrorHandling } from "./errorHandling";
+import { acceptProject } from "./transactions/acceptProject";
+import { CancelNotAccepted, CancelProject } from "./transactions/cancelProject";
+import { ProjectComplete } from "./transactions/projectComplete";
 
 interface Props {
   project: UTxO;
@@ -55,8 +53,6 @@ interface Props {
 export default function ProjectItem({ project, from }: Props) {
   const [walletConnection] = useWallet();
   const { lucid, address } = walletConnection;
-  // const { toast } = useToast()
-
   const [submitting, setSubmitting] = useState(false);
   const [datum, setDatum] = useState<ProjectDatum>();
   const [isCompleteByDev, setIsCompleteByDev] = useState(false);
@@ -100,77 +96,23 @@ export default function ProjectItem({ project, from }: Props) {
     newlisted();
   }, [lucid, project]);
 
-  async function acceptProject() {
-    if (!lucid || !address) {
-      toast.error("Error", { description: "Wallet not connected" });
-      return;
+  if (!datum) return null;
+
+  function newlisted() {
+    if (!lucid) return;
+    if (project.address == getAddress(ProjectInitiateValidator)) {
+      setIsNewListed(true);
     }
+  }
+
+  async function handleAcceptClick() {
     if (!datum) {
       toast.error("Error", { description: "Project data not found" });
       return;
     }
-
-    // setSubmitting(true);
-    try {
-      const MILESTONEADDR = getAddress(MilestoneSpendValidator);
-      const HOLDINGADDR = getAddress(HoldingContractValidator);
-      const PROJECTINITPID = getPolicyId(ProjectInitiateValidator);
-      const TALENDROPID = getPolicyId(TalendroTokenValidator);
-      const updatedDatum: ProjectDatum = {
-        ...datum,
-        developer: paymentCredentialOf(address).hash,
-      };
-
-      const dev_assetname = fromText("dev_") + datum.title;
-      const dev_token = { [PROJECTINITPID + dev_assetname]: 1n };
-
-      const ref_utxo = await refUtxo(lucid);
-      const UTxO_Talendro = await lucid.utxoByUnit(
-        TALENDROPID + paymentCredentialOf(address).hash.slice(-20)
-      );
-      const redeemer = Data.to(1n);
-
-      const contractAddress = datum.pay ? HOLDINGADDR : MILESTONEADDR;
-      const tx = await lucid
-        .newTx()
-        .readFrom(ref_utxo)
-        .readFrom([UTxO_Talendro])
-        .collectFrom([project], redeemer)
-        .pay.ToAddress(address, dev_token)
-        .pay.ToAddressWithData(
-          contractAddress,
-          { kind: "inline", value: Data.to(updatedDatum, ProjectDatum) },
-          { lovelace: datum.pay ? BigInt(datum.pay) : 3_000_000n }
-        )
-        .attach.SpendingValidator(ProjectInitiateValidator())
-        .addSigner(address)
-        .complete();
-
-      const signed = await tx.sign.withWallet().complete();
-      const txHash = await signed.submit();
-      console.log("txHash: ", txHash);
-    } catch (error: any) {
-      console.error(error);
-    }
-    // finally {
-    // setSubmitting(false);
-    // }
-  }
-
-  async function projectCompleteClick() {
-    if (!lucid || !address || !datum) {
-      toast.error("Error", { description: "Missing required data" });
-
-      return;
-    }
     setSubmitting(true);
-    try {
-      const calledByDev = from.includes("dev");
-      const safePrjComplete = withErrorHandling(ProjectComplete);
-      await safePrjComplete(lucid, project, datum, calledByDev, address);
-    } catch (error) {
-      console.error(error);
-    }
+    const saferMint = withErrorHandling(acceptProject);
+    await saferMint(walletConnection, project, datum);
     setSubmitting(false);
   }
 
@@ -194,6 +136,23 @@ export default function ProjectItem({ project, from }: Props) {
     setSubmitting(false);
   }
 
+  async function projectCompleteClick() {
+    if (!lucid || !address || !datum) {
+      toast.error("Error", { description: "Missing required data" });
+
+      return;
+    }
+    setSubmitting(true);
+    try {
+      const calledByDev = from.includes("dev");
+      const safePrjComplete = withErrorHandling(ProjectComplete);
+      await safePrjComplete(lucid, project, datum, calledByDev, address);
+    } catch (error) {
+      console.error(error);
+    }
+    setSubmitting(false);
+  }
+
   async function handleArbitrationClick() {
     setIsArbitrationDialogOpen(true);
   }
@@ -203,12 +162,7 @@ export default function ProjectItem({ project, from }: Props) {
       setSubmitting(true);
       const calledByDev = from.includes("dev");
       const safeArbitration = withErrorHandling(arbitration);
-      const result = await safeArbitration(
-        walletConnection,
-        project,
-        calledByDev,
-        POWLink
-      );
+      await safeArbitration(walletConnection, project, calledByDev, POWLink);
       setIsArbitrationDialogOpen(false);
     } catch (error) {
       console.error(error);
@@ -217,24 +171,7 @@ export default function ProjectItem({ project, from }: Props) {
     setPOWLink("");
   }
 
-  if (!datum) return null;
-
   const imageUrl = metadata?.image?.replace("ipfs://", "https://ipfs.io/ipfs/");
-
-  function newlisted() {
-    if (!lucid) return;
-    if (project.address == getAddress(ProjectInitiateValidator)) {
-      setIsNewListed(true);
-    }
-  }
-
-  async function handleAcceptClick() {
-    setSubmitting(true);
-    const saferMint = withErrorHandling(acceptProject);
-    const result = await saferMint();
-
-    setSubmitting(false);
-  }
 
   return (
     <Card className="w-full max-w-md mx-auto">

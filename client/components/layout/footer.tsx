@@ -1,8 +1,8 @@
 "use client";
 import React from "react";
 
-import { TalendroLogo } from "./icons";
-import { Marquee } from "./magicui/marquee";
+import { TalendroLogo } from "../icons";
+import { Marquee } from "../magicui/marquee";
 import Link from "next/link";
 export default function Footer() {
   return (

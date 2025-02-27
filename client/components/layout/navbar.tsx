@@ -16,7 +16,7 @@ import clsx from "clsx";
 import { siteConfig } from "@/config/site";
 import { Logo, TalendroLogo } from "@/components/icons";
 import { useEffect, useState } from "react";
-import WalletConnector from "./walletConnector/client";
+import WalletConnector from "../walletConnector/client";
 import { usePathname } from "next/navigation";
 import { useWallet } from "@/context/walletContext";
 

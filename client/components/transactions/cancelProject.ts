@@ -3,7 +3,6 @@ import {
   ProjectInitiateValidator,
   TalendroTokenValidator,
 } from "@/config/scripts/scripts";
-import { useWallet } from "@/context/walletContext";
 import {
   getAddress,
   getPolicyId,
@@ -19,7 +18,7 @@ import {
   UTxO,
 } from "@lucid-evolution/lucid";
 
-export async function ProjectComplete(
+export async function CancelProject(
   lucid: LucidEvolution,
   utxo: UTxO,
   datum: ProjectDatum,
@@ -43,9 +42,11 @@ export async function ProjectComplete(
     const UTxO_Talendro = await lucid.utxoByUnit(
       TALENDROPID + paymentCredentialOf(address).hash.slice(-20)
     ); //talendroPolicyID+assetName assetname is user address
+    const toPay = datum.pay;
+    datum.pay = null;
+    datum.developer = null;
 
-    const redeemer = Data.to("Complete", ProjectRedeemer);
-    console.log(calledByDev, utxo, HOLDINGADDR);
+    const redeemer = Data.to("Cancel", ProjectRedeemer);
 
     let dev, clt, signed;
     const tx = lucid
@@ -60,23 +61,20 @@ export async function ProjectComplete(
         .ToAddressWithData(
           HOLDINGADDR,
           { kind: "inline", value: Data.to(datum, ProjectDatum) },
-          { lovelace: datum.pay as bigint, ...dev_token }
+          { lovelace: toPay as bigint, ...dev_token }
         )
         .complete();
       signed = await dev.sign.withWallet().complete();
     } else {
       clt = await tx.pay
-        .ToAddress(keyHashtoAddress(datum.developer as string), {
-          lovelace: datum.pay as bigint,
+        .ToAddress(address, {
+          lovelace: toPay as bigint,
         })
         .mintAssets({ ...clt_token, ...dev_token }, Data.to(1n))
         .attach.MintingPolicy(mintingValidator)
         .complete();
       signed = await clt.sign.withWallet().complete();
     }
-
-    // const finalTx = calledByDev ? dev : clt
-    // const txSystemSigned = await SystemWallet(tx)
     const txHash = await signed.submit();
     return txHash;
   } catch (error) {
@@ -84,26 +82,40 @@ export async function ProjectComplete(
   }
 }
 
-export async function AlreadyComplete(
+export async function CancelNotAccepted(
   lucid: LucidEvolution,
+  utxo: UTxO,
   datum: ProjectDatum
 ) {
-  const PROJECTINITPID = getPolicyId(ProjectInitiateValidator);
-  const [walletConnection] = useWallet();
-  const { address } = walletConnection;
+  try {
+    const PROJECTINITPID = getPolicyId(ProjectInitiateValidator);
 
-  const mintingValidator = ProjectInitiateValidator();
+    const dev_assetname = fromText("dev_") + datum.title;
+    const dev_token = { [PROJECTINITPID + dev_assetname]: -1n };
 
-  const dev_assetname = fromText("dev_") + datum.title;
-  const dev_token = { [PROJECTINITPID + dev_assetname]: 1 };
+    const clt_assetname = fromText("clt_") + datum.title;
+    const clt_token = { [PROJECTINITPID + clt_assetname]: -1n };
 
-  const have_dev_token = await lucid.utxosAtWithUnit(
-    address as string,
-    dev_assetname
-  );
-  if (have_dev_token.length > 0) {
-    return true;
+    const clientaddr = keyHashtoAddress(datum.client);
+    const pay = datum.pay;
+
+    const redeemer = Data.to(1n);
+    const spend_redeemer = Data.to(2n);
+
+    const tx = await lucid
+      .newTx()
+      .collectFrom([utxo], spend_redeemer)
+      .pay.ToAddress(clientaddr, {
+        lovelace: pay as bigint,
+      })
+      .mintAssets({ ...clt_token, ...dev_token }, redeemer)
+      .attach.Script(ProjectInitiateValidator())
+      .complete();
+
+    const sign = await tx.sign.withWallet().complete();
+    const submit = await sign.submit();
+    return submit;
+  } catch (error) {
+    return error;
   }
-  console.log(have_dev_token);
-  return false;
 }
