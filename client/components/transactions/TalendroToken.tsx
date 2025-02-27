@@ -57,8 +57,8 @@ export default function TalendroTokenMinter() {
     const tx = await lucid
       .newTx()
       .readFrom(ref_utxo)
-      .collectFrom(utxoWithIdentificationToken)
-      .pay.ToAddress(SYSTEMADDRESS, { ...usr_configNFT, lovelace: 2_000_000n })
+      // .collectFrom(utxoWithIdentificationToken)
+      // .pay.ToAddress(SYSTEMADDRESS, { ...usr_configNFT, lovelace: 2_000_000n })
       .pay.ToAddressWithData(
         STAKEADDRESS,
         {
