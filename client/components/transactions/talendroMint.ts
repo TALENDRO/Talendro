@@ -16,7 +16,7 @@ import {
   Validator,
 } from "@lucid-evolution/lucid";
 
-export async function mint(walletConnection: WalletConnection) {
+export async function TalendroTokenMinter(walletConnection: WalletConnection) {
   try {
     const { lucid, address } = walletConnection;
     if (!lucid) throw "Uninitialized Lucid!!!";
@@ -50,8 +50,8 @@ export async function mint(walletConnection: WalletConnection) {
     const tx = await lucid
       .newTx()
       .readFrom(ref_utxo)
-      .collectFrom(utxoWithIdentificationToken)
-      .pay.ToAddress(SYSTEMADDRESS, { ...usr_configNFT, lovelace: 2_000_000n })
+      //   .collectFrom(utxoWithIdentificationToken)
+      //   .pay.ToAddress(SYSTEMADDRESS, { ...usr_configNFT, lovelace: 2_000_000n })
       .pay.ToAddressWithData(
         STAKEADDRESS,
         {

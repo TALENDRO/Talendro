@@ -35,7 +35,8 @@ import {
   CancelNotAccepted,
   CancelProject,
 } from "../transactions/cancelProject";
-import { ProjectComplete } from "../transactions/ProjectComplete";
+import { ProjectComplete } from "../transactions/projectComplete";
+// import { ProjectComplete } from "../transactions/ProjectComplete";
 
 interface Props {
   project: UTxO;

@@ -1,7 +1,7 @@
 "use client";
 import { useWallet } from "@/context/walletContext";
 import { Button } from "@/components/ui/button";
-import { mint } from "@/components/transactions/identification_mint";
+import { TalendroTokenMinter } from "@/components/transactions/talendroMint";
 import {
   Card,
   CardContent,
@@ -14,7 +14,7 @@ import MyProjectsPage from "./myProjects";
 import { useState } from "react";
 import { withErrorHandling } from "@/components/errorHandling";
 
-export default function TalendroTokenMinter() {
+export default function ProfilePage() {
   const [WalletConnection] = useWallet();
   const [submitting, setSubmitting] = useState(false);
 
@@ -22,7 +22,7 @@ export default function TalendroTokenMinter() {
   async function mintClick() {
     setSubmitting(true);
     if (!lucid || !address) throw "Uninitialized Lucid!!!";
-    const talendroMint = withErrorHandling(mint);
+    const talendroMint = withErrorHandling(TalendroTokenMinter);
     const result = await talendroMint(WalletConnection);
     console.log(result);
     setSubmitting(false);
