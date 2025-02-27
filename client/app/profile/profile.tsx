@@ -9,7 +9,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { CreateProject } from "@/components/createProjectModal";
+import { CreateProject } from "@/components/projectCards/createProjectModal";
 import MyProjectsPage from "./myProjects";
 import { useState } from "react";
 import { withErrorHandling } from "@/components/errorHandling";

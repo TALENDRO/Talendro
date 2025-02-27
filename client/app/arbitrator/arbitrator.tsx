@@ -26,7 +26,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Loader2, RefreshCw } from "lucide-react";
-import ArbitratorProjectItem from "@/components/arbitratorProjectItem";
+import ArbitratorProjectItem from "@/components/projectCards/arbitratorProjectItem";
 import { toast } from "sonner";
 import { getAddress, getPolicyId, privateKeytoAddress } from "@/lib/utils";
 
