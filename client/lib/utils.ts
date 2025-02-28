@@ -74,7 +74,7 @@ export function handleError(error: any) {
 
   const failureCause = failure?.cause;
 
-  console.error(failureCause ?? { error });
+  return failureCause ?? { error };
 }
 
 export function adaToLovelace(float: string) {
