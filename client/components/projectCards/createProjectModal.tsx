@@ -66,17 +66,16 @@ export function CreateProject() {
   const handleSubmit = async () => {
     setSubmitting(true);
 
-    // Console log the new fields
-    console.log("Project Description:", projectDescription);
-    console.log("Project Image:", projectImage);
-
     // Here you would handle the image upload to a storage service
     // and get back a URL to store in your project data
     let projectImageUrl = "";
     if (projectImage) {
       // This is where you would upload the image and get a URL
       // For now, we'll just use the file name as a placeholder
-      projectImageUrl = projectImage.name;
+
+      // temprorayly using this link
+      projectImageUrl = "https://avatars.githubusercontent.com/u/68136265";
+      // projectImageUrl = projectImage.name;
     }
 
     const saferCreateProject = withErrorHandling(createProject);
