@@ -165,10 +165,10 @@ export default function ProjectItem({ project, from }: Props) {
 
   return (
     <Card className="w-full max-w-md mx-auto">
-      <CardHeader>
+      <CardHeader className="flex !flex-row items-center justify-between">
         <CardTitle>{toText(datum.title)}</CardTitle>
-        <Badge variant={datum.pay ? "default" : "secondary"}>
-          {datum.pay ? "Regular" : "Milestone Based"}
+        <Badge variant={"secondary"}>
+          {!datum.milestones.length ? "Single Milestone" : "Multi Milestone"}
         </Badge>
       </CardHeader>
       <CardContent>
