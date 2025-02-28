@@ -33,7 +33,7 @@ import { ShineBorder } from "@/components/magicui/shine-border";
 export default function Page() {
   const [stakeAddress, setstakeAddress] = useState("");
   const [WalletConnection, setWalletConnection] = useWallet();
-  const { isEmulator } = WalletConnection;
+  const { isEmulator, address } = WalletConnection;
   const [submitting, setSubmitting] = useState(false);
   const [policyID, setPolicy] = useState("");
   const STAKESEED = process.env.NEXT_PUBLIC_STAKE_WALLET as string;
@@ -101,7 +101,12 @@ export default function Page() {
     setSubmitting(false);
   }
 
-  if (!isEmulator) {
+  // lace #account 1
+  if (
+    !isEmulator &&
+    address !==
+      "addr_test1qrlq53qjd2yxx4lqj29526fn2uyl9fe7julp4shkgqm3m4dpvpz9h24n9ttq5f4d2xunltqy3yfphmr29uw4kwxt0h9qadh7tj"
+  ) {
     return (
       <div className="w-full h-full flex items-center justify-center font-semibold text-2xl flex-col">
         YOU MUST BE IN EMULATOR MODE
