@@ -1,5 +1,4 @@
 "use client";
-import { CreateProject } from "@/components/projectCards/createProjectModal";
 import { useWallet } from "@/context/walletContext";
 import {
   type Address,
@@ -48,9 +47,9 @@ export default function MyProjectsPage() {
         try {
           const datum = Data.castFrom(data as Data, ProjectDatum);
           const hash = paymentCredentialOf(address).hash;
-          if (datum.developer === hash) {
+          if (datum.developer?.[0] === hash) {
             newDevProjects.add(utxo);
-          } else if (datum.client === hash) {
+          } else if (datum.client[0] === hash) {
             newClientProjects.add(utxo);
           }
         } catch (error) {

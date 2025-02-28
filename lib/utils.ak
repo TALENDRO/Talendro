@@ -14,6 +14,34 @@ pub fn must_consume_oref(inputs: List<Input>, oref: OutputReference) -> Bool {
   True
 }
 
+pub fn address_from_tuple(
+  key_hash_tuple: (VerificationKeyHash, VerificationKeyHash),
+) {
+  let (pkh, skh) = key_hash_tuple
+  Address {
+    payment_credential: pkh |> VerificationKey,
+    stake_credential: if skh == "" {
+      None
+    } else {
+      skh |> VerificationKey |> Inline |> Some
+    },
+  }
+}
+
+pub fn script_address_from_tuple(
+  key_hash_tuple: (VerificationKeyHash, VerificationKeyHash),
+) {
+  let (pkh, skh) = key_hash_tuple
+  Address {
+    payment_credential: pkh |> Script,
+    stake_credential: if skh == "" {
+      None
+    } else {
+      skh |> VerificationKey |> Inline |> Some
+    },
+  }
+}
+
 pub fn find_output_with_policy(outputs: List<Output>, nft: PolicyId) -> Output {
   expect Some(output_utxo) =
     list.find(
@@ -81,18 +109,10 @@ pub fn find_stake_input_by_address(
 
 pub fn find_output_with_address(
   outputs: List<Output>,
-  address: VerificationKeyHash,
+  address: Address,
 ) -> Output {
   expect Some(some_utxo) =
-    list.find(
-      outputs,
-      fn(output) {
-        when output.address.payment_credential is {
-          VerificationKey(vkh) -> vkh == address
-          Script(vkh) -> vkh == address
-        }
-      },
-    )
+    list.find(outputs, fn(output) { output.address == address })
   some_utxo
 }
 
@@ -103,12 +123,12 @@ pub fn datum_address_update(
 ) -> Bool {
   expect InlineDatum(projectdatum) = holding_output.datum
   expect project_datum: ProjectDatum = projectdatum
-  expect VerificationKey(vkh) = address.payment_credential
+  expect Some(project_datum_address) = project_datum.developer
   and {
     project_datum.title == input_datum.title,
     project_datum.client == input_datum.client,
     project_datum.pay == input_datum.pay,
-    project_datum.developer == Some(vkh),
+    address_from_tuple(project_datum_address) == address,
   }
 }
 
@@ -208,20 +228,9 @@ pub fn must_send_to_correct_script(
   }
 }
 
-pub fn find_input_with_address(
-  inputs: List<Input>,
-  address: VerificationKeyHash,
-) -> Input {
+pub fn find_input_with_address(inputs: List<Input>, address: Address) -> Input {
   expect Some(some_utxo) =
-    list.find(
-      inputs,
-      fn(input) {
-        when input.output.address.payment_credential is {
-          VerificationKey(vkh) -> vkh == address
-          _ -> False
-        }
-      },
-    )
+    list.find(inputs, fn(input) { input.output.address == address })
   some_utxo
 }
 
@@ -417,12 +426,14 @@ pub fn output_must_have_dev_token(
 
 pub fn must_pay_to_developer(output: List<Output>, datum: ProjectDatum) -> Bool {
   expect Some(dev_address) = datum.developer
-  let developer_output = find_output_with_address(output, dev_address)
+  let developer_output =
+    find_output_with_address(output, address_from_tuple(dev_address))
   must_pay_to_x(developer_output, datum.pay)
 }
 
 pub fn must_pay_to_client(output: List<Output>, datum: ProjectDatum) -> Bool {
-  let client_output = find_output_with_address(output, datum.client)
+  let client_output =
+    find_output_with_address(output, address_from_tuple(datum.client))
   must_pay_to_x(client_output, datum.pay)?
 }
 
@@ -465,7 +476,7 @@ pub fn must_send_stake_ada_and_talendro_nft(
             (assets.lovelace_of(output.value) == amount)?,
             must_have_token_in_output(
               output,
-              bytearray.slice(staked_datum.staked_by, 18, 27),
+              bytearray.slice(staked_datum.staked_by.1st, 18, 27),
               policy_id,
             )?,
           }
@@ -493,19 +504,5 @@ pub fn is_consuming_staked_ada(
     staked_by == dev
   } else {
     staked_by == clt
-  }
-}
-
-pub fn address_from_tuple(
-  key_hash_tuple: (VerificationKeyHash, VerificationKeyHash),
-) {
-  let (pkh, skh) = key_hash_tuple
-  Address {
-    payment_credential: pkh |> VerificationKey,
-    stake_credential: if skh == "" {
-      None
-    } else {
-      skh |> VerificationKey |> Inline |> Some
-    },
   }
 }

@@ -17,14 +17,14 @@ import {
 import { Switch } from "../ui/switch";
 import { Label } from "@radix-ui/react-label";
 import Image from "next/image";
-
+import { usePathname } from "next/navigation";
 export default function WalletComponent() {
   const [walletConnection, setWalletConnection] = useWallet();
   const { lucid, wallet, address, balance, isEmulator } = walletConnection;
   const [wallets, setWallets] = useState<Wallet[]>();
   const [isOpen, setIsOpen] = useState(false);
   const [connecting, setConnecting] = useState(false);
-
+  const pathname = usePathname();
   useEffect(() => {
     const wallets: Wallet[] = [];
     const { cardano } = window;
@@ -39,6 +39,13 @@ export default function WalletComponent() {
     setWallets(wallets);
     mkLucid(setWalletConnection, isEmulator);
   }, []);
+  useEffect(() => {
+    async function reconnect() {
+      if (!wallet || !lucid) return;
+      await walletConnect(setWalletConnection, wallet, lucid);
+    }
+    reconnect();
+  }, [pathname]);
 
   async function onConnectWallet(wallet: Wallet) {
     setIsOpen(false);

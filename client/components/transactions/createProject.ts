@@ -15,6 +15,7 @@ import {
   fromText,
   paymentCredentialOf,
   Data,
+  stakeCredentialOf,
 } from "@lucid-evolution/lucid";
 type ProjectType = "Milestone" | "Regular";
 
@@ -40,7 +41,10 @@ export async function createProject(
       title: fromText(title),
       pay: pay ? toLovelace(pay) : null,
       developer: null,
-      client: paymentCredentialOf(address).hash,
+      client: [
+        paymentCredentialOf(address).hash,
+        stakeCredentialOf(address).hash,
+      ],
       milestones: [],
       current_milestone: null,
       next_milestone: null,
@@ -54,6 +58,7 @@ export async function createProject(
     const dev_token = { [PROJECTINITPID + dev_assetname]: 1n };
     const ref_utxo = await refUtxo(lucid);
     const ref_stake = await refStakeUtxo(lucid, address, STAKEADDRESS);
+
     const redeemer = Data.to(0n);
     const tx = await lucid
       .newTx()

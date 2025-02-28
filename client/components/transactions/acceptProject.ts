@@ -19,6 +19,7 @@ import {
   fromText,
   Data,
   UTxO,
+  stakeCredentialOf,
 } from "@lucid-evolution/lucid";
 
 export async function acceptProject(
@@ -38,7 +39,10 @@ export async function acceptProject(
     const TALENDROPID = getPolicyId(TalendroTokenValidator);
     const updatedDatum: ProjectDatum = {
       ...datum,
-      developer: paymentCredentialOf(address).hash,
+      developer: [
+        paymentCredentialOf(address).hash,
+        stakeCredentialOf(address).hash,
+      ],
     };
 
     const dev_assetname = fromText("dev_") + datum.title;

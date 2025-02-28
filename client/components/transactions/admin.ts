@@ -3,6 +3,7 @@ import {
   ConfigDatumHolderValidator,
   IdentificationNFT_MintValidator,
 } from "@/config/scripts/scripts";
+import { SystemWallet } from "@/config/systemWallet";
 import { WalletConnection } from "@/context/walletContext";
 import { getAddress, privateKeytoAddress } from "@/lib/utils";
 import { ConfigDatum } from "@/types/cardano";
@@ -81,6 +82,55 @@ export async function sendConfigDatum(
       .complete();
 
     const signed = await tx.sign.withWallet().complete();
+    const txHash = await signed.submit();
+    console.log("txHash: ", txHash);
+    return txHash;
+  } catch (error: any) {
+    throw error;
+  }
+}
+
+export async function updateConfigDatum(
+  WalletConnection: WalletConnection,
+  CONFIGDATUM: ConfigDatum
+) {
+  try {
+    const { lucid, address } = WalletConnection;
+    const CONFIGADDR = getAddress(ConfigDatumHolderValidator);
+    const SYSTEMADDRESS = await privateKeytoAddress(PRIVATEKEY);
+
+    const IDENTIFICATIONPID = process.env
+      .NEXT_PUBLIC_IDENTIFICATION_POLICY_ID as string;
+    if (!lucid) throw new Error("Uninitalized Lucid");
+    if (!address) throw new Error("Wallet not connected");
+
+    const ref_configNFT: string = IDENTIFICATIONPID + fromText("ref_configNFT");
+    const usr_configNFT = IDENTIFICATIONPID + fromText("usr_configNFT");
+    const refTokenUTXO = await lucid.utxosAtWithUnit(CONFIGADDR, ref_configNFT);
+    const usrTokenUTXO = await lucid.utxosAtWithUnit(
+      SYSTEMADDRESS,
+      usr_configNFT
+    );
+
+    const tx = await lucid
+      .newTx()
+      .collectFrom(refTokenUTXO, Data.void())
+      .collectFrom(usrTokenUTXO)
+      .pay.ToAddressWithData(
+        CONFIGADDR,
+        { kind: "inline", value: Data.to(CONFIGDATUM, ConfigDatum) },
+        { lovelace: 5_000_000n, [ref_configNFT]: 1n }
+      )
+      .pay.ToAddress(SYSTEMADDRESS, {
+        lovelace: 2_000_000n,
+        [usr_configNFT]: 1n,
+      })
+      .addSigner(SYSTEMADDRESS)
+      .attach.Script(ConfigDatumHolderValidator())
+      .complete();
+
+    const systemSigned = await SystemWallet(tx);
+    const signed = await systemSigned.sign.withWallet().complete();
     const txHash = await signed.submit();
     console.log("txHash: ", txHash);
     return txHash;

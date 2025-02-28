@@ -115,7 +115,7 @@ export async function refStakeUtxo(
     STAKEADDRESS,
     TALENDROPID + paymentCredentialOf(address).hash.slice(-20)
   );
-
+  if (!utxos.length) throw new Error("Stake not found, Please Stake 100 ADA");
   return utxos;
 }
 export function signWithPrivateKey(tx: TxSignBuilder, privateKey: string) {
@@ -143,8 +143,9 @@ export async function seedtoAddress(seed: string) {
   return privatekeyAddress;
 }
 
-export function keyHashtoAddress(keyHash: string) {
-  const credentials = keyHashToCredential(keyHash);
-  const address = credentialToAddress(NETWORK, credentials);
+export function keyHashtoAddress(keyHash: string[]) {
+  const payment = keyHashToCredential(keyHash[0]);
+  const stake = keyHashToCredential(keyHash[1]);
+  const address = credentialToAddress(NETWORK, payment, stake);
   return address;
 }

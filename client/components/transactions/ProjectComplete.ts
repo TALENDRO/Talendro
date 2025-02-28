@@ -3,7 +3,6 @@ import {
   ProjectInitiateValidator,
   TalendroTokenValidator,
 } from "@/config/scripts/scripts";
-import { useWallet } from "@/context/walletContext";
 import {
   getAddress,
   getPolicyId,
@@ -45,7 +44,6 @@ export async function ProjectComplete(
     ); //talendroPolicyID+assetName assetname is user address
 
     const redeemer = Data.to("Complete", ProjectRedeemer);
-    console.log(calledByDev, utxo, HOLDINGADDR);
 
     let dev, clt, signed;
     const tx = lucid
@@ -66,7 +64,7 @@ export async function ProjectComplete(
       signed = await dev.sign.withWallet().complete();
     } else {
       clt = await tx.pay
-        .ToAddress(keyHashtoAddress(datum.developer as string), {
+        .ToAddress(keyHashtoAddress(datum.developer as string[]), {
           lovelace: datum.pay as bigint,
         })
         .mintAssets({ ...clt_token, ...dev_token }, Data.to(1n))

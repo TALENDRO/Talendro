@@ -1,20 +1,19 @@
 "use client";
 
-import { mint, sendConfigDatum } from "@/components/transactions/admin";
+import {
+  mint,
+  sendConfigDatum,
+  updateConfigDatum,
+} from "@/components/transactions/admin";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { useWallet } from "@/context/walletContext";
-import { toast } from "sonner";
 
 import { ConfigDatum } from "@/types/cardano";
-import {
-  generatePrivateKey,
-  paymentCredentialOf,
-  stakeCredentialOf,
-} from "@lucid-evolution/lucid";
+import { paymentCredentialOf } from "@lucid-evolution/lucid";
 import React, { useEffect, useState } from "react";
 import {
   ArbitrationContractValidator,
@@ -26,21 +25,15 @@ import {
   ProjectInitiateValidator,
   TalendroTokenValidator,
 } from "@/config/scripts/scripts";
-import {
-  getAddress,
-  getPolicyId,
-  privateKeytoAddress,
-  seedtoAddress,
-} from "@/lib/utils";
+import { getAddress, getPolicyId, privateKeytoAddress } from "@/lib/utils";
 import { STAKEPRIVATEKEY } from "@/config";
 import { withErrorHandling } from "@/components/errorHandling";
-import { fail } from "assert";
 import { ShineBorder } from "@/components/magicui/shine-border";
 
 export default function Page() {
   const [stakeAddress, setstakeAddress] = useState("");
   const [WalletConnection, setWalletConnection] = useWallet();
-  const { isEmulator } = WalletConnection;
+  const { isEmulator, address } = WalletConnection;
   const [submitting, setSubmitting] = useState(false);
   const [policyID, setPolicy] = useState("");
   const STAKESEED = process.env.NEXT_PUBLIC_STAKE_WALLET as string;
@@ -98,7 +91,22 @@ export default function Page() {
     setSubmitting(false);
   }
 
-  if (!isEmulator) {
+  async function uppdateConfigDatumClick() {
+    setSubmitting(true);
+
+    // if (isEmulator && !policyID) return;
+    const safe_configDatum = withErrorHandling(updateConfigDatum);
+    const result = await safe_configDatum(WalletConnection, CONFIGDATUM);
+    console.log(result);
+    setSubmitting(false);
+  }
+
+  // lace #account 1
+  if (
+    !isEmulator &&
+    address !==
+      "addr_test1qrlq53qjd2yxx4lqj29526fn2uyl9fe7julp4shkgqm3m4dpvpz9h24n9ttq5f4d2xunltqy3yfphmr29uw4kwxt0h9qadh7tj"
+  ) {
     return (
       <div className="w-full h-full flex items-center justify-center font-semibold text-2xl flex-col">
         YOU MUST BE IN EMULATOR MODE
@@ -192,6 +200,13 @@ export default function Page() {
                 className="w-full"
               >
                 {submitting ? "Processing..." : "Attach Config Datum"}
+              </Button>
+              <Button
+                onClick={uppdateConfigDatumClick}
+                disabled={submitting}
+                className="w-full"
+              >
+                {submitting ? "Processing..." : "Update Config Datum"}
               </Button>
               <div className="">
                 <Label>Do you Have a Policy ID already?</Label>

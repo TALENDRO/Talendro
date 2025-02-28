@@ -24,7 +24,10 @@ validator talendro_nft(identification_nft: PolicyId) {
             policy_id,
             staked_datum,
           ),
-          utils.must_be_signed_by(tx.extra_signatories, staked_datum.staked_by),
+          utils.must_be_signed_by(
+            tx.extra_signatories,
+            staked_datum.staked_by.1st,
+          ),
         }
       }
       // mint_utils.must_have_identification_nft(inputs, identification_nft),
