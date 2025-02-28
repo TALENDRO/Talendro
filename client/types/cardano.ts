@@ -61,7 +61,7 @@ export const ArbitratorDatum =
   ArbitratorDatumSchema as unknown as ArbitratorDatum;
 
 export const StakeDatumSchema = Data.Object({
-  staked_by: Data.Bytes(),
+  staked_by: AddressSchema,
   staked_amount: Data.Integer(),
 });
 export type StakeDatum = Data.Static<typeof StakeDatumSchema>;

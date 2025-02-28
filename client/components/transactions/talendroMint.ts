@@ -13,6 +13,7 @@ import {
   Data,
   fromText,
   paymentCredentialOf,
+  stakeCredentialOf,
   Validator,
 } from "@lucid-evolution/lucid";
 
@@ -37,7 +38,10 @@ export async function TalendroTokenMinter(walletConnection: WalletConnection) {
       IDENTIFICATIONPID + fromText("usr_configNFT")
     );
     const datum: StakeDatum = {
-      staked_by: paymentCredentialOf(address).hash,
+      staked_by: [
+        paymentCredentialOf(address).hash,
+        stakeCredentialOf(address).hash,
+      ],
       staked_amount: 100_000_000n,
     };
     const mintingValidator: Validator = TalendroTokenValidator();
