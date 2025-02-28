@@ -45,7 +45,6 @@ export async function ProjectComplete(
     ); //talendroPolicyID+assetName assetname is user address
 
     const redeemer = Data.to("Complete", ProjectRedeemer);
-    console.log(calledByDev, utxo, HOLDINGADDR);
 
     let dev, clt, signed;
     const tx = lucid
