@@ -4,8 +4,8 @@ use cardano/assets.{Lovelace, PolicyId}
 pub type ProjectDatum {
   title: ByteArray,
   pay: Option<Lovelace>,
-  developer: Option<VerificationKeyHash>,
-  client: VerificationKeyHash,
+  developer: Option<AddressSchema>,
+  client: AddressSchema,
   milestones: List<Milestone>,
   current_milestone: Option<Milestone>,
   next_milestone: Option<Milestone>,
@@ -17,6 +17,9 @@ pub type Milestone {
   pay: Lovelace,
 }
 
+pub type AddressSchema =
+  (VerificationKeyHash, VerificationKeyHash)
+
 pub type ConfigDatum {
   identification_nft: PolicyId,
   milestone_contract_policy: PolicyId,
@@ -26,7 +29,7 @@ pub type ConfigDatum {
   arbitrator_nft: PolicyId,
   arbitrator_contract: VerificationKeyHash,
   talendrouser_nft: PolicyId,
-  stake_vkh: (VerificationKeyHash, VerificationKeyHash),
+  stake_vkh: AddressSchema,
   stake_amount: Int,
 }
 
@@ -37,7 +40,7 @@ pub type ArbitrationDatum {
 }
 
 pub type StakeDatum {
-  staked_by: VerificationKeyHash,
+  staked_by: AddressSchema,
   staked_amount: Int,
 }
 

@@ -18,7 +18,7 @@ validator arbitration(config_nft: PolicyId) {
     let arb_policy_id = config_datum.arbitrator_nft
     let stake_vkh = config_datum.stake_vkh
     let staked_input: Input =
-      utils.find_input_with_address(inputs, stake_vkh.1st)
+      utils.find_input_with_address(inputs, utils.address_from_tuple(stake_vkh))
 
     and {
       utils.must_have_x_token(inputs, arb_policy_id),

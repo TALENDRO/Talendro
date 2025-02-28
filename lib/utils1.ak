@@ -36,7 +36,9 @@ pub fn milestone_mint_create(
   let milestone_input: Input =
     utils.find_input_with_address(
       tx.inputs,
-      config_datum.milestone_contract_address,
+      utils.script_address_from_tuple(
+        (config_datum.milestone_contract_address, ""),
+      ),
     )
 
   let milestone_datum: ProjectDatum = d.input_to_project_datum(milestone_input)
@@ -48,7 +50,10 @@ pub fn milestone_mint_create(
     d.output_to_project_datum(holding_contract_utxo)
   expect Some(dev_address) = milestone_datum.developer
   let dev_output: Output =
-    utils.find_output_with_address(tx.outputs, dev_address)
+    utils.find_output_with_address(
+      tx.outputs,
+      utils.address_from_tuple(dev_address),
+    )
   and {
     utils.output_must_have_dev_or_clt_tokens(
       dev_output,
@@ -78,11 +83,17 @@ pub fn milestone_mint_compelete(
   policy_id: PolicyId,
 ) {
   let input_project_datum: ProjectDatum =
-    utils.find_input_with_address(tx.inputs, config_datum.holding_contract)
+    utils.find_input_with_address(
+      tx.inputs,
+      utils.script_address_from_tuple((config_datum.holding_contract, "")),
+    )
       |> d.input_to_project_datum
 
   let holding_contract_output =
-    utils.find_output_with_address(tx.outputs, config_datum.holding_contract)
+    utils.find_output_with_address(
+      tx.outputs,
+      utils.script_address_from_tuple((config_datum.holding_contract, "")),
+    )
   let output_project_datum: ProjectDatum =
     d.output_to_project_datum(holding_contract_output)
   and {
@@ -105,7 +116,10 @@ pub fn milestone_mint_cancel(
   policy_id: PolicyId,
 ) {
   let holding_contract_input: Input =
-    utils.find_input_with_address(tx.inputs, config_datum.holding_contract)
+    utils.find_input_with_address(
+      tx.inputs,
+      utils.script_address_from_tuple((config_datum.holding_contract, "")),
+    )
   let holding_contract_datum: ProjectDatum =
     d.input_to_project_datum(holding_contract_input)
   and {

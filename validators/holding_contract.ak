@@ -96,7 +96,9 @@ validator holding_contract(config_nft: PolicyId) {
         let arbitrator_output: Output =
           utils.find_output_with_address(
             outputs,
-            config_datum.arbitrator_contract,
+            utils.script_address_from_tuple(
+              (config_datum.arbitrator_contract, ""),
+            ),
           )
         let arbitration_datum = d.output_to_arbitration_datum(arbitrator_output)
         and {

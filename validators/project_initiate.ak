@@ -53,7 +53,11 @@ validator project_initiator(config_nft: PolicyId) {
             reference_inputs,
             config_datum.talendrouser_nft,
           )?,
-          (output_datum.developer == Some(vk_hash))?,
+          when output_datum.developer is {
+            Some((vkh, skh)) ->
+              utils.address_from_tuple((vkh, skh)) == dev_output.address
+            None -> fail
+          }?,
           utils.must_send_to_correct_script(
             contract_output,
             datum.pay,
