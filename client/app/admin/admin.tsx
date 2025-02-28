@@ -1,20 +1,19 @@
 "use client";
 
-import { mint, sendConfigDatum } from "@/components/transactions/admin";
+import {
+  mint,
+  sendConfigDatum,
+  updateConfigDatum,
+} from "@/components/transactions/admin";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { useWallet } from "@/context/walletContext";
-import { toast } from "sonner";
 
 import { ConfigDatum } from "@/types/cardano";
-import {
-  generatePrivateKey,
-  paymentCredentialOf,
-  stakeCredentialOf,
-} from "@lucid-evolution/lucid";
+import { paymentCredentialOf } from "@lucid-evolution/lucid";
 import React, { useEffect, useState } from "react";
 import {
   ArbitrationContractValidator,
@@ -26,15 +25,9 @@ import {
   ProjectInitiateValidator,
   TalendroTokenValidator,
 } from "@/config/scripts/scripts";
-import {
-  getAddress,
-  getPolicyId,
-  privateKeytoAddress,
-  seedtoAddress,
-} from "@/lib/utils";
+import { getAddress, getPolicyId, privateKeytoAddress } from "@/lib/utils";
 import { STAKEPRIVATEKEY } from "@/config";
 import { withErrorHandling } from "@/components/errorHandling";
-import { fail } from "assert";
 import { ShineBorder } from "@/components/magicui/shine-border";
 
 export default function Page() {
@@ -93,6 +86,16 @@ export default function Page() {
 
     // if (isEmulator && !policyID) return;
     const safe_configDatum = withErrorHandling(sendConfigDatum);
+    const result = await safe_configDatum(WalletConnection, CONFIGDATUM);
+    console.log(result);
+    setSubmitting(false);
+  }
+
+  async function uppdateConfigDatumClick() {
+    setSubmitting(true);
+
+    // if (isEmulator && !policyID) return;
+    const safe_configDatum = withErrorHandling(updateConfigDatum);
     const result = await safe_configDatum(WalletConnection, CONFIGDATUM);
     console.log(result);
     setSubmitting(false);
@@ -192,6 +195,13 @@ export default function Page() {
                 className="w-full"
               >
                 {submitting ? "Processing..." : "Attach Config Datum"}
+              </Button>
+              <Button
+                onClick={uppdateConfigDatumClick}
+                disabled={submitting}
+                className="w-full"
+              >
+                {submitting ? "Processing..." : "Update Config Datum"}
               </Button>
               <div className="">
                 <Label>Do you Have a Policy ID already?</Label>

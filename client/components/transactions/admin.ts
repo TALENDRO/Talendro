@@ -88,3 +88,39 @@ export async function sendConfigDatum(
     throw error;
   }
 }
+
+export async function updateConfigDatum(
+  WalletConnection: WalletConnection,
+  CONFIGDATUM: ConfigDatum
+) {
+  try {
+    const { lucid, address } = WalletConnection;
+    const CONFIGADDR = getAddress(ConfigDatumHolderValidator);
+    const IDENTIFICATIONPID = process.env
+      .NEXT_PUBLIC_IDENTIFICATION_POLICY_ID as string;
+    if (!lucid) throw new Error("Uninitalized Lucid");
+    if (!address) throw new Error("Wallet not connected");
+
+    const ref_configNFT = IDENTIFICATIONPID + fromText("ref_configNFT");
+    const usr_configNFT = IDENTIFICATIONPID + fromText("usr_configNFT");
+    const refTokenUTXO = await lucid.utxosAtWithUnit(CONFIGADDR, ref_configNFT);
+    const usrTokenUTXO = await lucid.utxosAtWithUnit(address, usr_configNFT);
+    const tx = await lucid
+      .newTx()
+      .collectFrom(refTokenUTXO, Data.void())
+      .collectFrom(usrTokenUTXO)
+      .pay.ToAddressWithData(
+        CONFIGADDR,
+        { kind: "inline", value: Data.to(CONFIGDATUM, ConfigDatum) },
+        { lovelace: 5_000_000n, ref_configNFT: 1n }
+      )
+      .complete();
+
+    const signed = await tx.sign.withWallet().complete();
+    const txHash = await signed.submit();
+    console.log("txHash: ", txHash);
+    return txHash;
+  } catch (error: any) {
+    throw error;
+  }
+}
