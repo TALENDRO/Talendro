@@ -204,13 +204,22 @@ export default function ProjectItem({ project, from }: Props) {
                 disabled={
                   submitting ||
                   (isCompleteByDev && from.includes("dev")) ||
-                  (!isCompleteByDev && from.includes("client"))
+                  (!isCompleteByDev && from.includes("client")) ||
+                  (isCancelByDev && from.includes("client"))
                 }
+                // style={{
+                //   display:
+                //     (isCompleteByDev && from.includes("dev")) ||
+                //     (!isCompleteByDev && from.includes("client")) ||
+                //     (isCancelByDev && from.includes("client"))
+                //       ? "none"
+                //       : "block",
+                // }}
               >
                 {submitting
                   ? "Processing..."
                   : isCompleteByDev && from.includes("dev")
-                    ? "Completed"
+                    ? "Marked Completed"
                     : !isCompleteByDev && from.includes("client")
                       ? "Awaiting Completion"
                       : "Complete Project"}
@@ -222,6 +231,13 @@ export default function ProjectItem({ project, from }: Props) {
                   (isCancelByDev && from.includes("dev")) ||
                   (!isCancelByDev && from.includes("client"))
                 }
+                // style={{
+                //   display:
+                //     (isCancelByDev && from.includes("dev")) ||
+                //     (!isCancelByDev && from.includes("client"))
+                //       ? "none"
+                //       : "block",
+                // }}
               >
                 {submitting
                   ? "Processing..."
