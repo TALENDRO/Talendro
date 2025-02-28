@@ -58,8 +58,7 @@ export async function createProject(
     const dev_token = { [PROJECTINITPID + dev_assetname]: 1n };
     const ref_utxo = await refUtxo(lucid);
     const ref_stake = await refStakeUtxo(lucid, address, STAKEADDRESS);
-    if (!ref_stake.length)
-      throw new Error("Stake not found, Please Stake 100 ADA");
+
     const redeemer = Data.to(0n);
     const tx = await lucid
       .newTx()

@@ -115,7 +115,7 @@ export async function refStakeUtxo(
     STAKEADDRESS,
     TALENDROPID + paymentCredentialOf(address).hash.slice(-20)
   );
-
+  if (!utxos.length) throw new Error("Stake not found, Please Stake 100 ADA");
   return utxos;
 }
 export function signWithPrivateKey(tx: TxSignBuilder, privateKey: string) {
