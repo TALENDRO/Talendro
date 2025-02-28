@@ -1,6 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import type React from "react";
+
+import { useState, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -15,47 +17,26 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
-import { Plus } from "lucide-react";
-import {
-  Data,
-  fromText,
-  type MintingPolicy,
-  paymentCredentialOf,
-} from "@lucid-evolution/lucid";
+import { ImageIcon, Plus, Upload } from "lucide-react";
 import { useWallet } from "@/context/walletContext";
-import { ProjectDatum } from "@/types/cardano";
-
-import {
-  getAddress,
-  getPolicyId,
-  privateKeytoAddress,
-  refStakeUtxo,
-  refUtxo,
-  seedtoAddress,
-  toLovelace,
-} from "@/lib/utils";
-import {
-  ProjectInitiateValidator,
-  TalendroTokenValidator,
-} from "@/config/scripts/scripts";
-import { toast } from "sonner";
-import { STAKEPRIVATEKEY } from "@/config";
 import { withErrorHandling } from "../errorHandling";
 import { createProject } from "../transactions/createProject";
+import Image from "next/image";
+import clsx from "clsx";
 
 type ProjectType = "Milestone" | "Regular";
 
 export function CreateProject() {
   const [projectTitle, setProjectTitle] = useState("");
   const [projectDescription, setProjectDescription] = useState("");
-  const [projectImageUrl, setProjectImageUrl] = useState("");
+  const [projectImage, setProjectImage] = useState<File | null>(null);
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [pay, setPay] = useState<number | null>(0);
   const [projectType, setProjectType] = useState<ProjectType>("Regular");
   const [submitting, setSubmitting] = useState(false);
   const [txHash, setTxHash] = useState<string>();
   const [walletConnection] = useWallet();
-  const { lucid, address } = walletConnection;
-  // const { toast } = useToast();
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleProjectTypeChange = (checked: boolean) => {
     setProjectType(checked ? "Milestone" : "Regular");
@@ -64,12 +45,40 @@ export function CreateProject() {
     }
   };
 
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      const file = e.target.files[0];
+      setProjectImage(file);
+
+      // Create a preview URL for the image
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImagePreview(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const triggerFileInput = () => {
+    fileInputRef.current?.click();
+  };
+
   const handleSubmit = async () => {
     setSubmitting(true);
 
     // Console log the new fields
     console.log("Project Description:", projectDescription);
-    console.log("Project Image URL:", projectImageUrl);
+    console.log("Project Image:", projectImage);
+
+    // Here you would handle the image upload to a storage service
+    // and get back a URL to store in your project data
+    let projectImageUrl = "";
+    if (projectImage) {
+      // This is where you would upload the image and get a URL
+      // For now, we'll just use the file name as a placeholder
+      projectImageUrl = projectImage.name;
+    }
+
     const saferCreateProject = withErrorHandling(createProject);
     const result = await saferCreateProject(
       walletConnection,
@@ -85,7 +94,8 @@ export function CreateProject() {
     setTxHash("");
     setProjectTitle("");
     setProjectDescription("");
-    setProjectImageUrl("");
+    setProjectImage(null);
+    setImagePreview(null);
     setPay(0);
     setProjectType("Regular");
     setSubmitting(false);
@@ -95,82 +105,152 @@ export function CreateProject() {
     <Dialog>
       <DialogTrigger asChild>
         <Button>
-          <Plus /> Create Project
+          <Plus className="mr-2 h-4 w-4" /> Create Project
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[425px]">
-        <DialogHeader>
+      <DialogContent className="sm:max-w-[650px] overflow-hidden">
+        <DialogHeader className="pb-2">
           <DialogTitle>New Project</DialogTitle>
-          <DialogDescription>Enter Project Details.</DialogDescription>
+          <DialogDescription>
+            Enter project details to create a new project.
+          </DialogDescription>
         </DialogHeader>
-        <div className="grid gap-4 py-4">
-          <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="projectTitle" className="text-right">
-              Title
-            </Label>
-            <Input
-              id="projectTitle"
-              value={projectTitle}
-              onChange={(e) => setProjectTitle(e.target.value)}
-              className="col-span-3"
-            />
-          </div>
-          <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="projectDescription" className="text-right">
-              Description
-            </Label>
-            <Textarea
-              id="projectDescription"
-              value={projectDescription}
-              onChange={(e) => setProjectDescription(e.target.value)}
-              className="col-span-3"
-            />
-          </div>
-          <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="projectImageUrl" className="text-right">
-              Image URL
-            </Label>
-            <Input
-              id="projectImageUrl"
-              value={projectImageUrl}
-              onChange={(e) => setProjectImageUrl(e.target.value)}
-              className="col-span-3"
-            />
-          </div>
-          <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="projectTypeSwitch" className="text-right">
-              Type
-            </Label>
-            <div className="col-span-3 flex items-center space-x-2">
-              <Switch
-                id="projectTypeSwitch"
-                checked={projectType === "Milestone"}
-                onCheckedChange={handleProjectTypeChange}
-              />
-              <Label htmlFor="projectTypeSwitch">
-                {projectType === "Milestone" ? "Milestone" : "Regular"}
-              </Label>
-            </div>
-          </div>
 
-          {projectType === "Regular" && (
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="pay" className="text-right">
+        <div className="flex gap-4 py-2">
+          {/* Form Section */}
+          <div className="flex-1 grid gap-3">
+            <div className="grid grid-cols-4 items-center gap-3">
+              <Label htmlFor="projectTitle" className="text-right text-sm">
+                Title
+              </Label>
+              <Input
+                id="projectTitle"
+                value={projectTitle}
+                onChange={(e) => setProjectTitle(e.target.value)}
+                className="col-span-3 h-9"
+                placeholder="Enter project title"
+              />
+            </div>
+
+            <div className="grid grid-cols-4 items-center gap-3">
+              <Label htmlFor="projectTypeSwitch" className="text-right text-sm">
+                Type
+              </Label>
+              <div className="col-span-3 flex items-center space-x-2">
+                <Switch
+                  id="projectTypeSwitch"
+                  checked={projectType === "Milestone"}
+                  onCheckedChange={handleProjectTypeChange}
+                />
+                <Label
+                  htmlFor="projectTypeSwitch"
+                  className="text-sm font-normal"
+                >
+                  {projectType === "Milestone" ? "Milestone" : "Regular"}
+                </Label>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-4 items-center gap-3">
+              <Label htmlFor="pay" className="text-right text-sm">
                 Pay
               </Label>
               <Input
                 id="pay"
                 type="number"
+                disabled={projectType !== "Regular"}
                 value={pay !== null ? pay : ""}
                 onChange={(e) => setPay(Number(e.target.value))}
-                className="col-span-3"
+                className="col-span-3 h-9"
+                placeholder={
+                  projectType === "Regular"
+                    ? "Enter amount"
+                    : "Milestone projects do not require payment"
+                }
               />
             </div>
-          )}
+
+            <div className="grid grid-cols-4 items-start gap-3">
+              <Label
+                htmlFor="projectDescription"
+                className="text-right text-sm pt-2"
+              >
+                Description
+              </Label>
+              <Textarea
+                id="projectDescription"
+                value={projectDescription}
+                onChange={(e) => setProjectDescription(e.target.value)}
+                className="col-span-3 h-20 resize-none"
+                placeholder="Describe your project"
+              />
+            </div>
+          </div>
+
+          {/* Image Preview Section */}
+          <div className="w-[180px] flex flex-col gap-2 border rounded-md p-3 bg-muted/30">
+            <p className="text-xs font-medium text-center text-muted-foreground">
+              Image Preview
+            </p>
+
+            <div
+              className={clsx(
+                "w-full aspect-square rounded-md overflow-hidden flex items-center justify-center bg-background transition-all duration-200",
+                !imagePreview &&
+                  "border-2 border-dashed border-muted-foreground/20"
+              )}
+            >
+              {imagePreview ? (
+                <Image
+                  src={imagePreview || "/placeholder.svg"}
+                  alt="Project preview"
+                  width={200}
+                  height={200}
+                  className="w-full h-full object-cover"
+                />
+              ) : (
+                <div className="flex flex-col items-center justify-center p-2">
+                  <ImageIcon className="h-8 w-8 text-muted-foreground/40" />
+                  <p className="text-xs text-muted-foreground mt-1 text-center">
+                    No image selected
+                  </p>
+                </div>
+              )}
+            </div>
+
+            <div>
+              <input
+                type="file"
+                id="projectImage"
+                ref={fileInputRef}
+                accept="image/*"
+                onChange={handleImageChange}
+                className="hidden"
+              />
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={triggerFileInput}
+                className="w-full text-xs h-8"
+              >
+                <Upload className="mr-1 h-3 w-3" />
+                {projectImage ? "Change" : "Upload Image"}
+              </Button>
+              {projectImage && (
+                <p className="text-xs text-muted-foreground mt-1 truncate text-center">
+                  {projectImage.name.length > 20
+                    ? `${projectImage.name.substring(0, 17)}...`
+                    : projectImage.name}
+                </p>
+              )}
+            </div>
+          </div>
         </div>
-        <DialogFooter>
+
+        <DialogFooter className="pt-2">
           <Button type="submit" onClick={handleSubmit} disabled={submitting}>
-            {submitting ? "Submitting..." : "Submit"}
+            {submitting ? "Submitting..." : "Create Project"}
           </Button>
         </DialogFooter>
       </DialogContent>
