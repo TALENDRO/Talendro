@@ -3,7 +3,6 @@ import {
   ProjectInitiateValidator,
   TalendroTokenValidator,
 } from "@/config/scripts/scripts";
-import { useWallet } from "@/context/walletContext";
 import {
   getAddress,
   getPolicyId,

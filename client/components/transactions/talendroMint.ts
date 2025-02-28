@@ -2,16 +2,10 @@ import { STAKEPRIVATEKEY } from "@/config";
 import { TalendroTokenValidator } from "@/config/scripts/scripts";
 import { SystemWallet } from "@/config/systemWallet";
 import { WalletConnection } from "@/context/walletContext";
-import {
-  getPolicyId,
-  privateKeytoAddress,
-  refUtxo,
-  seedtoAddress,
-} from "@/lib/utils";
+import { getPolicyId, privateKeytoAddress, refUtxo } from "@/lib/utils";
 import { StakeDatum } from "@/types/cardano";
 import {
   Data,
-  fromText,
   paymentCredentialOf,
   stakeCredentialOf,
   Validator,
@@ -30,13 +24,6 @@ export async function TalendroTokenMinter(walletConnection: WalletConnection) {
     const SYSTEMADDRESS = await privateKeytoAddress(PRIVATEKEY);
     const STAKEADDRESS = await privateKeytoAddress(STAKEPRIVATEKEY);
 
-    const usr_configNFT = {
-      [IDENTIFICATIONPID + fromText("usr_configNFT")]: 1n,
-    };
-    const utxoWithIdentificationToken = await lucid.utxosAtWithUnit(
-      SYSTEMADDRESS,
-      IDENTIFICATIONPID + fromText("usr_configNFT")
-    );
     const datum: StakeDatum = {
       staked_by: [
         paymentCredentialOf(address).hash,

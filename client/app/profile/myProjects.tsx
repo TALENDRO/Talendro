@@ -1,5 +1,4 @@
 "use client";
-import { CreateProject } from "@/components/projectCards/createProjectModal";
 import { useWallet } from "@/context/walletContext";
 import {
   type Address,
