@@ -92,6 +92,7 @@ export async function ArbitratorAction(
     const { lucid, address } = walletConnection;
     if (!lucid || !address) throw new Error("Uninitialized Lucid!!!");
     const ARBITRATORPID = getPolicyId(ArbitratorTokenValidator);
+    const TALENDROPID = getPolicyId(TalendroTokenValidator);
     const STAKEADDRESS = await privateKeytoAddress(STAKEPRIVATEKEY);
     const data = await lucid.datumOf(utxo);
     const currentDatum = Data.castFrom(data, ArbitratorDatum);
@@ -104,6 +105,9 @@ export async function ArbitratorAction(
     let stakedUtxo = (
       await refStakeUtxo(lucid, AtFaultAddress, STAKEADDRESS)
     )[0];
+    const TalendroUserName =
+      paymentCredentialOf(AtFaultAddress).hash.slice(-20);
+    const burnAssets = { [TALENDROPID + TalendroUserName]: -1n };
 
     const ref_utxo = await refUtxo(lucid);
     const UTxO_Arbitrator = await lucid.utxosAtWithUnit(
@@ -125,6 +129,8 @@ export async function ArbitratorAction(
       .pay.ToAddress(address, {
         lovelace: stakedUtxo.assets["lovelace"] as bigint,
       })
+      .mintAssets(burnAssets, stakedUtxo.datum as string)
+      .attach.MintingPolicy(TalendroTokenValidator())
       .attach.SpendingValidator(ArbitrationContractValidator())
       .addSigner(STAKEADDRESS)
       .complete();
