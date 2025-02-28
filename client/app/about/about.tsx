@@ -71,7 +71,7 @@ export default function AboutPage() {
         >
           <div className="container mx-auto px-4 py-24 text-center space-y-16">
             <div className="space-y-8">
-              <h2 className="relative group inline-block text-3xl md:text-5xl font-bold tracking-widest">
+              <h2 className="relative group inline-block text-3xl md:text-5xl font-light tracking-widest">
                 WHO WE ARE
                 <span className="absolute left-0 bottom-0 w-0 h-[2px] bg-foreground transition-all duration-300 group-hover:w-full"></span>
               </h2>
@@ -85,9 +85,13 @@ export default function AboutPage() {
                 blockchain adoption and innovation.
               </p>
             </div>
+          </div>
+        </section>
 
+        <section className="relative min-h-[80vh] bg-secondary/50 flex items-center justify-center mt-10">
+          <div className="container mx-auto px-4 py-24 text-center space-y-16">
             <div className="space-y-8">
-              <h2 className="relative group inline-block text-3xl md:text-5xl font-bold tracking-widest">
+              <h2 className="relative group inline-block text-3xl md:text-5xl font-light tracking-widest">
                 WHAT WE DO
                 <span className="absolute left-0 bottom-0 w-0 h-[2px] bg-foreground transition-all duration-300 group-hover:w-full"></span>
               </h2>
@@ -105,14 +109,6 @@ export default function AboutPage() {
             </div>
           </div>
         </section>
-
-        {/* <section className="relative min-h-[80vh] flex items-center justify-center bg-background">
-          <div className="container mx-auto px-4 py-24 text-center">
-            <h2 className="text-3xl md:text-5xl font-light">
-              Let&apos;s create something meaningful
-            </h2>
-          </div>
-        </section> */}
         <section className="relative min-h-[80vh] flex items-center justify-center bg-background">
           <div className="container mx-auto px-4 py-24">
             <h2 className="text-3xl md:text-5xl font-light text-center mb-16">

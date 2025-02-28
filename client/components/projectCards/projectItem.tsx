@@ -165,10 +165,10 @@ export default function ProjectItem({ project, from }: Props) {
 
   return (
     <Card className="w-full max-w-md mx-auto">
-      <CardHeader>
+      <CardHeader className="flex !flex-row items-center justify-between">
         <CardTitle>{toText(datum.title)}</CardTitle>
-        <Badge variant={datum.pay ? "default" : "secondary"}>
-          {datum.pay ? "Regular" : "Milestone Based"}
+        <Badge variant={"secondary"}>
+          {!datum.milestones.length ? "Single Milestone" : "Multi Milestone"}
         </Badge>
       </CardHeader>
       <CardContent>
@@ -204,13 +204,22 @@ export default function ProjectItem({ project, from }: Props) {
                 disabled={
                   submitting ||
                   (isCompleteByDev && from.includes("dev")) ||
-                  (!isCompleteByDev && from.includes("client"))
+                  (!isCompleteByDev && from.includes("client")) ||
+                  (isCancelByDev && from.includes("client"))
                 }
+                // style={{
+                //   display:
+                //     (isCompleteByDev && from.includes("dev")) ||
+                //     (!isCompleteByDev && from.includes("client")) ||
+                //     (isCancelByDev && from.includes("client"))
+                //       ? "none"
+                //       : "block",
+                // }}
               >
                 {submitting
                   ? "Processing..."
                   : isCompleteByDev && from.includes("dev")
-                    ? "Completed"
+                    ? "Marked Completed"
                     : !isCompleteByDev && from.includes("client")
                       ? "Awaiting Completion"
                       : "Complete Project"}
@@ -222,6 +231,13 @@ export default function ProjectItem({ project, from }: Props) {
                   (isCancelByDev && from.includes("dev")) ||
                   (!isCancelByDev && from.includes("client"))
                 }
+                // style={{
+                //   display:
+                //     (isCancelByDev && from.includes("dev")) ||
+                //     (!isCancelByDev && from.includes("client"))
+                //       ? "none"
+                //       : "block",
+                // }}
               >
                 {submitting
                   ? "Processing..."

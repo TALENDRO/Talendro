@@ -67,7 +67,7 @@ export const Navbar = () => {
               : "opacity-0 -translate-y-full"
             : "opacity-100 translate-y-0",
           scrolled &&
-            "mx-auto my-4 md:w-[80%] sm:w-[75%] rounded-lg shadow-lg border-2 border-primary/50",
+            "mx-auto my-4 lg:w-[1080px] md:w-[75%] sm:w-[80%] rounded-lg shadow-lg border-2 border-primary/50",
           "font-comfortaa transition-all duration-500 "
         )}
       >

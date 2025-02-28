@@ -69,9 +69,9 @@ export async function acceptProject(
 
     const signed = await tx.sign.withWallet().complete();
     const txHash = await signed.submit();
-    console.log("txHash: ", txHash);
+    return txHash;
   } catch (error: any) {
-    console.error(error);
+    throw error;
   }
   // finally {
   // setSubmitting(false);
