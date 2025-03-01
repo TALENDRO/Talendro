@@ -217,14 +217,6 @@ export default function ProjectItem({ project, from }: Props) {
                   (!isCompleteByDev && from.includes("client")) ||
                   (isCancelByDev && from.includes("client"))
                 }
-                // style={{
-                //   display:
-                //     (isCompleteByDev && from.includes("dev")) ||
-                //     (!isCompleteByDev && from.includes("client")) ||
-                //     (isCancelByDev && from.includes("client"))
-                //       ? "none"
-                //       : "block",
-                // }}
               >
                 {submitting
                   ? "Processing..."
