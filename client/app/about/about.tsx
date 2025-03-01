@@ -80,9 +80,9 @@ export default function AboutPage() {
                 We are a team of passionate blockchain developers, and technical
                 writers dedicated to building and educating within the Cardano
                 ecosystem. With expertise in{" "}
-                <b className="text-white">smart contract development</b> and
-                decentralized technologies, we strive to push the boundaries of
-                blockchain adoption and innovation.
+                <b className="text-foreground">smart contract development</b>{" "}
+                and decentralized technologies, we strive to push the boundaries
+                of blockchain adoption and innovation.
               </p>
             </div>
           </div>
@@ -98,13 +98,13 @@ export default function AboutPage() {
 
               <p className="text-muted-foreground max-w-2xl mx-auto">
                 We develop secure and efficient smart contracts using{" "}
-                <b className="text-white">Aiken, Plutus, and Marlowe </b>,
+                <b className="text-foreground">Aiken, Plutus, and Marlowe </b>,
                 contribute to Cardano governance as a{" "}
-                <b className="text-white">DRep</b>, and actively engage in
+                <b className="text-foreground">DRep</b>, and actively engage in
                 technical writing to educate the community. We also conduct
                 blockchain workshops, contribute to{" "}
-                <b className="text-white">open-source </b> projects, and explore
-                real-world applications of decentralized solutions.
+                <b className="text-foreground">open-source </b> projects, and
+                explore real-world applications of decentralized solutions.
               </p>
             </div>
           </div>
