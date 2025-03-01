@@ -82,29 +82,24 @@ export default function ContactPage() {
                 GET IN TOUCH
               </h2>
               <div className="space-y-4">
-                <a
-                  href="mailto:faizanvit8@gmail.com"
-                  className="block text-xl md:text-2xl text-muted-foreground hover:text-foreground transition-colors"
-                >
-                  Faizan Shaikh
-                </a>
-                <a
-                  href="mailto:rahxtsayyed@gmail.com"
-                  className="block text-xl md:text-2xl text-muted-foreground hover:text-foreground transition-colors"
-                >
-                  Rahat Sayyed
-                </a>
+                <div className="flex space-x-4 text-center justify-center">
+                  <a
+                    href="mailto:faizanvit8@gmail.com"
+                    className="text-xl md:text-2xl text-muted-foreground hover:text-foreground transition-colors"
+                  >
+                    Faizan Shaikh
+                  </a>
+                  <a
+                    href="mailto:rahxtsayyed@gmail.com"
+                    className="text-xl md:text-2xl text-muted-foreground hover:text-foreground transition-colors"
+                  >
+                    Rahat Sayyed
+                  </a>
+                </div>
                 <p className="text-muted-foreground">
                   Available for new projects and collaborations
                 </p>
               </div>
-            </div>
-
-            <div className="space-y-8">
-              <h2 className="text-3xl md:text-5xl font-light tracking-widest">
-                LOCATION
-              </h2>
-              <p className="text-muted-foreground text-xl">INDIA</p>
             </div>
           </div>
         </section>
