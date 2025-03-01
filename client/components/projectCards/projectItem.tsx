@@ -161,7 +161,17 @@ export default function ProjectItem({ project, from }: Props) {
     setPOWLink("");
   }
 
-  const imageUrl = metadata?.image?.replace("ipfs://", "https://ipfs.io/ipfs/");
+  // const imageUrl = metadata?.image?.replace("ipfs://", "https://ipfs.io/ipfs/");
+  const imageUrl = metadata?.image
+    ? metadata.image.startsWith("ipfs://")
+      ? metadata.image.replace(
+          "ipfs://",
+          "https://beige-electoral-meadowlark-467.mypinata.cloud/ipfs/"
+        )
+      : metadata.image.startsWith("http")
+        ? metadata.image
+        : `https://beige-electoral-meadowlark-467.mypinata.cloud/ipfs/${metadata.image}`
+    : "https://avatars.githubusercontent.com/u/68136265?v=4";
 
   return (
     <Card className="w-full max-w-md mx-auto">
