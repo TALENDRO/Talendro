@@ -1,5 +1,3 @@
-/** @type {import('next').NextConfig} */
-
 const nextConfig = {
   webpack: (config) => {
     config.experiments = {
@@ -11,7 +9,6 @@ const nextConfig = {
     config.module.rules.push({
       test: /\.mdx/,
       use: [
-        // {loader: 'babel-loader', options: {}},
         {
           loader: "@mdx-js/loader",
           options: {},
@@ -34,6 +31,12 @@ const nextConfig = {
         hostname: "avatars.githubusercontent.com",
         port: "",
         pathname: "/**",
+      },
+      {
+        protocol: "https",
+        hostname: "beige-electoral-meadowlark-467.mypinata.cloud",
+        port: "",
+        pathname: "/ipfs/**",
       },
     ],
   },
