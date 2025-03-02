@@ -24,12 +24,11 @@ export default function ProfilePage() {
     if (!lucid || !address) throw "Uninitialized Lucid!!!";
     const talendroMint = withErrorHandling(TalendroTokenMinter);
     const result = await talendroMint(WalletConnection);
-    console.log(result);
     setSubmitting(false);
   }
 
   return (
-    <div className="container mx-auto p-4">
+    <div className="mx-auto p-4">
       <Card className="mb-6">
         <CardHeader>
           <CardTitle>Get Started</CardTitle>

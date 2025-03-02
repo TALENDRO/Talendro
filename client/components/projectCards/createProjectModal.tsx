@@ -1,7 +1,7 @@
 "use client";
 
 import type React from "react";
-
+import axios from "axios";
 import { useState, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import {
@@ -34,7 +34,7 @@ export function CreateProject() {
   const [pay, setPay] = useState<number | null>(0);
   const [projectType, setProjectType] = useState<ProjectType>("Regular");
   const [submitting, setSubmitting] = useState(false);
-  const [txHash, setTxHash] = useState<string>();
+  const [txHash, setTxHash] = useState<string | null>(null);
   const [walletConnection] = useWallet();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -50,7 +50,6 @@ export function CreateProject() {
       const file = e.target.files[0];
       setProjectImage(file);
 
-      // Create a preview URL for the image
       const reader = new FileReader();
       reader.onloadend = () => {
         setImagePreview(reader.result as string);
@@ -63,42 +62,82 @@ export function CreateProject() {
     fileInputRef.current?.click();
   };
 
+  const uploadImageToIPFS = async () => {
+    if (!projectImage) return "ipfs://default-placeholder-cid";
+
+    const allowedTypes = ["image/jpeg", "image/png", "image/gif"];
+    if (!allowedTypes.includes(projectImage.type)) {
+      throw new Error("Invalid file type. Accepted: JPEG, PNG, GIF");
+    }
+
+    const formData = new FormData();
+    formData.append("file", projectImage);
+    formData.append(
+      "pinataMetadata",
+      JSON.stringify({
+        name: projectImage.name,
+        keyvalues: {
+          type: "projectImage",
+        },
+      })
+    );
+    formData.append(
+      "pinataOptions",
+      JSON.stringify({
+        cidVersion: 1,
+        wrapWithDirectory: false,
+      })
+    );
+
+    try {
+      const response = await axios.post(
+        "https://api.pinata.cloud/pinning/pinFileToIPFS",
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+            Authorization: `Bearer ${process.env.NEXT_PUBLIC_PINATA_JWT || ""}`,
+          },
+        }
+      );
+
+      return response.data.IpfsHash;
+    } catch (error) {
+      console.error("Upload failed:", error);
+      throw new Error("Image upload failed. Please try again.");
+    }
+  };
   const handleSubmit = async () => {
     setSubmitting(true);
 
-    // Console log the new fields
-    console.log("Project Description:", projectDescription);
-    console.log("Project Image:", projectImage);
+    try {
+      const projectImageUrl = await uploadImageToIPFS();
+      const saferCreateProject = withErrorHandling(createProject);
 
-    // Here you would handle the image upload to a storage service
-    // and get back a URL to store in your project data
-    let projectImageUrl = "";
-    if (projectImage) {
-      // This is where you would upload the image and get a URL
-      // For now, we'll just use the file name as a placeholder
-      projectImageUrl = projectImage.name;
+      const result = await saferCreateProject(
+        walletConnection,
+        projectTitle,
+        pay,
+        projectType,
+        projectDescription,
+        projectImageUrl
+      );
+
+      console.log("Transaction result:", result);
+
+      setTxHash(result?.txHash || "");
+      setProjectTitle("");
+      setProjectDescription("");
+      setProjectImage(null);
+      setImagePreview(null);
+      setPay(0);
+      setProjectType("Regular");
+    } catch (error) {
+      console.error("Error creating project:", error);
+      alert("Failed to create project. Please try again.");
+    } finally {
+      setSubmitting(false);
     }
-
-    const saferCreateProject = withErrorHandling(createProject);
-    const result = await saferCreateProject(
-      walletConnection,
-      projectTitle,
-      pay,
-      projectType,
-      projectDescription,
-      projectImageUrl
-    );
-    console.log(result);
-
-    // Reset the form
-    setTxHash("");
-    setProjectTitle("");
-    setProjectDescription("");
-    setProjectImage(null);
-    setImagePreview(null);
-    setPay(0);
-    setProjectType("Regular");
-    setSubmitting(false);
   };
 
   return (
@@ -117,7 +156,6 @@ export function CreateProject() {
         </DialogHeader>
 
         <div className="flex gap-4 py-2">
-          {/* Form Section */}
           <div className="flex-1 grid gap-3">
             <div className="grid grid-cols-4 items-center gap-3">
               <Label htmlFor="projectTitle" className="text-right text-sm">
@@ -169,7 +207,6 @@ export function CreateProject() {
                 }
               />
             </div>
-
             <div className="grid grid-cols-4 items-start gap-3">
               <Label
                 htmlFor="projectDescription"
@@ -181,18 +218,18 @@ export function CreateProject() {
                 id="projectDescription"
                 value={projectDescription}
                 onChange={(e) => setProjectDescription(e.target.value)}
-                className="col-span-3 h-20 resize-none"
                 placeholder="Describe your project"
+                className="col-span-3 h-20 resize-none"
               />
             </div>
           </div>
 
           {/* Image Preview Section */}
+
           <div className="w-[180px] flex flex-col gap-2 border rounded-md p-3 bg-muted/30">
             <p className="text-xs font-medium text-center text-muted-foreground">
               Image Preview
             </p>
-
             <div
               className={clsx(
                 "w-full aspect-square rounded-md overflow-hidden flex items-center justify-center bg-background transition-all duration-200",
@@ -202,8 +239,8 @@ export function CreateProject() {
             >
               {imagePreview ? (
                 <Image
-                  src={imagePreview || "/placeholder.svg"}
-                  alt="Project preview"
+                  src={imagePreview}
+                  alt="Preview"
                   width={200}
                   height={200}
                   className="w-full h-full object-cover"
@@ -217,39 +254,29 @@ export function CreateProject() {
                 </div>
               )}
             </div>
-
-            <div>
-              <input
-                type="file"
-                id="projectImage"
-                ref={fileInputRef}
-                accept="image/*"
-                onChange={handleImageChange}
-                className="hidden"
-              />
-              <Button
-                type="button"
-                variant="outline"
-                size="sm"
-                onClick={triggerFileInput}
-                className="w-full text-xs h-8"
-              >
-                <Upload className="mr-1 h-3 w-3" />
-                {projectImage ? "Change" : "Upload Image"}
-              </Button>
-              {projectImage && (
-                <p className="text-xs text-muted-foreground mt-1 truncate text-center">
-                  {projectImage.name.length > 20
-                    ? `${projectImage.name.substring(0, 17)}...`
-                    : projectImage.name}
-                </p>
-              )}
-            </div>
+            <input
+              type="file"
+              id="projectImage"
+              ref={fileInputRef}
+              accept="image/*"
+              onChange={handleImageChange}
+              className="hidden"
+            />
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={triggerFileInput}
+              className="w-full text-xs h-8"
+            >
+              <Upload className="mr-1 h-3 w-3" />
+              {projectImage ? "Change" : "Upload Image"}
+            </Button>
           </div>
         </div>
 
-        <DialogFooter className="pt-2">
-          <Button type="submit" onClick={handleSubmit} disabled={submitting}>
+        <DialogFooter>
+          <Button onClick={handleSubmit} disabled={submitting}>
             {submitting ? "Submitting..." : "Create Project"}
           </Button>
         </DialogFooter>

@@ -42,7 +42,7 @@ export default function WalletComponent() {
   useEffect(() => {
     async function reconnect() {
       if (!wallet || !lucid) return;
-      await walletConnect(setWalletConnection, wallet, lucid);
+      await onConnectWallet(wallet);
     }
     reconnect();
   }, [pathname]);
