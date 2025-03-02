@@ -29,7 +29,7 @@ export default function ProfilePage() {
   }
 
   return (
-    <div className="container mx-auto p-4">
+    <div className="mx-auto p-4">
       <Card className="mb-6">
         <CardHeader>
           <CardTitle>Get Started</CardTitle>

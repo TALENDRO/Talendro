@@ -140,7 +140,7 @@ export const timelineData = Object.entries(DATA).map(
     title: "..." + (stepIndex + 1),
     content: (
       <div>
-        <h4 className="text-xl sm:text-3xl md:text-4xl font-bold text-white pb-5 md:pb-10">
+        <h4 className="text-xl sm:text-3xl md:text-4xl font-bold text-foreground pb-5 md:pb-10">
           <span className="relative inline-block group">
             {stepValue.title}
             <span className="absolute left-0 bottom-0 w-0 h-[2px] bg-foreground transition-all duration-300 group-hover:w-full"></span>
