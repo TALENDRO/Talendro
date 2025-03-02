@@ -37,7 +37,7 @@ const nextConfig = {
         protocol: "https",
         hostname: "beige-electoral-meadowlark-467.mypinata.cloud",
         port: "",
-        pathname: "/ipfs/**",
+        pathname: "/**",
       },
     ],
   },
