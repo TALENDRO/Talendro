@@ -17,7 +17,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
-import { ImageIcon, Plus } from "lucide-react";
+import { ImageIcon, Plus, Upload } from "lucide-react";
 import { useWallet } from "@/context/walletContext";
 import { withErrorHandling } from "../errorHandling";
 import { createProject } from "../transactions/createProject";
@@ -157,47 +157,97 @@ export function CreateProject() {
 
         <div className="flex gap-4 py-2">
           <div className="flex-1 grid gap-3">
-            <Label htmlFor="projectTitle">Title</Label>
-            <Input
-              id="projectTitle"
-              value={projectTitle}
-              onChange={(e) => setProjectTitle(e.target.value)}
-              placeholder="Enter project title"
-            />
+            <div className="grid grid-cols-4 items-center gap-3">
+              <Label htmlFor="projectTitle" className="text-right text-sm">
+                Title
+              </Label>
+              <Input
+                id="projectTitle"
+                value={projectTitle}
+                onChange={(e) => setProjectTitle(e.target.value)}
+                className="col-span-3 h-9"
+                placeholder="Enter project title"
+              />
+            </div>
 
-            <Label htmlFor="projectTypeSwitch">Type</Label>
-            <Switch
-              id="projectTypeSwitch"
-              checked={projectType === "Milestone"}
-              onCheckedChange={handleProjectTypeChange}
-            />
-            <Label>{projectType}</Label>
+            <div className="grid grid-cols-4 items-center gap-3">
+              <Label htmlFor="projectTypeSwitch" className="text-right text-sm">
+                Type
+              </Label>
+              <div className="col-span-3 flex items-center space-x-2">
+                <Switch
+                  id="projectTypeSwitch"
+                  checked={projectType === "Milestone"}
+                  onCheckedChange={handleProjectTypeChange}
+                />
+                <Label
+                  htmlFor="projectTypeSwitch"
+                  className="text-sm font-normal"
+                >
+                  {projectType === "Milestone" ? "Milestone" : "Regular"}
+                </Label>
+              </div>
+            </div>
 
-            <Label htmlFor="pay">Pay</Label>
-            <Input
-              id="pay"
-              type="number"
-              disabled={projectType !== "Regular"}
-              value={pay ?? ""}
-              onChange={(e) => setPay(Number(e.target.value))}
-              placeholder="Enter amount"
-            />
-
-            <Label htmlFor="projectDescription">Description</Label>
-            <Textarea
-              id="projectDescription"
-              value={projectDescription}
-              onChange={(e) => setProjectDescription(e.target.value)}
-              placeholder="Describe your project"
-            />
+            <div className="grid grid-cols-4 items-center gap-3">
+              <Label htmlFor="pay" className="text-right text-sm">
+                Pay
+              </Label>
+              <Input
+                id="pay"
+                type="number"
+                disabled={projectType !== "Regular"}
+                value={pay !== null ? pay : ""}
+                onChange={(e) => setPay(Number(e.target.value))}
+                className="col-span-3 h-9"
+                placeholder={
+                  projectType === "Regular"
+                    ? "Enter amount"
+                    : "Milestone projects do not require payment"
+                }
+              />
+            </div>
+            <div className="grid grid-cols-4 items-start gap-3">
+              <Label
+                htmlFor="projectDescription"
+                className="text-right text-sm pt-2"
+              >
+                Description
+              </Label>
+              <Textarea
+                id="projectDescription"
+                value={projectDescription}
+                onChange={(e) => setProjectDescription(e.target.value)}
+                placeholder="Describe your project"
+                className="col-span-3 h-20 resize-none"
+              />
+            </div>
+            {/* //               <Label
+//                 htmlFor="projectDescription"
+//                
+//               >
+//                 Description
+//               </Label>
+//               <Textarea
+//                 id="projectDescription"
+//                 value={projectDescription}
+//                 onChange={(e) => setProjectDescription(e.target.value)}
+//                 
+//                 placeholder="Describe your project"
+//               /> */}
           </div>
 
-          <div className="w-[180px] flex flex-col gap-2">
-            <p>Image Preview</p>
+          {/* Image Preview Section */}
+
+          <div className="w-[180px] flex flex-col gap-2 border rounded-md p-3 bg-muted/30">
+            <p className="text-xs font-medium text-center text-muted-foreground">
+              Image Preview
+            </p>
             <div
               className={clsx(
-                "w-full aspect-square rounded-md overflow-hidden",
-                !imagePreview && "border-2 border-dashed"
+                "w-full aspect-square rounded-md overflow-hidden flex items-center justify-center bg-background transition-all duration-200",
+                !imagePreview &&
+                  "border-2 border-dashed border-muted-foreground/20"
               )}
             >
               {imagePreview ? (
@@ -206,19 +256,33 @@ export function CreateProject() {
                   alt="Preview"
                   width={200}
                   height={200}
+                  className="w-full h-full object-cover"
                 />
               ) : (
-                <ImageIcon className="h-8 w-8" />
+                <div className="flex flex-col items-center justify-center p-2">
+                  <ImageIcon className="h-8 w-8 text-muted-foreground/40" />
+                  <p className="text-xs text-muted-foreground mt-1 text-center">
+                    No image selected
+                  </p>
+                </div>
               )}
             </div>
             <input
               type="file"
+              id="projectImage"
               ref={fileInputRef}
               accept="image/*"
               onChange={handleImageChange}
               className="hidden"
             />
-            <Button onClick={triggerFileInput}>
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={triggerFileInput}
+              className="w-full text-xs h-8"
+            >
+              <Upload className="mr-1 h-3 w-3" />
               {projectImage ? "Change" : "Upload Image"}
             </Button>
           </div>
