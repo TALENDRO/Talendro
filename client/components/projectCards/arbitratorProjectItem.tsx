@@ -27,9 +27,10 @@ import Image from "next/image";
 import { toast } from "sonner";
 import { blockfrost } from "@/lib/blockfrost";
 import Link from "next/link";
-import { ExternalLink } from "lucide-react";
+import { ExternalLink, ImageIcon } from "lucide-react";
 import { ProjectInitiateValidator } from "@/config/scripts/scripts";
 import { withErrorHandling } from "../errorHandling";
+import clsx from "clsx";
 // import { useToast } from "@/components/ui/use-toast"
 
 interface Props {
@@ -85,7 +86,17 @@ export default function ArbitratorProjectItem({ project }: Props) {
     return <div className="text-center p-4">Loading...</div>;
   }
 
-  const imageUrl = metadata?.image?.replace("ipfs://", "https://ipfs.io/ipfs/");
+  // const imageUrl = metadata?.image?.replace("ipfs://", "https://ipfs.io/ipfs/");
+  const imageUrl = metadata?.image
+    ? metadata.image.startsWith("ipfs://")
+      ? metadata.image.replace(
+          "ipfs://",
+          "https://beige-electoral-meadowlark-467.mypinata.cloud/ipfs/"
+        )
+      : metadata.image.startsWith("http")
+        ? metadata.image
+        : `https://beige-electoral-meadowlark-467.mypinata.cloud/ipfs/${metadata.image}`
+    : null;
 
   return (
     <Card className="w-full max-w-md mx-auto">
@@ -97,15 +108,29 @@ export default function ArbitratorProjectItem({ project }: Props) {
       </CardHeader>
       <CardContent>
         <div className="space-y-4">
-          <Image
-            src={
-              imageUrl || "https://avatars.githubusercontent.com/u/68136265?v=4"
-            }
-            alt={toText(datum.project_datum.title)}
-            width={500}
-            height={500}
-            className="rounded-md mx-auto"
-          />
+          <div
+            className={clsx(
+              "w-full aspect-square rounded-md overflow-hidden flex items-center justify-center bg-background transition-all duration-200",
+              !imageUrl && "border-2 border-dashed border-muted-foreground/20"
+            )}
+          >
+            {imageUrl ? (
+              <Image
+                src={imageUrl}
+                alt={toText(datum.project_datum.title)}
+                width={500}
+                height={500}
+                className="rounded-md mx-auto w-full h-full object-cover"
+              />
+            ) : (
+              <div className="flex flex-col items-center justify-center p-2">
+                <ImageIcon className="h-8 w-8 text-muted-foreground/40" />
+                <p className="text-xs text-muted-foreground mt-1 text-center">
+                  loading Image
+                </p>
+              </div>
+            )}
+          </div>
           <p className="text-sm text-muted-foreground">
             {metadata?.description || "No description provided"}
           </p>

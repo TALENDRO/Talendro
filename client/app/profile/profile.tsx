@@ -24,7 +24,6 @@ export default function ProfilePage() {
     if (!lucid || !address) throw "Uninitialized Lucid!!!";
     const talendroMint = withErrorHandling(TalendroTokenMinter);
     const result = await talendroMint(WalletConnection);
-    console.log(result);
     setSubmitting(false);
   }
 

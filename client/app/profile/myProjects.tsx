@@ -36,7 +36,6 @@ export default function MyProjectsPage() {
 
   async function fetchProjects(contractAddress: Address) {
     if (!lucid || !address) return;
-    console.log("fecthing projects");
     try {
       const utxos = await lucid.utxosAt(contractAddress);
       const newClientProjects = new Set<UTxO>();

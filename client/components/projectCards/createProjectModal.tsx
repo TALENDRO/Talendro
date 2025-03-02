@@ -222,19 +222,6 @@ export function CreateProject() {
                 className="col-span-3 h-20 resize-none"
               />
             </div>
-            {/* //               <Label
-//                 htmlFor="projectDescription"
-//                
-//               >
-//                 Description
-//               </Label>
-//               <Textarea
-//                 id="projectDescription"
-//                 value={projectDescription}
-//                 onChange={(e) => setProjectDescription(e.target.value)}
-//                 
-//                 placeholder="Describe your project"
-//               /> */}
           </div>
 
           {/* Image Preview Section */}

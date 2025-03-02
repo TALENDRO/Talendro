@@ -41,7 +41,6 @@ export default function WalletComponent() {
   }, []);
   useEffect(() => {
     async function reconnect() {
-      console.log(pathname, "reconnecting wallet");
       if (!wallet || !lucid) return;
       await onConnectWallet(wallet);
     }
