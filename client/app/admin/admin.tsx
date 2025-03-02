@@ -103,7 +103,7 @@ export default function Page() {
 
   // lace #account 1
   if (
-    !isEmulator &&
+    isEmulator &&
     address !==
       "addr_test1qrlq53qjd2yxx4lqj29526fn2uyl9fe7julp4shkgqm3m4dpvpz9h24n9ttq5f4d2xunltqy3yfphmr29uw4kwxt0h9qadh7tj"
   ) {
@@ -142,7 +142,7 @@ export default function Page() {
         Configuration Management
       </h1>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <ShineBorder
+        {/* <ShineBorder
           className="relative w-full rounded-lg p-[2px]"
           color={["#A07CFE", "#FE8FB5", "#FFBE7B"]}
         >
@@ -159,6 +159,28 @@ export default function Page() {
                   2
                 )}
               </pre>
+            </CardContent>
+          </Card>
+        </ShineBorder> */}
+        <ShineBorder
+          className="relative w-full rounded-lg p-[2px]"
+          color={["#A07CFE", "#FE8FB5", "#FFBE7B"]}
+        >
+          <Card className="bg-background rounded-lg p-4">
+            <CardHeader>
+              <CardTitle className="text-center">Config Datum</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="bg-secondary/30 p-4 rounded-md overflow-auto max-h-96">
+                <pre className="whitespace-pre-wrap break-words">
+                  {JSON.stringify(
+                    CONFIGDATUM,
+                    (key, value) =>
+                      typeof value === "bigint" ? value.toString() : value,
+                    2
+                  )}
+                </pre>
+              </div>
             </CardContent>
           </Card>
         </ShineBorder>
