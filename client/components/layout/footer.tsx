@@ -70,16 +70,16 @@ export default function Footer() {
 
 const QUICK_LINKS = [
   { href: "/about", label: "About Us" },
-  { href: "/products", label: "Products" },
-  { href: "/blog", label: "Blog" },
+  { href: "/#", label: "Products" },
+  { href: "/#", label: "Blog" },
   { href: "/contactUs", label: "Contact" },
 ];
 
 const RESOURCES = [
-  { href: "/documentation", label: "Documentation" },
-  { href: "/pricing", label: "Pricing" },
-  { href: "/support", label: "Support" },
-  { href: "/terms", label: "Terms of Service" },
+  { href: "/#", label: "Documentation" },
+  { href: "/#", label: "Pricing" },
+  { href: "/#", label: "Support" },
+  { href: "/#", label: "Terms of Service" },
 ];
 
 const LinkSection: React.FC<{ title: string; links: any[] }> = ({
