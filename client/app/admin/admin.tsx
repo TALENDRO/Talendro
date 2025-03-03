@@ -103,7 +103,7 @@ export default function Page() {
 
   // lace #account 1
   if (
-    isEmulator &&
+    !isEmulator &&
     address !==
       "addr_test1qrlq53qjd2yxx4lqj29526fn2uyl9fe7julp4shkgqm3m4dpvpz9h24n9ttq5f4d2xunltqy3yfphmr29uw4kwxt0h9qadh7tj"
   ) {
