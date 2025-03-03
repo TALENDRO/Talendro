@@ -69,8 +69,8 @@ export default function Footer() {
 }
 
 const QUICK_LINKS = [
+  { href: "https://github.com/TALENDRO/talendro-aiken", label: "Github" },
   { href: "/about", label: "About Us" },
-  { href: "/#", label: "Products" },
   { href: "/#", label: "Blog" },
   { href: "/contactUs", label: "Contact" },
 ];
