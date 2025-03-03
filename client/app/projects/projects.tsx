@@ -31,32 +31,64 @@ export default function ProjectsPage() {
   const [searchTerm, setSearchTerm] = useState("");
   const [page, setPage] = useState(1);
   const { ref, inView } = useInView();
+  const [isManualLoading, setIsManualLoading] = useState(false);
 
-  const fetchProjects = useCallback(async () => {
-    if (!lucid) return;
-    setIsLoading(true);
-    try {
-      const PROJECTINITPID = getPolicyId(ProjectInitiateValidator);
-      const PROJECTINITADDR = getAddress(ProjectInitiateValidator);
-      const utxos = await lucid.utxosAt(PROJECTINITADDR);
-      const filteredUtxos = utxos.filter((utxo) => {
-        return Object.keys(utxo.assets).some((key) =>
-          key.includes(PROJECTINITPID)
-        );
-      });
-      setProjects(filteredUtxos);
-    } catch (error: any) {
-      toast.error("ERROR", { description: error.message });
-      console.error("Error fetching projects:", error);
-    } finally {
-      setIsLoading(false);
-    }
-  }, [lucid]);
+  // const fetchProjects = useCallback(async () => {
+  //   if (!lucid) return;
+  //   setIsLoading(true);
+  //   try {
+  //     const PROJECTINITPID = getPolicyId(ProjectInitiateValidator);
+  //     const PROJECTINITADDR = getAddress(ProjectInitiateValidator);
+  //     const utxos = await lucid.utxosAt(PROJECTINITADDR);
+  //     const filteredUtxos = utxos.filter((utxo) => {
+  //       return Object.keys(utxo.assets).some((key) =>
+  //         key.includes(PROJECTINITPID)
+  //       );
+  //     });
+  //     setProjects(filteredUtxos);
+  //   } catch (error: any) {
+  //     toast.error("ERROR", { description: error.message });
+  //     console.error("Error fetching projects:", error);
+  //   } finally {
+  //     setIsLoading(false);
+  //   }
+  // }, [lucid]);
+  const fetchProjects = useCallback(
+    async (isManual: boolean = false) => {
+      if (!lucid) return;
+      if (isManual) setIsManualLoading(true); // Only set loading state for manual refresh
+      try {
+        const PROJECTINITPID = getPolicyId(ProjectInitiateValidator);
+        const PROJECTINITADDR = getAddress(ProjectInitiateValidator);
+        const utxos = await lucid.utxosAt(PROJECTINITADDR);
+        const filteredUtxos = utxos.filter((utxo) => {
+          return Object.keys(utxo.assets).some((key) =>
+            key.includes(PROJECTINITPID)
+          );
+        });
+        setProjects(filteredUtxos);
+      } catch (error: any) {
+        toast.error("ERROR", { description: error.message });
+        console.error("Error fetching projects:", error);
+      } finally {
+        if (isManual) setIsManualLoading(false); // Only reset manual loading state
+      }
+    },
+    [lucid]
+  );
+  /////////////////////////
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      fetchProjects(); // Automatic refresh without loader
+    }, 5000);
+
+    return () => clearInterval(intervalId);
+  }, [fetchProjects]);
 
   useEffect(() => {
     fetchProjects();
   }, [fetchProjects]);
-
+  ////////////////////////////////////
   useEffect(() => {
     const filtered = projects.filter((project) =>
       Object.keys(project.assets).some((key) =>
@@ -78,7 +110,7 @@ export default function ProjectsPage() {
   };
 
   const handleRefresh = () => {
-    fetchProjects();
+    fetchProjects(true);
   };
 
   return (
@@ -114,7 +146,7 @@ export default function ProjectsPage() {
             <Button onClick={handleRefresh}>Refresh</Button>
           </div>
 
-          {isLoading ? (
+          {isManualLoading ? (
             <div className="flex justify-center items-center h-64">
               <Loader2 className="h-8 w-8 animate-spin" />
             </div>

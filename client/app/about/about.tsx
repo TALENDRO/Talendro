@@ -120,7 +120,7 @@ export default function AboutPage() {
               <div className="group relative bg-secondary/20 rounded-lg p-6 border-3 transition-all duration-300 hover:bg-secondary/30">
                 <div className="aspect-square relative rounded-lg overflow-hidden mb-6">
                   <Image
-                    src="/placeholder.svg?height=400&width=400"
+                    src="/naruto.jpg"
                     alt="Team Member 1"
                     width={400}
                     height={400}
@@ -162,7 +162,7 @@ export default function AboutPage() {
               <div className="group relative bg-secondary/20 border-3 rounded-lg p-6 transition-all duration-300 hover:bg-secondary/30">
                 <div className="aspect-square relative rounded-lg overflow-hidden mb-6">
                   <Image
-                    src="/placeholder.svg?height=400&width=400"
+                    src="/sasuke.jpg"
                     alt="Team Member 2"
                     width={400}
                     height={400}
