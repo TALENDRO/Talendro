@@ -125,6 +125,8 @@ export default function AboutPage() {
                     width={400}
                     height={400}
                     priority
+                    fetchPriority="high"
+                    unoptimized
                     className="object-cover transition-transform duration-500 "
                   />
                 </div>
@@ -169,6 +171,8 @@ export default function AboutPage() {
                     height={400}
                     className="object-cover transition-transform duration-500 "
                     priority
+                    fetchPriority="high"
+                    unoptimized
                   />
                 </div>
                 <h3 className="text-xl font-light mb-2 text-center">
