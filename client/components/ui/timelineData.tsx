@@ -11,9 +11,10 @@ import {
 } from "lucide-react";
 import { CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { MagicCard } from "../magicui/magic-card";
+const romanNumerals = ["I", "II", "III", "IV", "V", "VI"];
 
 export const DATA = {
-  "step 1": {
+  "step I": {
     title: "Stake Reputation",
     card: [
       {
@@ -30,7 +31,7 @@ export const DATA = {
       },
     ],
   },
-  "step 2": {
+  "step II": {
     title: "Post Job",
     card: [
       {
@@ -47,7 +48,7 @@ export const DATA = {
       },
     ],
   },
-  "step 3": {
+  "step III": {
     title: "Hire & Fund Smart Contract",
     card: [
       {
@@ -64,7 +65,7 @@ export const DATA = {
       },
     ],
   },
-  "step 4": {
+  "step IV": {
     title: "Work Submission & Review",
     card: [
       {
@@ -87,7 +88,7 @@ export const DATA = {
       },
     ],
   },
-  "step 5": {
+  "step V": {
     title: "Payment & Reputation Update",
     card: [
       {
@@ -110,7 +111,7 @@ export const DATA = {
       },
     ],
   },
-  "step 6": {
+  "step VI": {
     title: "Dispute Resolution",
     card: [
       {
@@ -137,7 +138,7 @@ export const DATA = {
 
 export const timelineData = Object.entries(DATA).map(
   ([stepKey, stepValue], stepIndex) => ({
-    title: "..." + (stepIndex + 1),
+    title: ".." + romanNumerals[stepIndex],
     content: (
       <div>
         <h4 className="text-xl sm:text-3xl md:text-4xl font-bold text-foreground pb-5 md:pb-10">
