@@ -121,9 +121,10 @@ export default function AboutPage() {
                 <div className="aspect-square relative rounded-lg overflow-hidden mb-6">
                   <Image
                     src="/naruto.jpg"
-                    alt="Team Member 1"
+                    alt="FaizanShaikh"
                     width={400}
                     height={400}
+                    priority
                     className="object-cover transition-transform duration-500 "
                   />
                 </div>
@@ -163,10 +164,11 @@ export default function AboutPage() {
                 <div className="aspect-square relative rounded-lg overflow-hidden mb-6">
                   <Image
                     src="/sasuke.jpg"
-                    alt="Team Member 2"
+                    alt="RahatSayyed"
                     width={400}
                     height={400}
                     className="object-cover transition-transform duration-500 "
+                    priority
                   />
                 </div>
                 <h3 className="text-xl font-light mb-2 text-center">

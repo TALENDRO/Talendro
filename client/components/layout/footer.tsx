@@ -89,8 +89,8 @@ const LinkSection: React.FC<{ title: string; links: any[] }> = ({
   <div className="space-y-4">
     <h3 className="text-lg font-bold">{title}</h3>
     <ul className="space-y-2">
-      {links.map(({ href, label }) => (
-        <li key={href}>
+      {links.map(({ href, label }, index) => (
+        <li key={index}>
           <Link
             href={href}
             className="text-sm text-muted-foreground hover:text-primary transition-colors"
