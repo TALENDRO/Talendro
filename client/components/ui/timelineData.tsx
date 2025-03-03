@@ -11,6 +11,7 @@ import {
 } from "lucide-react";
 import { CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { MagicCard } from "../magicui/magic-card";
+const romanNumerals = ["I", "II", "III", "IV", "V", "VI"];
 
 export const DATA = {
   "step I": {
@@ -137,7 +138,7 @@ export const DATA = {
 
 export const timelineData = Object.entries(DATA).map(
   ([stepKey, stepValue], stepIndex) => ({
-    title: "..." + (stepIndex + 1),
+    title: ".." + romanNumerals[stepIndex],
     content: (
       <div>
         <h4 className="text-xl sm:text-3xl md:text-4xl font-bold text-foreground pb-5 md:pb-10">
