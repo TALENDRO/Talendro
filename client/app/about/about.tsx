@@ -170,7 +170,7 @@ export default function AboutPage() {
                   />
                 </div>
                 <h3 className="text-xl font-light mb-2 text-center">
-                  Rahat Sayeyd
+                  Rahat Sayyed
                 </h3>
                 <p className="text-muted-foreground mb-4 text-center">
                   Developer
