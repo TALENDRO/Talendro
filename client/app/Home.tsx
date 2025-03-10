@@ -7,6 +7,7 @@ import MouseFollower from "@/components/home/MouseFollower";
 import Link from "next/link";
 import { Timeline } from "@/components/ui/timeline";
 import { timelineData } from "@/components/ui/timelineData";
+import GettingStarted from "@/components/home/getStarted";
 
 export default function Homepage() {
   const [scrollProgress, setScrollProgress] = useState(0);
@@ -54,7 +55,8 @@ export default function Homepage() {
             a connection that sparks growth
           </p>
         </div>
-        <div className="absolute bottom-8 scroll-indicator">
+        <div className="absolute bottom-8 scroll-indicator ">
+          {/* SCROLL */}
           <ArrowDown className="w-6 h-6" />
         </div>
       </div>
@@ -84,7 +86,7 @@ export default function Homepage() {
             </p>
           </Link>
         </section>
-
+        <GettingStarted />
         <section className="relative min-h-[80vh] flex flex-col items-center justify-center bg-background">
           <div className="container mx-auto px-4 py-24 text-center space-y-3 sm:space-y-6">
             <Link
