@@ -147,12 +147,12 @@ export const timelineData = Object.entries(DATA).map(
             <span className="absolute left-0 bottom-0 w-0 h-[2px] bg-foreground transition-all duration-300 group-hover:w-full"></span>
           </span>
         </h4>
-        <div className={`grid gap-4 grid-cols-4 items-center`}>
+        <div className={`grid md:gap-4 lg:grid-cols-4 items-center gap-2`}>
           {stepValue.card.map((card, cardIndex) => (
             <MagicCard
               key={cardIndex}
               className={`
-                ${cardIndex === 2 ? "col-start-2 col-span-2" : "col-span-2"}
+                ${cardIndex === 2 ? "lg:col-start-2 lg:col-span-2" : "lg:col-span-2"}
               `}
             >
               <CardHeader>

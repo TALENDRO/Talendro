@@ -29,8 +29,8 @@ export const Timeline = ({ data }: { data: TimelineEntry[] }) => {
 
   return (
     <div className="w-full  font-sans md:px-10" ref={containerRef}>
-      <div className="max-w-7xl mx-auto py-20 px-4 md:px-8 lg:px-10">
-        <h2 className="text-lg md:text-5xl mb-4 flex max-w-4xl font-comfortaa font-extrabold">
+      <div className="mx-auto py-10">
+        <h2 className="text-2xl md:text-5xl mb-4 flex max-w-4xl font-comfortaa font-extrabold">
           How &nbsp;
           <span className="group relative">
             TALENDRO

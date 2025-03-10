@@ -55,7 +55,8 @@ export default function Homepage() {
             a connection that sparks growth
           </p>
         </div>
-        <div className="absolute bottom-8 scroll-indicator">
+        <div className="absolute bottom-8 scroll-indicator ">
+          {/* SCROLL */}
           <ArrowDown className="w-6 h-6" />
         </div>
       </div>
