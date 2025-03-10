@@ -18,7 +18,7 @@ import {
 export default function GettingStarted() {
   const steps = [
     {
-      title: "Connect wallet with Preview Network",
+      title: "Connect wallet",
       description:
         "Connect your Cardano wallet and make sure it's on Preview Network. Get test ADA from the faucet.",
       icon: <Wallet className="h-6 w-6" />,
@@ -27,17 +27,12 @@ export default function GettingStarted() {
       external: true,
     },
     {
-      title: "Go to Profile tab",
-      description: "Navigate to your profile.",
-      icon: <User className="h-6 w-6" />,
+      title: "Become a Member",
+      description:
+        "Mint Talendro Token to become a member. (100 ADA will be Staked)",
+      icon: <Wallet className="h-6 w-6" />,
       link: "/profile",
       linkText: "Go to Profile",
-    },
-    {
-      title: "Mint Talendro Token & Stake Reputation",
-      description:
-        " Mint Talendro Token to become a member. (100 ADA will be Staked)",
-      icon: <Wallet className="h-6 w-6" />,
     },
     {
       title: "Explore projects",
@@ -62,14 +57,14 @@ export default function GettingStarted() {
   ];
 
   return (
-    <section className="w-full py-12 md:py-24 lg:py-32 bg-white">
-      <div className="container px-4 md:px-6">
+    <section className="w-full py-12 md:py-24 lg:py-32 bg-background">
+      <div className="container px-0 md:px-6">
         <div className="flex flex-col items-center justify-center space-y-4 text-center">
           <div className="space-y-2">
             <h2 className="text-3xl font-bold tracking-tighter sm:text-5xl">
               Getting Started with Talendro
             </h2>
-            <p className="max-w-[900px] text-zinc-500 md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
+            <p className="max-w-[900px] text-muted-foreground md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
               Follow these simple steps to begin your journey with Talendro
             </p>
           </div>
@@ -78,11 +73,11 @@ export default function GettingStarted() {
           {steps.map((step, index) => (
             <Card
               key={index}
-              className="border-2 border-black transition-colors duration-200 hover:bg-zinc-100 dark:hover:bg-zinc-800"
+              className="border-2 border-primary/50 transition-colors duration-200 hover:bg-background/80"
             >
               <CardHeader className="pb-2">
-                <div className="flex items-center gap-4">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-black text-white">
+                <div className="flex items-center gap-2 md:gap-4">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-foreground/90 text-background ">
                     {step.icon}
                   </div>
                   <div className="flex-1">
@@ -93,14 +88,14 @@ export default function GettingStarted() {
                 </div>
               </CardHeader>
               <CardContent>
-                <CardDescription className="text-base text-zinc-700">
+                <CardDescription className="text-base text-muted-foreground">
                   {step.description}
                   {step.link && (
                     <Link
                       href={step.link}
                       target={step.external ? "_blank" : "_self"}
                       rel={step.external ? "noopener noreferrer" : undefined}
-                      className="ml-2 inline-flex items-center font-medium text-black hover:underline"
+                      className="ml-2 inline-flex items-center font-medium  hover:underline"
                     >
                       {step.linkText ? step.linkText : "View projects"}{" "}
                       <ArrowRight className="ml-1 h-4 w-4" />
